@@ -31,7 +31,7 @@ h1,h2{margin:0;font-weight:500;text-transform:uppercase;text-wrap:balance;letter
 h1{font-size:clamp(30px,4.4vw,52px);line-height:1}
 h2{font-size:22px;line-height:1.1}
 .sheet{background:var(--sheet);border-radius:18px;padding:28px}
-header.sheet{display:flex;flex-wrap:wrap;gap:20px 32px;align-items:flex-end;justify-content:space-between}
+header.sheet{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-block:16px}
 header .lead{display:flex;flex-direction:column;gap:12px;min-width:0;max-width:640px}
 header p{margin:0;color:var(--muted);font-size:17px;font-weight:300}
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}

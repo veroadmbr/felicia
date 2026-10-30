@@ -1,22 +1,32 @@
 const MULT_KEYS={mov:"Movimento do salão",del:"Pedidos de delivery",eq:"Tamanho da equipe",rep:"Repasse aos cotistas"};
-const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
+const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",a0:0,a1:0,a2:0,a3:0,a4:0,a5:0,a6:0,ticketAlmoco:75,d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
   pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,sal:3500,enc_fgts:8,enc_13:8.33,enc_ferias:11.11,enc_multa:3.2,enc_inss:0,enc_rat:0,enc_terc:0,enc_vt:200,enc_ref:350,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
   reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
 
 const GROUPS=[
  {t:"Salão",open:true,modeSwitch:true,c:[
-  ["lugares","Lugares no salão",20,150,1,"","Mesas × cadeiras"],
-  ["d0","Segunda",0,300,1,"pessoas","0 = fechado","dias"],
-  ["d1","Terça",0,300,1,"pessoas","","dias"],
-  ["d2","Quarta",0,300,1,"pessoas","","dias"],
-  ["d3","Quinta",0,300,1,"pessoas","","dias"],
-  ["d4","Sexta",0,300,1,"pessoas","","dias"],
-  ["d5","Sábado",0,300,1,"pessoas","","dias"],
-  ["d6","Domingo",0,300,1,"pessoas","","dias"],
+  ["lugares","Lugares no salão",20,200,1,"","Mesas × cadeiras"]]},
+ {t:"Jantar",open:true,c:[
+  ["d0","Segunda",0,400,1,"pessoas","0 = sem jantar","dias"],
+  ["d1","Terça",0,400,1,"pessoas","","dias"],
+  ["d2","Quarta",0,400,1,"pessoas","","dias"],
+  ["d3","Quinta",0,400,1,"pessoas","","dias"],
+  ["d4","Sexta",0,400,1,"pessoas","","dias"],
+  ["d5","Sábado",0,400,1,"pessoas","","dias"],
+  ["d6","Domingo",0,400,1,"pessoas","","dias"],
   ["giro","Giro por noite",0.5,3.5,0.05,"x","Quantas vezes cada lugar é ocupado","giro"],
   ["aprov","Aproveitamento dos lugares",50,100,1,"%","Cadeiras vazias em mesas parciais","giro"],
   ["dias","Dias abertos por mês",16,30,1,"dias","","giro"]]},
- {t:"Ticket médio",open:true,calc:"ticket",c:[
+ {t:"Almoço",open:true,note:"Pessoas no almoço em cada dia. Deixe 0 nos dias sem almoço.",c:[
+  ["ticketAlmoco","Ticket médio do almoço",0,250,1,"R$","Por cliente"],
+  ["a0","Segunda",0,400,1,"pessoas",""],
+  ["a1","Terça",0,400,1,"pessoas",""],
+  ["a2","Quarta",0,400,1,"pessoas",""],
+  ["a3","Quinta",0,400,1,"pessoas",""],
+  ["a4","Sexta",0,400,1,"pessoas",""],
+  ["a5","Sábado",0,400,1,"pessoas",""],
+  ["a6","Domingo",0,400,1,"pessoas",""]]},
+ {t:"Ticket médio do jantar",open:true,calc:"ticket",c:[
   ["pizzas","Pizzas por cliente",0.3,2,0.05,"un",""],
   ["precoPizza","Preço médio da pizza",30,150,1,"R$",""],
   ["bebidas","Bebidas por cliente",0,5,0.1,"un","Drinks, vinho, chopp, soft"],
@@ -83,7 +93,7 @@ const ENC=[["enc_fgts","FGTS"],["enc_13","13º salário"],["enc_ferias","Férias
 function team(p){const sal=p.sal||0,rows=ENC.map(([k,n])=>[n,p[k]||0,sal*(p[k]||0)/100]).filter(r=>r[1]>0);
   const enc=rows.reduce((a,r)=>a+r[2],0),ben=(p.enc_vt||0)+(p.enc_ref||0),per=sal+enc+ben;
   return {sal,rows,enc,ben,per,total:per*p.func,encPct:sal>0?enc/sal*100:0,fator:sal>0?per/sal:0}}
-function eff(p,k){const m=mult(p,k),e={...p};e.giro=p.giro*m.mov;for(let i=0;i<7;i++)e["d"+i]=Math.round(p["d"+i]*m.mov);
+function eff(p,k){const m=mult(p,k),e={...p};e.giro=p.giro*m.mov;for(let i=0;i<7;i++){e["d"+i]=Math.round(p["d"+i]*m.mov);e["a"+i]=Math.round(p["a"+i]*m.mov)}
   e.pedidos=p.pedidos*m.del;e.func=p.func*m.eq;e.rep1=p.rep1*m.rep;e.rep2=p.rep2*m.rep;e.rep3=p.rep3*m.rep;return e}
 function fromSaved(o){if(!o)return {...ZERO};const b=(o.sets&&o.sets.base)||o.p||{};return {...DEFAULTS,...b}}
 try{const s=JSON.parse(localStorage.getItem("felicia-sim")||"null");if(s){P=fromSaved(s);SC=s.sc||"base";CUR=s.cur||null;DIRTY=!!s.dirty}}catch(e){}
@@ -101,10 +111,16 @@ function brl(v){if(!isFinite(v))v=0;const a=Math.abs(v),s=v<0?"–":"";
 
 function run(p){
   const ticket=p.pizzas*p.precoPizza+p.bebidas*p.precoBebida+p.sobremesa*p.precoSobremesa;
-  const WK=4.33, DAYS=[p.d0,p.d1,p.d2,p.d3,p.d4,p.d5,p.d6];
+  const WK=4.33, DAYS=[p.d0,p.d1,p.d2,p.d3,p.d4,p.d5,p.d6], LUNCH=[p.a0,p.a1,p.a2,p.a3,p.a4,p.a5,p.a6];
+  const sumA=LUNCH.reduce((a,b)=>a+b,0), almocoM=sumA*WK, salaoAlmoco=almocoM*p.ticketAlmoco;
   let pessoas,salao,dias,pico;
-  if(p.modo==="dias"){const open=DAYS.filter(x=>x>0).length;dias=Math.max(open,1)*WK;const pm=DAYS.reduce((a,b)=>a+b,0)*WK;pessoas=pm/dias;salao=pm*ticket;pico=Math.max(...DAYS)}
-  else{dias=p.dias;pessoas=p.lugares*p.giro*p.aprov/100;salao=pessoas*ticket*dias;pico=pessoas}
+  let jantarM;
+  if(p.modo==="dias"){const open=DAYS.filter((x,i)=>x>0||LUNCH[i]>0).length;dias=Math.max(open,1)*WK;jantarM=DAYS.reduce((a,b)=>a+b,0)*WK;pico=Math.max(...DAYS,...LUNCH)}
+  else{dias=p.dias;jantarM=p.lugares*p.giro*p.aprov/100*dias;pico=Math.max(p.lugares*p.giro*p.aprov/100,...LUNCH)}
+  pessoas=(jantarM+almocoM)/dias;
+  const salaoJantar=jantarM*ticket;
+  salao=salaoJantar+salaoAlmoco;
+  const ticketMedio=(jantarM+almocoM)>0?salao/(jantarM+almocoM):0;
   const giroImp=p.lugares>0?pessoas/p.lugares:0;
   const deliv=p.pedidos*p.ticketDeliv*dias;
   const total=salao+deliv;
@@ -134,7 +150,7 @@ function run(p){
   const mature=revs[11];
   const lucroM=mature*(1-varPct)-fixoBase;
   const be=fixoBase/(1-varPct);
-  return {delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,T,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
+  return {LUNCH,jantarM,almocoM,salaoJantar,salaoAlmoco,ticketMedio,delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,T,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
     cost:{cmv:mature*p.cmv/100,simples:mature*p.simples/100,cartao:mature*p.cartao/100,del:mature*delivShare*p.custoDeliv/100}};
 }
 
@@ -200,8 +216,8 @@ function update(){
   document.getElementById("k-36-s").textContent=brl(R.cum[36].dist)+" para distribuição";
 
   const night=[
-    [nf(R.pessoas,0),"Clientes no salão por dia"],
-    ["R$ "+nf(R.ticket,0),"Ticket médio no salão"],
+    [nf(R.pessoas,0),"Clientes no salão por dia"+(R.almocoM>0?" · almoço e jantar":"")],
+    ["R$ "+nf(R.ticketMedio,0),R.almocoM>0?"Ticket médio no salão · jantar R$ "+nf(R.ticket,0)+", almoço R$ "+nf(P.ticketAlmoco,0):"Ticket médio no salão"],
     [nf(R.pedidos,0)+" pedidos","Delivery por dia · "+nf(R.delivShare*100,0)+"% do faturamento"],
     [brl(R.total/R.dias),"Faturamento por dia"],
     [brl(R.be),"Ponto de equilíbrio por mês"],
@@ -209,9 +225,12 @@ function update(){
   ];
   document.getElementById("night").innerHTML=night.map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
   const wk=document.getElementById("week");
-  if(P.modo==="dias"){const names=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"],mx=Math.max(...R.DAYS,1);
+  if(P.modo==="dias"||R.almocoM>0){const names=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+    const J=P.modo==="dias"?R.DAYS:R.DAYS.map(()=>Math.round(P.lugares*E.giro*P.aprov/100)),A=R.LUNCH;
+    const mx=Math.max(1,...J.map((d,i)=>d+A[i])),wkTot=J.reduce((a,b)=>a+b,0)+A.reduce((a,b)=>a+b,0);
     wk.hidden=false;
-    wk.innerHTML=`<p class="note">Semana típica · ${nf(R.DAYS.reduce((a,b)=>a+b,0),0)} pessoas no salão por semana, ${nf(R.DAYS.reduce((a,b)=>a+b,0)*R.WK,0)} por mês</p><div class="bars">`+R.DAYS.map((d,i)=>`<span class="n">${names[i]}</span><span class="t"><div style="width:${d/mx*100}%"></div></span><span class="val">${d?nf(d,0)+" pessoas":"fechado"}${d?`<small>${nf(d/P.lugares,1)}x · ${brl(d*R.ticket)}</small>`:""}</span>`).join("")+`</div>`}
+    wk.innerHTML=`<p class="note">Semana típica · ${nf(wkTot,0)} pessoas no salão por semana, ${nf(wkTot*R.WK,0)} por mês</p><div class="legend" style="margin-top:0"><span><i style="background:var(--red)"></i>Jantar</span><span><i style="background:var(--red-deep);opacity:.45"></i>Almoço</span></div><div class="bars">`+
+      J.map((d,i)=>{const a=A[i],t=d+a;return `<span class="n">${names[i]}</span><span class="t" style="display:flex"><div style="width:${d/mx*100}%;border-radius:0"></div><div style="width:${a/mx*100}%;border-radius:0;background:var(--red-deep);opacity:.45"></div></span><span class="val">${t?`${nf(t,0)} pessoas<small>${a?"almoço "+nf(a,0)+" · ":""}jantar ${nf(d,0)} · ${brl(d*R.ticket+a*P.ticketAlmoco)}</small>`:"fechado"}</span>`}).join("")+`</div>`}
   else wk.hidden=true;
 
   // summary table
@@ -269,7 +288,7 @@ function update(){
   A.push(mg>20?["warn","Margem",`Margem de ${nf(mg,1)}% está acima da média do setor (12% a 15%). Prepare a justificativa, como equipe enxuta ou CMV baixo.`]:mg<5?["bad","Margem",`Margem de ${nf(mg,1)}% deixa pouca folga para imprevistos.`]:["ok","Margem",`Margem de ${nf(mg,1)}%, em linha com o setor.`]);
   A.push(R.minCash<-P.caixa?["bad","Caixa",`O caixa chega a ${brl(R.minCash)}, mais do que o capital de giro de ${brl(P.caixa)}.`]:R.minCash<0?["warn","Caixa",`Os primeiros meses usam ${brl(-R.minCash)} do capital de giro (${nf(-R.minCash/P.caixa*100,0)}% dele).`]:["ok","Caixa","O repasse cabe no lucro de todos os meses."]);
   const gp=R.pico/P.lugares;
-  A.push(gp>2.2?["warn","Capacidade",`Na noite mais cheia, cada lugar gira ${nf(gp,1)}x. Isso exige mesas rápidas e equipe dimensionada para o pico.`]:["ok","Capacidade",`Na noite mais cheia, cada lugar gira ${nf(gp,1)}x, viável para um pizza bar.`]);
+  A.push(gp>2.2?["warn","Capacidade",`No serviço mais cheio, cada lugar gira ${nf(gp,1)}x. Isso exige mesas rápidas e equipe dimensionada para o pico.`]:["ok","Capacidade",`No serviço mais cheio, cada lugar gira ${nf(gp,1)}x, viável para um pizza bar.`]);
   if(P.g2+P.g3>30&&P.reaj<P.g2/2)A.push(["warn","Crescimento","O faturamento cresce bem mais rápido que os custos fixos. Com mais movimento, a equipe tende a crescer junto."]);
   A.push(R.quit&&R.quit<=36?["ok","Aporte",`Os cotistas recebem 100% do aporte no mês ${R.quit}.`]:["warn","Aporte",`O aporte não volta inteiro em 36 meses${R.pq?" (previsão: mês ~"+R.pq+")":""}.`]);
   if(R.mature<=0)A.splice(0,A.length,["warn","Premissas","As premissas estão zeradas. Preencha o movimento do salão, o ticket médio e os custos para ver a leitura."]);
