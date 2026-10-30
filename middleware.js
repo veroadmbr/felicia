@@ -1,24 +1,33 @@
-// Protege todo o site com senha (Vercel Routing Middleware).
-// A senha vem da variável de ambiente SITE_PASSWORD na Vercel.
+// Protege o site com duas senhas: a do site (landing) e a do simulador (simulador, CMS e gravações).
+import { COOKIE, readCookie, validToken } from './api/_auth.js';
+
 export const config = {
   matcher: ['/((?!login\\.html|api/login|login-assets/|favicon\\.ico).*)'],
 };
 
-async function token(pass) {
-  const data = new TextEncoder().encode('felicia:' + pass);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
+const next = () => new Response(null, { headers: { 'x-middleware-next': '1' } });
 
 export default async function middleware(request) {
-  const pass = process.env.SITE_PASSWORD || 'felicia1109';
-  const cookie = request.headers.get('cookie') || '';
-  const m = cookie.match(/(?:^|;\s*)felicia_auth=([a-f0-9]{64})/);
-  if (m && m[1] === (await token(pass))) {
-    return new Response(null, { headers: { 'x-middleware-next': '1' } });
-  }
   const url = new URL(request.url);
-  const login = new URL('/login.html', url);
-  login.searchParams.set('next', url.pathname + url.search);
-  return Response.redirect(login, 307);
+  const p = url.pathname;
+  const isApi = p.startsWith('/api/');
+  const isDoc = request.headers.get('sec-fetch-dest') === 'document' || (request.headers.get('accept') || '').includes('text/html');
+
+  const toLogin = (area) => {
+    if (isApi) return new Response(JSON.stringify({ error: 'login', area }), { status: 401, headers: { 'content-type': 'application/json' } });
+    const l = new URL('/login.html', url);
+    l.searchParams.set('next', p + url.search);
+    if (area === 'sim') l.searchParams.set('area', 'sim');
+    return Response.redirect(l, 307);
+  };
+
+  if (!(await validToken(readCookie(request, COOKIE.site), 'site', isDoc))) return toLogin('site');
+
+  const restricted =
+    p.startsWith('/simulador') || p.startsWith('/cms') ||
+    p === '/api/password' || p === '/api/scenarios' ||
+    (isApi && request.method !== 'GET' && request.method !== 'HEAD');
+  if (restricted && !(await validToken(readCookie(request, COOKIE.sim), 'sim', isDoc || isApi))) return toLogin('sim');
+
+  return next();
 }

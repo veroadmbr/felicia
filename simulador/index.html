@@ -33,6 +33,7 @@
           <button type="button" id="zeroBtn">Zerar premissas</button>
           <button type="button" id="exampleBtn">Carregar exemplo</button>
           <button type="button" id="copyInv">Copiar link do investidor</button>
+          <button type="button" id="pwOpen">Senhas de acesso</button>
         </div>
       </div>
     </div>
@@ -92,6 +93,26 @@
 </div>
 
 <button type="button" class="fab" id="savedBtn" aria-expanded="false" aria-controls="savedPanel">Cenários salvos <span class="count" id="savedCount">0</span></button>
+<div class="panel" id="pwPanel" hidden role="dialog" aria-label="Senhas de acesso">
+  <div class="panel-head"><h2>Senhas de acesso</h2><button type="button" class="x" id="pwClose" aria-label="Fechar">×</button></div>
+  <form class="saveform pwform" data-area="site">
+    <label>Senha do site (landing, para investidores)</label>
+    <input type="password" name="current" placeholder="Senha atual" autocomplete="current-password" aria-label="Senha atual do site">
+    <input type="password" name="next" placeholder="Senha nova (mínimo 6 caracteres)" autocomplete="new-password" aria-label="Senha nova do site">
+    <input type="password" name="confirm" placeholder="Repita a senha nova" autocomplete="new-password" aria-label="Confirme a senha nova do site">
+    <button type="submit" class="btn red">Trocar senha do site</button>
+    <p class="site-note" hidden></p>
+  </form>
+  <form class="saveform pwform" data-area="sim">
+    <label>Senha do simulador (simulador e CMS)</label>
+    <input type="password" name="current" placeholder="Senha atual" autocomplete="current-password" aria-label="Senha atual do simulador">
+    <input type="password" name="next" placeholder="Senha nova (mínimo 6 caracteres)" autocomplete="new-password" aria-label="Senha nova do simulador">
+    <input type="password" name="confirm" placeholder="Repita a senha nova" autocomplete="new-password" aria-label="Confirme a senha nova do simulador">
+    <button type="submit" class="btn red">Trocar senha do simulador</button>
+    <p class="site-note" hidden></p>
+  </form>
+  <span class="autosave">Quem já entrou com a senha antiga precisa digitar a nova na próxima visita.</span>
+</div>
 <div class="panel" id="savedPanel" hidden role="dialog" aria-label="Cenários salvos">
   <div class="panel-head"><h2>Cenários salvos</h2><button type="button" class="x" id="savedClose" aria-label="Fechar">×</button></div>
   <form class="saveform" id="saveForm">

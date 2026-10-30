@@ -228,6 +228,22 @@ confirmBtn("exampleBtn","Confirmar: carregar exemplo",()=>({...DEFAULTS}));
   document.addEventListener("click",e=>{if(!ml.hidden&&!ml.contains(e.target)&&e.target!==mb)setM(false)});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!ml.hidden){setM(false);mb.focus()}});
   document.getElementById("present").addEventListener("click",()=>setM(false));
+  const pw=document.getElementById("pwPanel");
+  document.getElementById("pwOpen").addEventListener("click",()=>{setM(false);document.getElementById("savedPanel").hidden=true;pw.hidden=false;pw.querySelector("input").focus()});
+  document.getElementById("pwClose").addEventListener("click",()=>{pw.hidden=true});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!pw.hidden)pw.hidden=true});
+  pw.querySelectorAll(".pwform").forEach(f=>f.addEventListener("submit",async e=>{e.preventDefault();
+    const note=f.querySelector(".site-note"),btn=f.querySelector("button"),v=n=>f.elements[n].value,say=(c,t)=>{note.hidden=false;note.className="site-note "+c;note.textContent=t};
+    if(v("next").length<6)return say("bad","A senha nova precisa ter pelo menos 6 caracteres.");
+    if(v("next")!==v("confirm"))return say("bad","As duas senhas novas não são iguais.");
+    btn.disabled=true;const lbl=btn.textContent;btn.textContent="Salvando…";
+    try{const r=await fetch("../api/password",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({area:f.dataset.area,current:v("current"),next:v("next")})});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok){f.reset();say("ok",f.dataset.area==="site"?"Senha do site trocada. Avise quem precisa entrar.":"Senha do simulador trocada.")}
+      else if(r.status===503||r.status===404)say("warn","Para trocar senhas, o armazenamento do site precisa estar ligado. Veja a aba Conexão do CMS.");
+      else say("bad",j.error||"Não foi possível trocar a senha.")}
+    catch(x){say("bad","Sem conexão com o site. Tente de novo.")}
+    btn.disabled=false;btn.textContent=lbl}));
   const ci=document.getElementById("copyInv");ci.addEventListener("click",()=>{
     const code=btoa(unescape(encodeURIComponent(JSON.stringify(P)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
     const link=new URL("../?p="+code+"#calculos",location.href).href;
@@ -358,7 +374,7 @@ try{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",
 new MutationObserver(()=>update()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 // ---------- cenários salvos ----------
 const panel=document.getElementById("savedPanel"),fab=document.getElementById("savedBtn");
-function openPanel(focus){panel.hidden=false;fab.setAttribute("aria-expanded","true");renderSaved();if(focus){const i=document.getElementById("saveName");const cur=SAVED.find(x=>x.id===CUR);if(cur&&!i.value)i.value=cur.name;i.focus();i.select()}}
+function openPanel(focus){document.getElementById("pwPanel").hidden=true;panel.hidden=false;fab.setAttribute("aria-expanded","true");renderSaved();if(focus){const i=document.getElementById("saveName");const cur=SAVED.find(x=>x.id===CUR);if(cur&&!i.value)i.value=cur.name;i.focus();i.select()}}
 function closePanel(){panel.hidden=true;fab.setAttribute("aria-expanded","false")}
 fab.addEventListener("click",()=>panel.hidden?openPanel(false):closePanel());
 document.getElementById("saveOpen").addEventListener("click",()=>openPanel(true));
