@@ -1,6 +1,6 @@
 const MULT_KEYS={mov:"Movimento do salão",del:"Pedidos de delivery",eq:"Tamanho da equipe",rep:"Repasse aos cotistas"};
 const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
-  pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,custoFunc:5000,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
+  pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,sal:3500,enc_fgts:8,enc_13:8.33,enc_ferias:11.11,enc_multa:3.2,enc_inss:0,enc_rat:0,enc_terc:0,enc_vt:200,enc_ref:350,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
   reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
 
 const GROUPS=[
@@ -31,9 +31,19 @@ const GROUPS=[
   ["cmv","Insumos (CMV)",10,45,0.5,"%","Mercado: 25% a 32%"],
   ["simples","Imposto (Simples Nacional)",4,19,0.1,"%","Anexo I · cerca de 10% nesta faixa de faturamento"],
   ["cartao","Taxa de cartão",0,6,0.1,"%","Maquininha, média entre débito, crédito e Pix"]]},
+ {t:"Equipe e encargos",regime:true,note:"Encargos sobre o salário bruto. No Simples, INSS patronal, RAT e Terceiros já estão no imposto do Simples.",c:[
+  ["sal","Salário médio bruto",0,12000,50,"R$","Por funcionário, sem encargos"],
+  ["enc_fgts","FGTS",0,12,0.01,"%",""],
+  ["enc_13","13º salário (provisão)",0,12,0.01,"%","1/12 do salário"],
+  ["enc_ferias","Férias + 1/3 (provisão)",0,15,0.01,"%","1/12 de 4/3 do salário"],
+  ["enc_multa","Multa do FGTS (provisão)",0,6,0.1,"%","40% do FGTS em demissões sem justa causa"],
+  ["enc_inss","INSS patronal",0,25,0.1,"%","0% no Simples · 20% no Lucro Presumido"],
+  ["enc_rat","RAT (acidente de trabalho)",0,6,0.1,"%","0% no Simples · 1% a 3% fora dele"],
+  ["enc_terc","Terceiros (Sistema S)",0,8,0.1,"%","0% no Simples · 5,8% fora dele"],
+  ["enc_vt","Vale-transporte",0,800,10,"R$","Por funcionário, já descontados os 6% do salário"],
+  ["enc_ref","Refeição",0,1200,10,"R$","Por funcionário, por mês"]]},
  {t:"Custos fixos",c:[
   ["func","Funcionários",3,30,1,"pessoas",""],
-  ["custoFunc","Custo por funcionário",2000,10000,100,"R$","Com encargos"],
   ["prolabore","Pró-labore",0,60000,1000,"R$",""],
   ["aluguel","Aluguel e IPTU",0,40000,500,"R$",""],
   ["energia","Luz, água e gás",0,15000,500,"R$",""],
@@ -65,10 +75,14 @@ const GROUPS=[
   ["caixa","Capital de giro",0,600000,10000,"R$",""]]}
 ];
 
-const ZERO=(()=>{const z={};for(const k in DEFAULTS){const v=DEFAULTS[k];z[k]=(typeof v!=="number"||k.startsWith("mc_")||k.startsWith("mo_"))?v:0}z.ramp1=100;z.ramp2=100;return z})();
+const ZERO=(()=>{const z={};for(const k in DEFAULTS){const v=DEFAULTS[k];z[k]=(typeof v!=="number"||k.startsWith("mc_")||k.startsWith("mo_")||k.startsWith("enc_"))?v:0}z.ramp1=100;z.ramp2=100;return z})();
 let P={...ZERO}, SC="base", CUR=null, DIRTY=false, SAVED=[];
 const clone=o=>JSON.parse(JSON.stringify(o));
 function mult(p,k){const pre=k==="conservador"?"mc_":k==="otimista"?"mo_":null;const g=x=>pre?p[pre+x]:1;return {mov:g("mov"),del:g("del"),eq:g("eq"),rep:g("rep")}}
+const ENC=[["enc_fgts","FGTS"],["enc_13","13º salário"],["enc_ferias","Férias + 1/3"],["enc_multa","Multa do FGTS"],["enc_inss","INSS patronal"],["enc_rat","RAT"],["enc_terc","Terceiros (Sistema S)"]];
+function team(p){const sal=p.sal||0,rows=ENC.map(([k,n])=>[n,p[k]||0,sal*(p[k]||0)/100]).filter(r=>r[1]>0);
+  const enc=rows.reduce((a,r)=>a+r[2],0),ben=(p.enc_vt||0)+(p.enc_ref||0),per=sal+enc+ben;
+  return {sal,rows,enc,ben,per,total:per*p.func,encPct:sal>0?enc/sal*100:0,fator:sal>0?per/sal:0}}
 function eff(p,k){const m=mult(p,k),e={...p};e.giro=p.giro*m.mov;for(let i=0;i<7;i++)e["d"+i]=Math.round(p["d"+i]*m.mov);
   e.pedidos=p.pedidos*m.del;e.func=p.func*m.eq;e.rep1=p.rep1*m.rep;e.rep2=p.rep2*m.rep;e.rep3=p.rep3*m.rep;return e}
 function fromSaved(o){if(!o)return {...ZERO};const b=(o.sets&&o.sets.base)||o.p||{};return {...DEFAULTS,...b}}
@@ -97,7 +111,7 @@ function run(p){
   const pedidos=p.pedidos;
   const delivShare=total>0?deliv/total:0;
   const varPct=(p.cmv+p.simples+p.cartao+delivShare*p.custoDeliv)/100;
-  const equipe=p.func*p.custoFunc;
+  const T=team(p),equipe=T.total;
   const fixoBase=equipe+p.prolabore+p.aluguel+p.energia+p.mkt+p.manut+p.adm;
   const ramp=[p.ramp1/100,p.ramp2/100,...Array(10).fill(1)];
   const y1=ramp.map(f=>total*f), A1=y1.reduce((a,b)=>a+b,0);
@@ -120,7 +134,7 @@ function run(p){
   const mature=revs[11];
   const lucroM=mature*(1-varPct)-fixoBase;
   const be=fixoBase/(1-varPct);
-  return {delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
+  return {delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,T,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
     cost:{cmv:mature*p.cmv/100,simples:mature*p.simples/100,cartao:mature*p.cartao/100,del:mature*delivShare*p.custoDeliv/100}};
 }
 
@@ -132,6 +146,8 @@ GROUPS.forEach((g,gi)=>{
   const d=document.createElement("details");if(g.open)d.open=true;
   d.innerHTML=`<summary>${g.t}</summary>`;
   if(g.note){const n=document.createElement("p");n.className="hint";n.style.margin="0 0 12px";n.textContent=g.note;d.appendChild(n)}
+  if(g.regime){const ms=document.createElement("div");ms.className="modeseg";ms.innerHTML=`<span class="hint">Regime tributário</span><div class="seg" role="group" aria-label="Regime tributário"><button type="button" data-reg="simples">Simples Nacional</button><button type="button" data-reg="presumido">Lucro Presumido</button></div>`;d.appendChild(ms);
+    ms.querySelectorAll("[data-reg]").forEach(b=>b.addEventListener("click",()=>{const pr=b.dataset.reg==="simples";P.enc_inss=pr?0:20;P.enc_rat=pr?0:2;P.enc_terc=pr?0:5.8;markCustom();syncControls();update()}))}
   if(g.modeSwitch){const ms=document.createElement("div");ms.className="modeseg";ms.innerHTML=`<span class="hint">Calcular o salão por</span><div class="seg" role="group" aria-label="Forma de cálculo do salão"><button type="button" id="modo-dias" data-modo="dias">Pessoas por dia</button><button type="button" id="modo-giro" data-modo="giro">Giro</button></div>`;d.appendChild(ms);
     ms.querySelectorAll("[data-modo]").forEach(b=>b.addEventListener("click",()=>{P.modo=b.dataset.modo;applyMode();update()}))}
   if(g.calc==="ticket"){const c=document.createElement("div");c.className="calc";c.innerHTML=`<span>Ticket médio por cliente</span><b id="calc-ticket">–</b>`;d.appendChild(c)}
@@ -170,6 +186,7 @@ function css(v){return getComputedStyle(document.documentElement).getPropertyVal
 function update(){
   save();renderCur&&renderCur();
   document.querySelectorAll("[data-sc]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sc===SC));
+  document.querySelectorAll("[data-reg]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.reg==="simples")===(P.enc_inss===0&&P.enc_rat===0&&P.enc_terc===0))));
   const E=eff(P,SC),R=run(E);
   document.getElementById("calc-ticket").textContent="R$ "+nf(R.ticket,2);
 
@@ -214,6 +231,15 @@ function update(){
   const mx=Math.max(1,...items.map(x=>x[1]));
   document.getElementById("bars").innerHTML=items.map(([n,v])=>`<span class="n">${n}</span><span class="t"><div style="width:${v/mx*100}%"></div></span><span class="val">${brl(v)}<small>${nf(v/R.mature*100,1)}%</small></span>`).join("");
   const fixo=R.fixoBase, var$=R.mature*R.varPct;
+  {const T=R.T,n=E.func,row=(a,b,c,d,k)=>`<tr${k?' class="key"':""}><td>${a}</td><td>${b}</td><td>${c}</td><td>${d}</td></tr>`;
+    document.getElementById("teamLead").textContent=`${nf(n,1)} funcionários. Cada um custa ${nf(T.fator,2)}x o salário bruto${document.querySelector('[data-reg]')&&P.enc_inss>0?" (regime fora do Simples)":" (Simples Nacional)"}.`;
+    document.getElementById("teamTable").innerHTML=`<thead><tr><th>Item</th><th>% do salário</th><th>Por funcionário</th><th class="hl">Equipe por mês</th></tr></thead><tbody>`+
+      row("Salário bruto","100%",brl(T.sal),brl(T.sal*n))+
+      T.rows.map(([nm,pc,v])=>row(nm,nf(pc,2)+"%",brl(v),brl(v*n))).join("")+
+      row("Total de encargos",nf(T.encPct,1)+"%",brl(T.enc),brl(T.enc*n),1)+
+      (P.enc_vt>0?row("Vale-transporte","–",brl(P.enc_vt),brl(P.enc_vt*n)):"")+
+      (P.enc_ref>0?row("Refeição","–",brl(P.enc_ref),brl(P.enc_ref*n)):"")+
+      row("Custo total da equipe",nf(T.fator*100,0)+"%",brl(T.per),brl(T.total),1)+`</tbody>`}
   document.getElementById("costfoot").innerHTML=`<span>Custo fixo <b>${brl(fixo)}/mês</b></span><span>Variável <b>${nf(R.varPct*100,1)}% da receita</b></span><span>Custo total <b>${brl(fixo+var$)}/mês</b></span>`;
 
   // compare
@@ -235,7 +261,7 @@ function update(){
   // alerts
   const A=[];
   const yr=R.annual.findIndex(a=>a>4.8e6);
-  A.push(yr>=0?["bad","Simples",`O faturamento passa de R$ 4,8 mi no ano ${yr+1}. A casa sai do Simples e os impostos sobem além dos ${nf(P.simples,1)}% usados aqui.`]:["ok","Simples","Faturamento dentro do limite do Simples Nacional nos 3 anos."]);
+  A.push(yr>=0?["bad","Simples",`O faturamento passa de R$ 4,8 mi no ano ${yr+1}. A casa sai do Simples e os impostos sobem além dos ${nf(P.simples,1)}% usados aqui${P.enc_inss>0?"":", e a folha passa a pagar INSS patronal, RAT e Terceiros (troque o regime em Equipe e encargos)"}.`]:["ok","Simples","Faturamento dentro do limite do Simples Nacional nos 3 anos."]);
   A.push(P.cmv<25?["warn","CMV",`${nf(P.cmv,1)}% está abaixo da faixa de mercado (25% a 32%). Tenha a ficha técnica pronta para mostrar.`]:P.cmv>32?["bad","CMV",`${nf(P.cmv,1)}% está acima de 32%, o teto recomendado para pizzarias.`]:["ok","CMV","Dentro da faixa de mercado para pizzarias (25% a 32%)."]);
   const prime=(R.cost.cmv+R.equipe+P.prolabore)/R.mature*100;
   A.push(prime>60?["bad","Prime cost",`Insumos + equipe somam ${nf(prime,0)}% da receita. Acima de 60%, a conta costuma não fechar.`]:["ok","Prime cost",`Insumos + equipe somam ${nf(prime,0)}% da receita, abaixo do limite de 60%.`]);
