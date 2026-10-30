@@ -61,11 +61,15 @@ const GROUPS=[
   ["caixa","Capital de giro",0,600000,10000,"R$",""]]}
 ];
 
-let P={...DEFAULTS}, SC="base", CUR=null, DIRTY=false, SAVED=[];
-try{const s=JSON.parse(localStorage.getItem("felicia-sim")||"null");if(s&&s.p){P={...DEFAULTS,...s.p};SC=s.sc||"base";CUR=s.cur||null;DIRTY=!!s.dirty}}catch(e){}
+let P={...DEFAULTS}, SC="base", CUR=null, DIRTY=false, SAVED=[], SETS={};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function loadSets(sets,sc,fallback){SETS={};["conservador","base","otimista"].forEach(k=>{if(sets&&sets[k])SETS[k]={...DEFAULTS,...sets[k]}});SC=sc||"base";
+  if(!SETS[SC])SETS[SC]=fallback?{...DEFAULTS,...fallback}:{...DEFAULTS,...PRESETS[SC]};P=SETS[SC]}
+function setFor(k){return SETS[k]||{...P,...PRESETS[k]}}
+try{const s=JSON.parse(localStorage.getItem("felicia-sim")||"null");if(s){loadSets(s.sets,s.sc,s.p);CUR=s.cur||null;DIRTY=!!s.dirty}else loadSets(null,"base")}catch(e){loadSets(null,"base")}
 try{SAVED=JSON.parse(localStorage.getItem("felicia-saved")||"[]")||[]}catch(e){SAVED=[]}
 const hhmm=d=>d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-function save(){let ok=true;try{localStorage.setItem("felicia-sim",JSON.stringify({p:P,sc:SC,cur:CUR,dirty:DIRTY}))}catch(e){ok=false}
+function save(){let ok=true;try{localStorage.setItem("felicia-sim",JSON.stringify({sets:SETS,p:P,sc:SC,cur:CUR,dirty:DIRTY}))}catch(e){ok=false}
   const a=document.getElementById("autosave");if(a)a.textContent=ok?"Alterações salvas automaticamente às "+hhmm(new Date())+".":"Este navegador bloqueou o salvamento automático. Use Salvar para guardar um cenário enquanto a página estiver aberta.";}
 function persistSaved(){try{localStorage.setItem("felicia-saved",JSON.stringify(SAVED))}catch(e){}}
 
@@ -139,7 +143,11 @@ function syncControls(){GROUPS.forEach(g=>g.c.forEach(([id,, , ,step])=>{const r
 function markCustom(){if(CUR)DIRTY=true}
 function applyMode(){document.querySelectorAll(".ctl[data-mode]").forEach(el=>el.hidden=el.dataset.mode!==P.modo);document.querySelectorAll("[data-modo]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.modo===P.modo))}
 
-document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;Object.assign(P,PRESETS[SC]);markCustom();syncControls();update()}));
+document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.sc;if(k===SC)return;
+  SETS[SC]=P;const nxt=SETS[k]||{...P,...PRESETS[k]};SC=k;P=SETS[k]=nxt;syncControls();applyMode();update()}));
+(()=>{const rb=document.getElementById("resetSc");let t;rb.addEventListener("click",()=>{
+  if(!rb.classList.contains("confirm")){rb.classList.add("confirm");rb.textContent="Confirmar: voltar ao padrão";t=setTimeout(()=>{rb.classList.remove("confirm");rb.textContent="Restaurar padrão"},3000);return}
+  clearTimeout(t);rb.classList.remove("confirm");rb.textContent="Restaurar padrão";P=SETS[SC]={...DEFAULTS,...PRESETS[SC]};markCustom();syncControls();applyMode();update()})})();
 document.getElementById("present").addEventListener("click",e=>{const on=document.body.classList.toggle("present");e.currentTarget.textContent=on?"Mostrar premissas":"Modo apresentação";chart&&chart.resize()});
 
 // ---------- render ----------
@@ -196,7 +204,7 @@ function update(){
 
   // compare
   const sc=["conservador","base","otimista"],names={conservador:"Conservador",base:"Base",otimista:"Otimista"};
-  const Rs=sc.map(s=>run({...P,...PRESETS[s]}));
+  const Rs=sc.map(s=>run(s===SC?P:setFor(s)));
   const crow=(n,f)=>`<tr><td>${n}</td>${Rs.map((r,i)=>`<td class="${sc[i]===SC?"cur":""}">${f(r,sc[i])}</td>`).join("")}</tr>`;
   document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${names[s]}</th>`).join("")}</tr></thead><tbody>`+
     crow("Giro médio por noite",r=>nf(r.giroImp,2)+"x")+
@@ -258,7 +266,7 @@ document.getElementById("saveForm").addEventListener("submit",e=>{e.preventDefau
   const inp=document.getElementById("saveName");const name=inp.value.trim();
   if(!name){inp.placeholder="Dê um nome ao cenário para salvar";inp.focus();return}
   const now=new Date().toISOString();let it=SAVED.find(x=>x.name.toLowerCase()===name.toLowerCase());
-  if(it){it.p={...P};it.sc=SC;it.date=now}else{it={id:"c"+Date.now(),name,date:now,p:{...P},sc:SC};SAVED.unshift(it)}
+  SETS[SC]=P;if(it){it.p={...P};it.sets=clone(SETS);it.sc=SC;it.date=now}else{it={id:"c"+Date.now(),name,date:now,p:{...P},sets:clone(SETS),sc:SC};SAVED.unshift(it)}
   CUR=it.id;DIRTY=false;persistSaved();inp.value="";save();renderSaved();renderCur()});
 function renderCur(){const c=document.getElementById("curName"),it=SAVED.find(x=>x.id===CUR);
   if(it){c.hidden=false;c.textContent="Cenário: "+it.name+(DIRTY?" · alterado":"")}else c.hidden=true}
@@ -272,8 +280,8 @@ function renderSaved(){
     li.innerHTML=`<b></b><span class="meta">${d.toLocaleDateString("pt-BR")} às ${hhmm(d)} · ${brl(r.mature)}/mês · lucro ${brl(r.lucroM)}/mês</span>
       <span class="btns"><button type="button" class="btn sm" data-a="open">Abrir</button><button type="button" class="btn sm" data-a="upd">Atualizar com o atual</button><button type="button" class="btn sm danger" data-a="del">Excluir</button></span>`;
     li.querySelector("b").textContent=it.name;
-    li.querySelector('[data-a="open"]').onclick=()=>{P={...DEFAULTS,...it.p};SC=it.sc||SC;CUR=it.id;DIRTY=false;syncControls();applyMode();update();renderSaved()};
-    li.querySelector('[data-a="upd"]').onclick=()=>{it.p={...P};it.sc=SC;it.date=new Date().toISOString();CUR=it.id;DIRTY=false;persistSaved();save();renderSaved();renderCur()};
+    li.querySelector('[data-a="open"]').onclick=()=>{loadSets(it.sets?clone(it.sets):null,it.sc||SC,it.p);CUR=it.id;DIRTY=false;syncControls();applyMode();update();renderSaved()};
+    li.querySelector('[data-a="upd"]').onclick=()=>{SETS[SC]=P;it.p={...P};it.sets=clone(SETS);it.sc=SC;it.date=new Date().toISOString();CUR=it.id;DIRTY=false;persistSaved();save();renderSaved();renderCur()};
     const del=li.querySelector('[data-a="del"]');let t;
     del.onclick=()=>{if(!del.classList.contains("confirm")){del.classList.add("confirm");del.textContent="Confirmar exclusão";t=setTimeout(()=>{del.classList.remove("confirm");del.textContent="Excluir"},3000);return}
       clearTimeout(t);SAVED=SAVED.filter(x=>x.id!==it.id);if(CUR===it.id){CUR=null;DIRTY=false}persistSaved();save();renderSaved();renderCur()};
