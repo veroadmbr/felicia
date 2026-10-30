@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulador Felícia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="icon" href="logo.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><a href="../" aria-label="Voltar ao site"><img src="logo.png" alt="Felícia pizzabar"></a><span class="brand-nav"><a href="../">Site</a><b>Simulador</b></span></div>
+  <header class="sheet">
+    <div class="lead">
+      <span class="chip" id="curName" hidden></span>
+    </div>
+    <div class="actions">
+      <div class="seg" role="group" aria-label="Cenário">
+        <button type="button" data-sc="conservador" id="sc-conservador">Conservador</button>
+        <button type="button" data-sc="base" id="sc-base">Base</button>
+        <button type="button" data-sc="otimista" id="sc-otimista">Otimista</button>
+      </div>
+      <button type="button" class="btn red" id="saveOpen">Salvar cenário</button>
+      <div class="menu">
+        <button type="button" class="burger" id="menuBtn" aria-label="Mais opções" aria-expanded="false" aria-controls="menuList"><span></span><span></span><span></span></button>
+        <div class="menu-list" id="menuList" hidden>
+          <button type="button" id="present">Modo apresentação</button>
+          <button type="button" id="zeroBtn">Zerar premissas</button>
+          <button type="button" id="exampleBtn">Carregar exemplo</button>
+          <button type="button" id="copyInv">Copiar link do investidor</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Resumo">
+    <div class="kpi"><span class="v" id="k-fat">–</span><span class="l">Faturamento por mês</span><span class="s" id="k-fat-s">casa madura</span></div>
+    <div class="kpi"><span class="v" id="k-luc">–</span><span class="l">Lucro líquido por mês</span><span class="s" id="k-luc-s">–</span></div>
+    <div class="kpi"><span class="v" id="k-pay">–</span><span class="l">Aporte 100% devolvido</span><span class="s" id="k-pay-s">–</span></div>
+    <div class="kpi"><span class="v" id="k-36">–</span><span class="l">Lucro líquido em 36 meses</span><span class="s" id="k-36-s">–</span></div>
+  </section>
+
+  <div class="main">
+    <aside class="sheet" id="controls" aria-label="Premissas"></aside>
+
+    <div class="content">
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">Um dia na casa</span><h2>Quanto a casa gira</h2></div>
+        <div class="night" id="night"></div>
+        <div class="week" id="week" hidden></div>
+      </section>
+
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">36 meses</span><h2>Lucro e devolução do aporte</h2><p>Barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.</p></div>
+        <div class="chartbox"><canvas id="chart" aria-label="Gráfico de lucro mensal e aporte devolvido"></canvas></div>
+        <div class="legend"><span><i style="background:var(--red)"></i>Lucro líquido do mês</span><span><i style="background:var(--ink)"></i>Lucro acumulado</span><span><i style="background:var(--muted)"></i>Aporte devolvido</span></div>
+      </section>
+
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">Síntese</span><h2>12, 24 e 36 meses</h2><p>Valores somados desde a abertura.</p></div>
+        <div class="tablewrap"><table id="summary"></table></div>
+        <p class="note" id="annual" style="margin-top:14px"></p>
+      </section>
+
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">Custo de operação</span><h2>Para onde vai cada mês</h2><p>Mês 12, com a casa madura.</p></div>
+        <div class="bars" id="bars"></div>
+        <div class="costfoot" id="costfoot"></div>
+      </section>
+
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">Equipe</span><h2>Custo real de cada funcionário</h2><p id="teamLead">Salário, encargos e benefícios.</p></div>
+        <div class="tablewrap"><table id="teamTable"></table></div>
+      </section>
+
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">Cenários</span><h2>Os três cenários lado a lado</h2><p>Todos usam as mesmas premissas. Conservador e Otimista aplicam os multiplicadores sobre movimento, delivery, equipe e repasse.</p></div>
+        <div class="tablewrap"><table class="compare" id="compare"></table></div>
+      </section>
+
+      <section class="sheet">
+        <div class="sec-head"><span class="eyebrow">Leitura</span><h2>Pontos de atenção</h2></div>
+        <div class="alerts" id="alerts"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="fab" id="savedBtn" aria-expanded="false" aria-controls="savedPanel">Cenários salvos <span class="count" id="savedCount">0</span></button>
+<div class="panel" id="savedPanel" hidden role="dialog" aria-label="Cenários salvos">
+  <div class="panel-head"><h2>Cenários salvos</h2><button type="button" class="x" id="savedClose" aria-label="Fechar">×</button></div>
+  <form class="saveform" id="saveForm">
+    <label for="saveName">Salvar as premissas atuais com o nome</label>
+    <div class="row"><input id="saveName" type="text" maxlength="60" placeholder="Ex.: Nappo · base com almoço" autocomplete="off"><button type="submit" class="btn red">Salvar</button></div>
+  </form>
+  <ul class="saved-list" id="savedList"></ul>
+  <span class="autosave" id="autosave">As alterações são salvas automaticamente neste navegador.</span>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

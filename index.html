@@ -35,10 +35,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset
 nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--red)}
 nav.top .in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
 nav.top img{height:42px;width:auto}
-.tabs{display:flex;gap:4px;background:rgba(0,0,0,.14);border-radius:999px;padding:4px}
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,.14);border-radius:999px;padding:4px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
 .tabs a{color:var(--cream);text-decoration:none;font-weight:500;font-size:14px;padding:8px 16px;border-radius:999px;white-space:nowrap}
 .tabs a[aria-current="page"]{background:var(--cream);color:var(--red)}
-@media (max-width:560px){nav.top img{height:30px}.tabs a{padding:7px 10px;font-size:13px}}
+@media (max-width:560px){nav.top img{height:28px}.tabs a{padding:7px 9px;font-size:12.5px}nav.top .in{gap:10px}}
 
 .eyebrow{color:var(--red);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:12px}
 .on-red .eyebrow{color:var(--cream);opacity:.85}
@@ -246,6 +247,7 @@ th.cur,td.cur{background:var(--red-soft)}
       <a href="#marca" data-view="marca">Marca</a>
       <a href="#apresentacao" data-view="apresentacao">Apresentação</a>
       <a href="#calculos" data-view="calculos">Cálculos</a>
+      <a href="simulador/">Simulador</a>
     </div>
   </div>
 </nav>
