@@ -55,7 +55,7 @@ p{margin:0}
 .stack{display:flex;flex-direction:column;gap:14px}
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:center}
 @media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
-.ph{border-radius:22px;overflow:hidden;background:var(--track)}
+.ph{border-radius:var(--r,22px);overflow:hidden;background:var(--track)}
 .ph img{width:100%;height:100%;object-fit:cover}
 .pts{display:flex;flex-direction:column;gap:20px;margin-top:8px}
 .pt{display:grid;grid-template-columns:10px minmax(0,1fr);gap:4px 14px}
@@ -65,10 +65,10 @@ p{margin:0}
 .pt span{color:var(--muted);font-size:15px}
 .on-red .pt span{color:var(--cream);opacity:.85}
 .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-.rc{background:var(--red);color:var(--cream);border-radius:20px;padding:24px 26px;display:flex;flex-direction:column;gap:6px}
+.rc{background:var(--red);color:var(--cream);border-radius:var(--r,20px);padding:24px 26px;display:flex;flex-direction:column;gap:6px}
 .rc .v{font-size:clamp(32px,3.6vw,46px);font-weight:600;letter-spacing:-.02em;line-height:1}
 .rc .l{font-size:14px;opacity:.9}
-.wc{background:var(--sheet);color:var(--red);border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;gap:6px}
+.wc{background:var(--sheet);color:var(--red);border-radius:var(--r,20px);padding:22px 24px;display:flex;flex-direction:column;gap:6px}
 .wc .v{font-size:clamp(30px,3.2vw,42px);font-weight:600;letter-spacing:-.02em;line-height:1}
 .wc .l{font-size:14px;color:var(--ink)}
 
@@ -91,7 +91,7 @@ p{margin:0}
 .space .b{grid-column:span 2;grid-row:span 2}
 .space .c{grid-column:span 1;grid-row:span 2}
 @media (max-width:760px){.space{grid-template-columns:repeat(2,minmax(0,1fr))}.space .a{grid-column:span 2}.space .b{grid-column:span 2}.space .c{grid-column:span 1}}
-.hero-photo{position:relative;border-radius:22px;overflow:hidden}
+.hero-photo{position:relative;border-radius:var(--r,22px);overflow:hidden}
 .hero-photo .cap{position:absolute;left:clamp(16px,3vw,36px);bottom:clamp(16px,3vw,36px);color:#fff;font-weight:800;text-transform:uppercase;line-height:.95;font-size:clamp(26px,4.4vw,56px);text-shadow:0 2px 24px rgba(0,0,0,.45)}
 .hero-photo .cap em{font-style:normal;color:var(--red);text-shadow:none;background:var(--cream);padding:0 .12em;border-radius:6px}
 
@@ -129,7 +129,7 @@ p{margin:0}
 
 /* slides */
 .viewer{display:flex;flex-direction:column;gap:16px;padding-block:28px 56px}
-.stage{position:relative;background:var(--ink);border-radius:18px;overflow:hidden;aspect-ratio:1440/810}
+.stage{position:relative;background:var(--ink);border-radius:var(--r,18px);overflow:hidden;aspect-ratio:1440/810}
 .stage img{width:100%;height:100%;object-fit:contain}
 .arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(250,245,230,.92);color:var(--red);font:inherit;font-size:24px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .arrow.prev{left:14px}.arrow.next{right:14px}
@@ -145,7 +145,7 @@ p{margin:0}
 
 /* calc */
 .calc-wrap{display:flex;flex-direction:column;gap:20px;padding-block:28px 64px}
-.sheet{background:var(--sheet);border-radius:20px;padding:clamp(20px,3vw,32px)}
+.sheet{background:var(--sheet);border-radius:var(--r,20px);padding:clamp(20px,3vw,32px)}
 .sec-head{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
 .sec-head h2{font-size:clamp(22px,2.4vw,28px)}
 .sec-head p{color:var(--muted);max-width:70ch}
@@ -154,7 +154,7 @@ p{margin:0}
 .seg button{font:inherit;font-size:14px;font-weight:500;border:0;background:transparent;color:var(--muted);padding:9px 16px;border-radius:999px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--red);color:var(--cream)}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.kpi{background:var(--red);color:var(--cream);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi{background:var(--red);color:var(--cream);border-radius:var(--r,18px);padding:22px 24px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .kpi .v{font-size:clamp(26px,2.8vw,38px);font-weight:600;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .kpi .l{font-size:14px;opacity:.92}
 .kpi .s{font-size:13px;opacity:.75}
@@ -196,25 +196,25 @@ th.cur,td.cur{background:var(--red-soft)}
 .prem dt,.prem dd{padding:7px 0;border-bottom:1px solid var(--line)}
 .prem dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;padding-left:12px}
 .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.how div{background:var(--bg);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.how div{background:var(--bg);border-radius:var(--r,14px);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
 .how b{font-size:15px}
 .how span{font-size:14px;color:var(--muted)}
 .lock{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .lock::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
 .logos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 @media (max-width:860px){.logos{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.lg{margin:0;border-radius:18px;aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.lg{margin:0;border-radius:var(--r,18px);aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
 .lg img{width:72%;height:auto}
 .lg figcaption{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
-.lockup{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;background:var(--cream);border-radius:18px;padding:clamp(20px,4vw,44px)}
+.lockup{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;background:var(--cream);border-radius:var(--r,18px);padding:clamp(20px,4vw,44px)}
 @media (max-width:760px){.lockup{grid-template-columns:minmax(0,1fr)}}
 .swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 @media (max-width:860px){.swatches{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.sw{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--sheet)}
+.sw{border-radius:var(--r,18px);overflow:hidden;border:1px solid var(--line);background:var(--sheet)}
 .sw .chip{aspect-ratio:4/3;display:flex;align-items:flex-end;padding:16px;font-weight:600;font-size:18px}
 .sw dl{margin:0;padding:14px 16px;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;font-size:13px;font-variant-numeric:tabular-nums}
 .sw dt{color:var(--muted)}.sw dd{margin:0;text-align:right}
-.ratio{display:flex;height:48px;border-radius:12px;overflow:hidden;font-size:12px;font-weight:600;color:var(--cream)}
+.ratio{display:flex;height:48px;border-radius:var(--r,12px);overflow:hidden;font-size:12px;font-weight:600;color:var(--cream)}
 .ratio span{display:flex;align-items:center;padding-left:12px;white-space:nowrap;overflow:hidden}
 .type-spec{display:flex;flex-direction:column;gap:10px;padding-block:18px;border-top:1px solid rgba(250,245,230,.3)}
 .type-spec .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
@@ -224,7 +224,7 @@ th.cur,td.cur{background:var(--red-soft)}
 .voice p{background:var(--red);color:var(--cream);border-radius:999px;padding:12px 22px;font-size:clamp(17px,1.8vw,22px);font-weight:500}
 .dodont{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 @media (max-width:640px){.dodont{grid-template-columns:minmax(0,1fr)}}
-.dodont div{background:var(--sheet);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:10px}
+.dodont div{background:var(--sheet);border-radius:var(--r,16px);padding:20px 22px;display:flex;flex-direction:column;gap:10px}
 .dodont b{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ok)}
 .dodont div+div b{color:var(--red)}
 .dodont span{font-size:16px}
@@ -235,7 +235,7 @@ th.cur,td.cur{background:var(--red-soft)}
 .app{margin:0;display:flex;flex-direction:column;gap:8px}
 .app figcaption{font-size:13px;color:var(--muted)}
 .photo-bleed{display:grid;grid-auto-flow:dense;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:clamp(120px,17vw,320px);gap:6px;padding-inline:max(6px,env(safe-area-inset-left,0px)) max(6px,env(safe-area-inset-right,0px))}
-.photo-bleed .ph{border-radius:6px}
+.photo-bleed .ph{border-radius:var(--r,6px)}
 .photo-bleed .f1{grid-column:span 2;grid-row:span 2}.photo-bleed .f2{grid-column:span 2;grid-row:span 2}.photo-bleed .f3{grid-column:span 2;grid-row:span 3}
 .photo-bleed .f4{grid-column:span 2;grid-row:span 2}.photo-bleed .f5{grid-column:span 2;grid-row:span 2}.photo-bleed .f6{grid-column:span 2;grid-row:span 2}.photo-bleed .f7{grid-column:span 2;grid-row:span 1}.photo-bleed .f8{grid-column:span 2;grid-row:span 1}
 @media (max-width:900px){.photo-bleed{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(110px,24vw,240px)}.photo-bleed .ph{grid-column:span 2!important;grid-row:span 2!important}.photo-bleed .f7,.photo-bleed .f8{grid-row:span 2!important}}
@@ -255,7 +255,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </nav>
 <!-- ================= MARCA ================= -->
 <main data-v="marca" id="v-marca">
-<section class="hero on-red band gut">
+<section data-sec="s01" class="hero on-red band gut">
 <div class="in" style="grid-template-columns:minmax(0,1fr)">
 <div class="stack" style="gap:30px;align-items:center;text-align:center;padding-block:clamp(20px,5vw,60px)">
 <span class="eyebrow" data-c="t005">Manual da marca</span>
@@ -264,7 +264,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </div>
 </div>
 </section>
-<section class="band gut">
+<section data-sec="s02" class="band gut">
 <div class="in split">
 <div class="stack">
 <span class="eyebrow" data-c="t007">Essência</span>
@@ -280,7 +280,7 @@ th.cur,td.cur{background:var(--red-soft)}
 <div class="ph" style="aspect-ratio:4/5"><img alt="Senhora de óculos vermelhos com pizzas e drinks" data-img="img/post-senhora.jpg" src="img/post-senhora.jpg"/></div>
 </div>
 </section>
-<section class="band gut" style="background:var(--sheet)">
+<section data-sec="s03" class="band gut" style="background:var(--sheet)">
 <div class="in stack" style="gap:28px">
 <div class="stack">
 <span class="eyebrow" data-c="t018">Logo</span>
@@ -303,7 +303,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </div>
 </div>
 </section>
-<section class="band gut">
+<section data-sec="s04" class="band gut">
 <div class="in stack" style="gap:28px">
 <div class="stack">
 <span class="eyebrow" data-c="t028">Cores</span>
@@ -314,7 +314,7 @@ th.cur,td.cur{background:var(--red-soft)}
 <div aria-label="Proporção de uso das cores" class="ratio"><span data-c="t031" style="flex:55;background:var(--red)">Vermelho 55%</span><span data-c="t032" style="flex:30;background:var(--cream);color:var(--ink)">Creme 30%</span><span data-c="t033" style="flex:10;background:var(--ink)">Preto 10%</span><span style="flex:5;background:var(--red-deep)"></span></div>
 </div>
 </section>
-<section class="band gut on-red">
+<section data-sec="s05" class="band gut on-red">
 <div class="in split">
 <div class="stack" style="gap:18px">
 <span class="eyebrow" data-c="t034">Tipografia</span>
@@ -338,7 +338,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </div>
 </div>
 </section>
-<section class="band gut">
+<section data-sec="s06" class="band gut">
 <div class="in stack" style="gap:28px">
 <div class="stack">
 <span class="eyebrow" data-c="t041">Tom de voz</span>
@@ -358,7 +358,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </div>
 </div>
 </section>
-<section class="band" style="background:var(--sheet)">
+<section data-sec="s07" class="band" style="background:var(--sheet)">
 <div class="gut"><div class="in stack" style="margin-bottom:clamp(24px,3vw,36px)">
 <span class="eyebrow" data-c="t055">Fotografia</span>
 <h2 data-c="t056">Flash, cor e gente de verdade</h2>
@@ -375,7 +375,7 @@ th.cur,td.cur{background:var(--red-soft)}
 <div class="ph f8"><img alt="Mesa com drinks e petiscos" data-img="img/urbana-mesa.jpg" loading="lazy" src="img/urbana-mesa.jpg"/></div>
 </div>
 </section>
-<section class="band gut">
+<section data-sec="s08" class="band gut">
 <div class="in stack" style="gap:28px">
 <div class="stack">
 <span class="eyebrow" data-c="t058">Aplicações</span>
@@ -395,7 +395,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </div>
 </div>
 </section>
-<section class="band gut" style="background:var(--ink);color:var(--cream)">
+<section data-sec="s09" class="band gut" style="background:var(--ink);color:var(--cream)">
 <div class="in stack" style="gap:24px">
 <div class="stack">
 <span class="eyebrow" data-c="t065" style="color:var(--red)">O espaço</span>
@@ -410,18 +410,18 @@ th.cur,td.cur{background:var(--red-soft)}
 </div>
 </div>
 </section>
-<section class="band gut on-red contact">
+<section data-sec="s10" class="band gut on-red contact">
 <div class="in">
 <img alt="Felícia pizzabar" data-img="img/logo.png" src="img/logo.png" style="width:min(260px,60%)"/>
 <p class="lead" data-c="t069" style="font-size:clamp(20px,2.4vw,30px)">Vamos sentar para comer uma pizza?</p>
-<div class="phone">Fale comigo: <span data-c="t070" id="phone">(13) 99175-7406</span><button class="copy" id="copyPhone" type="button">Copiar número</button></div>
+<div class="phone"><span data-c="t200">Fale comigo:</span> <span data-c="t070" id="phone">(13) 99175-7406</span><button class="copy" data-ui="copy" id="copyPhone" type="button">Copiar número</button></div>
 <p class="foot" data-c="t071">Felícia pizzabar · Rua da Paz · Santos</p>
 <a class="foot-link" data-c="t004" href="simulador/">Abrir o simulador</a>
 </div>
 </section>
 </main>
 <!-- ================= APRESENTAÇÃO ================= -->
-<main data-v="apresentacao" hidden="" id="v-apresentacao">
+<main data-sec="apresentacao" data-v="apresentacao" hidden="" id="v-apresentacao">
 <div class="gut"><div class="in viewer">
 <div class="vbar"><div class="stack" style="gap:6px"><span class="eyebrow" data-c="t072">Apresentação</span><h2 data-c="t073" style="font-size:clamp(22px,2.6vw,30px)">Deck do investidor · Outubro 2026</h2></div><span class="count" id="count">1 / 19</span></div>
 <div class="stage" id="stage">
@@ -434,7 +434,7 @@ th.cur,td.cur{background:var(--red-soft)}
 </div></div>
 </main>
 <!-- ================= CÁLCULOS ================= -->
-<main data-v="calculos" hidden="" id="v-calculos">
+<main data-sec="calculos" data-v="calculos" hidden="" id="v-calculos">
 <div class="gut"><div class="in calc-wrap">
 <section class="sheet">
 <div class="calc-top">
@@ -446,9 +446,9 @@ th.cur,td.cur{background:var(--red-soft)}
           <span class="note" id="scName" hidden></span>
 </div>
 <div aria-label="Cenário" class="seg" role="group">
-<button data-sc="conservador" type="button">Conservador</button>
-<button data-sc="base" type="button">Base</button>
-<button data-sc="otimista" type="button">Otimista</button>
+<button data-sc="conservador" type="button" data-ui="scCons">Conservador</button>
+<button data-sc="base" type="button" data-ui="scBase">Base</button>
+<button data-sc="otimista" type="button" data-ui="scOtim">Otimista</button>
 </div>
 </div>
 </section>
@@ -477,7 +477,7 @@ th.cur,td.cur{background:var(--red-soft)}
 <section class="sheet">
 <div class="sec-head"><span class="eyebrow" data-c="t100">36 meses</span><h2 data-c="t101">Lucro e devolução do aporte</h2><p data-c="t102">As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.</p></div>
 <div class="chartbox"><canvas aria-label="Gráfico de lucro mensal e aporte devolvido" id="chart"></canvas></div>
-<div class="legend" style="margin-top:12px"><span><i style="background:var(--red)"></i>Lucro líquido do mês</span><span><i style="background:var(--ink)"></i>Lucro acumulado</span><span><i style="background:var(--muted)"></i>Aporte devolvido</span></div>
+<div class="legend" style="margin-top:12px"><span><i style="background:var(--red)"></i><b data-ui="gLucro" style="font-weight:400">Lucro líquido do mês</b></span><span><i style="background:var(--ink)"></i><b data-ui="gAcum" style="font-weight:400">Lucro acumulado</b></span><span><i style="background:var(--muted)"></i><b data-ui="gAporte" style="font-weight:400">Aporte devolvido</b></span></div>
 </section>
 <section class="sheet">
 <div class="sec-head"><span class="eyebrow" data-c="t103">Síntese</span><h2 data-c="t104">12, 24 e 36 meses</h2><p data-c="t105">Valores somados desde a abertura.</p></div>
@@ -663,7 +663,8 @@ function run(p){
 }
 
 
-const DEFAULT_CONTENT={"version":1,"meta":{"title":"Felícia para Investidores"},"theme":{"red":"#D8131D","cream":"#FAF5E6","ink":"#161312","bg":"#F4F1EA","sheet":"#FCFBF7","redDeep":"#9E0E15","muted":"#6E6762","line":"#E3DED6","fontBody":"Outfit","fontDisplay":"Outfit"},"palette":[{"name":"Vermelho Felícia","hex":"#D8131D","use":"Fachada, posts, embalagens"},{"name":"Creme Massa","hex":"#FAF5E6","use":"Logo, papel, respiro"},{"name":"Preto Forno","hex":"#161312","use":"Noite, textos, contraste"},{"name":"Vermelho Vinho","hex":"#9E0E15","use":"Sombras e detalhes"}],"texts":{"t001":"Marca","t002":"Apresentação","t003":"Cálculos","t004":"Simulador","t005":"Manual da marca","t006":"Uma pizzaria de bairro com alma de bar. Jovem, vermelha, bem-humorada e feita para dividir.","t007":"Essência","t008":"Tudo aqui é massa","t009":"Felícia é o lugar onde a pizza napolitana encontra o drink e a música. Um nome de pessoa, como a tia que sempre recebe bem, assinado com um \"ESTD 1933\" que brinca com a tradição sem levar nada a sério demais.","t010":"Calorosa","t011":"Recebe como em casa. Pizza feita para dividir, mesa cheia, conversa alta.","t012":"Autêntica","t013":"Gente real, comendo com as mãos. Sem pose, sem filtro de revista.","t014":"Bem-humorada","t015":"Fala como o público fala, com trocadilho, coração desenhado e frase curta.","t016":"Feita com cuidado","t017":"Poucos ingredientes, ficha técnica travada, serviço de alto padrão.","t018":"Logo","t019":"Um lettering próprio, redondo e com sotaque","t020":"O nome é desenhado à mão, com hastes que terminam em curva e um acento que vira gesto. \"Pizzabar\" entra embaixo, menor, como uma assinatura.","t021":"Principal · creme sobre vermelho","t022":"Vermelho sobre creme","t023":"Creme sobre preto","t024":"Uma cor · preto","t025":"Assinatura completa","t026":"Com \"ESTD\" e \"1933\" nas laterais. Use em peças de destaque: fachada, porta-copo, embalagem e capa de cardápio. No dia a dia, a versão sem o ano funciona sozinha.","t027":"Respiro mínimo: a altura do \"f\" em volta de toda a marca. Nunca distorcer, contornar ou aplicar sobre fotos sem contraste.","t028":"Cores","t029":"Vermelho e creme, sempre juntos","t030":"O vermelho é o protagonista: fachada, cadeiras, posts e embalagens. O creme é a massa, o papel e o respiro. O preto aparece à noite, no forno e na luz baixa do salão.","t031":"Vermelho 55%","t032":"Creme 30%","t033":"Preto 10%","t034":"Tipografia","t035":"Hemis para falar alto, sans para explicar","t036":"Hemis · logo e títulos de campanha","t037":"A fonte da marca. Redonda, com hastes que terminam em curva, usada no logo e em frases curtas sobre foto: \"pizza com muito amor\", \"seja autêntico\", \"carbonara\".","t038":"Sans geométrica · sistema","t039":"Aa Bb Cc 123","t040":"Títulos em caixa alta com tracking aberto e textos corridos leves. No digital, a família usada é Outfit.","t041":"Tom de voz","t042":"Fala como um amigo que entende de pizza","t043":"Frases curtas, afetivas e com humor. Primeira pessoa, coração desenhado, zero jargão gastronômico.","t044":"“Pizza com muito amor”","t045":"“Seja autêntico”","t046":"“Eu ♥ negroni com pizza”","t047":"“Tudo aqui é massa”","t048":"“Não é só um pizzabar. É experiência.”","t049":"Assim","t050":"Vem dividir uma pizza com a gente hoje?","t051":"Sexta tem DJ, forno quente e negroni gelado.","t052":"Assim não","t053":"Venha conhecer nossa proposta gastronômica diferenciada.","t054":"Aproveite nossas promoções imperdíveis!","t055":"Fotografia","t056":"Flash, cor e gente de verdade","t057":"Luz direta, cores saturadas e o vermelho sempre em cena. Pessoas comendo com as mãos, rindo, de boca cheia. A comida aparece de cima, na mesa compartilhada.","t058":"Aplicações","t059":"A marca em cada ponto de contato","t060":"Pôsteres, redes sociais, embalagem, papelaria e uniforme seguem o mesmo par de cores e o mesmo lettering.","t061":"Sacola de delivery","t062":"Ecobag","t063":"Copo de café","t064":"Porta-copo ESTD 1933","t065":"O espaço","t066":"A marca vira lugar","t067":"Fachada vermelha, cadeiras vermelhas, luz quente e baixa. De dia é pizzaria, à noite é bar.","t068":"Não é só um pizzabar.<br/>É <em>experiência</em>","t069":"Vamos sentar para comer uma pizza?","t070":"(13) 99175-7406","t071":"Felícia pizzabar · Rua da Paz · Santos","t072":"Apresentação","t073":"Deck do investidor · Outubro 2026","t074":"Use as setas do teclado ou toque nas laterais para navegar.","t075":"Projeção de 36 meses","t076":"O negócio em números","t077":"Premissas fixas definidas pelos sócios. Escolha um cenário para comparar. Os números não podem ser alterados nesta página.","t078":"Versão travada para investidores","t079":"Faturamento por mês","t080":"Lucro líquido por mês","t081":"Aporte 100% devolvido","t082":"Lucro líquido em 36 meses","t083":"Como ler","t084":"Como a projeção é feita","t085":"1. Receita","t086":"Pessoas no salão em cada dia (almoço e jantar) × ticket médio de cada serviço, mais pedidos de delivery por dia × ticket do pedido.","t087":"2. Custos variáveis","t088":"Insumos (CMV), imposto do Simples, taxa de cartão e custo do delivery, todos em percentual do faturamento.","t089":"3. Custos fixos","t090":"Equipe com todos os encargos, pró-labore, aluguel, energia, marketing, manutenção e administrativo, reajustados ano a ano.","t091":"4. Crescimento","t092":"Rampa de abertura nos dois primeiros meses e crescimento anual do faturamento nos anos 2 e 3.","t093":"5. Investidor","t094":"Repasse mensal fixo por cota, tirado do lucro líquido até devolver 100% do aporte. Do que sobra, uma parte vira reserva e o resto é distribuído.","t095":"6. Cenários","t096":"Base usa as premissas abaixo. Conservador e Otimista aplicam multiplicadores sobre movimento, delivery, equipe e repasse.","t097":"Um dia na casa","t098":"Quanto a casa gira","t099":"Média de um dia aberto, com a casa madura.","t100":"36 meses","t101":"Lucro e devolução do aporte","t102":"As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.","t103":"Síntese","t104":"12, 24 e 36 meses","t105":"Valores somados desde a abertura.","t106":"Custo de operação","t107":"Para onde vai cada mês","t108":"Mês 12, com a casa madura.","t109":"Equipe","t110":"Custo real de cada funcionário","t111":"Cenários","t112":"Os três cenários lado a lado","t113":"Mesmas premissas, com os multiplicadores de cada cenário.","t114":"Premissas","t115":"Todas as premissas usadas","t116":"Valores do cenário Base. É sobre eles que os outros cenários aplicam os multiplicadores."},"images":{"img/logo.png":"img/logo.png","img/logo-full-cream.png":"img/logo-full-cream.png","img/post-senhora.jpg":"img/post-senhora.jpg","img/logo-red.png":"img/logo-red.png","img/logo-ink.png":"img/logo-ink.png","img/logo-full-red.png":"img/logo-full-red.png","img/post-amor.jpg":"img/post-amor.jpg","img/post-autentico.jpg":"img/post-autentico.jpg","img/poster-carbonara.jpg":"img/poster-carbonara.jpg","img/poster-camarao.jpg":"img/poster-camarao.jpg","img/publico.jpg":"img/publico.jpg","img/massa.jpg":"img/massa.jpg","img/oportunidade.jpg":"img/oportunidade.jpg","img/pizzas.jpg":"img/pizzas.jpg","img/garcom.jpg":"img/garcom.jpg","img/c-coqueteis.jpg":"img/c-coqueteis.jpg","img/urbana-mesa.jpg":"img/urbana-mesa.jpg","img/poster-negroni.jpg":"img/poster-negroni.jpg","img/c-sobremesas.jpg":"img/c-sobremesas.jpg","img/c-pratos.jpg":"img/c-pratos.jpg","img/merch-sacola.jpg":"img/merch-sacola.jpg","img/merch-bolsa.jpg":"img/merch-bolsa.jpg","img/merch-copo.jpg":"img/merch-copo.jpg","img/merch-mesa.jpg":"img/merch-mesa.jpg","img/fachada.jpg":"img/fachada.jpg","img/salao.jpg":"img/salao.jpg","img/interior.jpg":"img/interior.jpg","img/proj-jardim.jpg":"img/proj-jardim.jpg"},"slides":["slides/s-01.jpg","slides/s-02.jpg","slides/s-03.jpg","slides/s-04.jpg","slides/s-05.jpg","slides/s-06.jpg","slides/s-07.jpg","slides/s-08.jpg","slides/s-09.jpg","slides/s-10.jpg","slides/s-11.jpg","slides/s-12.jpg","slides/s-13.jpg","slides/s-14.jpg","slides/s-15.jpg","slides/s-16.jpg","slides/s-17.jpg","slides/s-18.jpg","slides/s-19.jpg"],"premissas":{}};
+const UI_DEF={"fatSub": ["Cálculos · Resumo", "Faturamento · linha de apoio", "Casa madura · {ano} por ano"], "lucSub": ["Cálculos · Resumo", "Lucro · linha de apoio", "Margem de {pct}%"], "paySem": ["Cálculos · Resumo", "Aporte · sem aporte", "Sem aporte"], "payMes": ["Cálculos · Resumo", "Aporte · mês de devolução", "Mês {mes}"], "payPrev": ["Cálculos · Resumo", "Aporte · previsão", "Mês ~{mes}"], "payDepois": ["Cálculos · Resumo", "Aporte · depois de 36 meses", "Após 36 meses"], "paySub": ["Cálculos · Resumo", "Aporte · linha de apoio (várias cotas)", "{aporte} em {n} cotas de {cota}"], "paySub1": ["Cálculos · Resumo", "Aporte · linha de apoio (uma cota)", "{aporte} em 1 cota de {cota}"], "l36Sub": ["Cálculos · Resumo", "Lucro 36 meses · linha de apoio", "{valor} para distribuição"], "scName": ["Cálculos · Resumo", "Nome do cenário publicado", "Cenário publicado: {nome}"], "nPessoas": ["Cálculos · Um dia na casa", "Clientes por dia", "Clientes no salão por dia"], "nPessoasAJ": ["Cálculos · Um dia na casa", "Clientes por dia (com almoço)", "Clientes no salão por dia · almoço e jantar"], "nTicket": ["Cálculos · Um dia na casa", "Ticket médio", "Ticket médio no salão"], "nTicketAJ": ["Cálculos · Um dia na casa", "Ticket médio (com almoço)", "Ticket médio no salão · jantar R$ {jantar}, almoço R$ {almoco}"], "nPedidosV": ["Cálculos · Um dia na casa", "Pedidos · número", "{n} pedidos"], "nPedidos": ["Cálculos · Um dia na casa", "Pedidos · rótulo", "Delivery por dia · {pct}% do faturamento"], "nFatDia": ["Cálculos · Um dia na casa", "Faturamento por dia", "Faturamento por dia"], "nBE": ["Cálculos · Um dia na casa", "Ponto de equilíbrio", "Ponto de equilíbrio por mês"], "nGiro": ["Cálculos · Um dia na casa", "Giro", "Giro médio por dia"], "wkNote": ["Cálculos · Um dia na casa", "Semana · resumo", "Semana típica · {semana} pessoas no salão por semana, {mes} por mês · {lugares} lugares"], "wkJantar": ["Cálculos · Um dia na casa", "Legenda jantar", "Jantar"], "wkAlmoco": ["Cálculos · Um dia na casa", "Legenda almoço", "Almoço"], "wkDias": ["Cálculos · Um dia na casa", "Dias da semana (separados por vírgula)", "Segunda, Terça, Quarta, Quinta, Sexta, Sábado, Domingo"], "wkPessoas": ["Cálculos · Um dia na casa", "Pessoas no dia", "{n} pessoas"], "wkAlm": ["Cálculos · Um dia na casa", "Detalhe almoço", "almoço {n}"], "wkJan": ["Cálculos · Um dia na casa", "Detalhe jantar", "jantar {n}"], "wkFechado": ["Cálculos · Um dia na casa", "Dia fechado", "fechado"], "sH12": ["Cálculos · Síntese", "Coluna 12 meses", "12 meses total"], "sH24": ["Cálculos · Síntese", "Coluna 24 meses", "24 meses total"], "sH36": ["Cálculos · Síntese", "Coluna 36 meses", "36 meses total"], "sF": ["Cálculos · Síntese", "Linha faturamento", "Faturamento total"], "sB": ["Cálculos · Síntese", "Linha lucro bruto", "Lucro bruto total"], "sC": ["Cálculos · Síntese", "Linha custo", "Custo total"], "sL": ["Cálculos · Síntese", "Linha lucro líquido", "Lucro líquido total"], "sPg": ["Cálculos · Síntese", "Linha repasse", "Repasse aos cotistas total"], "sSob": ["Cálculos · Síntese", "Linha sobra", "Sobra após repasse total"], "sRes": ["Cálculos · Síntese", "Linha reserva", "Reserva ({pct}%) total"], "sDist": ["Cálculos · Síntese", "Linha distribuição", "Distribuição ({pct}%) total"], "sAporte": ["Cálculos · Síntese", "Linha aporte devolvido", "Aporte devolvido"], "sMes": ["Cálculos · Síntese", "Mês da devolução", "(mês {mes})"], "sAnual": ["Cálculos · Síntese", "Nota abaixo da tabela", "Faturamento por ano: ano 1 {a1} · ano 2 {a2} · ano 3 {a3}. Repasse mensal por cota: R$ {r1} mil no ano 1, R$ {r2} mil no ano 2 e R$ {r3} mil no ano 3."], "cCmv": ["Cálculos · Custos", "Item: Insumos", "Insumos (CMV)"], "cEquipe": ["Cálculos · Custos", "Item: Equipe", "Equipe ({n} pessoas)"], "cPro": ["Cálculos · Custos", "Item: Pró-labore", "Pró-labore"], "cImp": ["Cálculos · Custos", "Item: Imposto", "Imposto (Simples)"], "cCartao": ["Cálculos · Custos", "Item: Taxa de cartão", "Taxa de cartão"], "cAluguel": ["Cálculos · Custos", "Item: Aluguel e IPTU", "Aluguel e IPTU"], "cMkt": ["Cálculos · Custos", "Item: Marca e marketing", "Marca e marketing"], "cDel": ["Cálculos · Custos", "Item: Delivery", "Delivery (app e embalagem)"], "cEnergia": ["Cálculos · Custos", "Item: Luz, água e gás", "Luz, água e gás"], "cAdm": ["Cálculos · Custos", "Item: Administrativo", "Administrativo"], "cManut": ["Cálculos · Custos", "Item: Manutenção", "Manutenção"], "cFixo": ["Cálculos · Custos", "Rodapé · custo fixo", "Custo fixo"], "cVar": ["Cálculos · Custos", "Rodapé · variável", "Variável"], "cVarRec": ["Cálculos · Custos", "Rodapé · % da receita", "% da receita"], "cTotal": ["Cálculos · Custos", "Rodapé · custo total", "Custo total"], "cMes": ["Cálculos · Custos", "Sufixo por mês", "/mês"], "tLead": ["Cálculos · Equipe", "Texto de apoio (Simples)", "{n} funcionários. Cada um custa {fator}x o salário bruto, no Simples Nacional, onde INSS patronal, RAT e Terceiros já estão no imposto."], "tLeadFora": ["Cálculos · Equipe", "Texto de apoio (fora do Simples)", "{n} funcionários. Cada um custa {fator}x o salário bruto, fora do Simples."], "tH1": ["Cálculos · Equipe", "Coluna item", "Item"], "tH2": ["Cálculos · Equipe", "Coluna %", "% do salário"], "tH3": ["Cálculos · Equipe", "Coluna por funcionário", "Por funcionário"], "tH4": ["Cálculos · Equipe", "Coluna equipe", "Equipe por mês"], "tSal": ["Cálculos · Equipe", "Linha salário", "Salário bruto"], "tEnc": ["Cálculos · Equipe", "Linha total de encargos", "Total de encargos"], "tVT": ["Cálculos · Equipe", "Linha vale-transporte", "Vale-transporte"], "tRef": ["Cálculos · Equipe", "Linha refeição", "Refeição"], "tTot": ["Cálculos · Equipe", "Linha custo total", "Custo total da equipe"], "scCons": ["Cálculos · Cenários", "Nome Conservador", "Conservador"], "scBase": ["Cálculos · Cenários", "Nome Base", "Base"], "scOtim": ["Cálculos · Cenários", "Nome Otimista", "Otimista"], "cpMult": ["Cálculos · Cenários", "Linha: Multiplicador de movimento", "Multiplicador de movimento"], "cpGiro": ["Cálculos · Cenários", "Linha: Giro médio por dia", "Giro médio por dia"], "cpPed": ["Cálculos · Cenários", "Linha: Pedidos de delivery por dia", "Pedidos de delivery por dia"], "cpFat": ["Cálculos · Cenários", "Linha: Faturamento por mês", "Faturamento por mês"], "cpLuc": ["Cálculos · Cenários", "Linha: Lucro líquido por mês", "Lucro líquido por mês"], "cpMarg": ["Cálculos · Cenários", "Linha: Margem", "Margem"], "cpL36": ["Cálculos · Cenários", "Linha: Lucro em 36 meses", "Lucro em 36 meses"], "cpAporte": ["Cálculos · Cenários", "Linha: Aporte devolvido em", "Aporte devolvido em"], "cpMes": ["Cálculos · Cenários", "Aporte · mês", "mês {mes}"], "cpPrev": ["Cálculos · Cenários", "Aporte · previsão", "mês ~{mes}"], "cpDepois": ["Cálculos · Cenários", "Aporte · depois de 36 meses", "após 36 meses"], "gLucro": ["Cálculos · Gráfico e botões", "Legenda: lucro do mês", "Lucro líquido do mês"], "gAcum": ["Cálculos · Gráfico e botões", "Legenda: acumulado", "Lucro acumulado"], "gAporte": ["Cálculos · Gráfico e botões", "Legenda: aporte", "Aporte devolvido"], "gMes": ["Cálculos · Gráfico e botões", "Dica do gráfico: mês", "Mês {mes}"], "swHex": ["Marca · Cores", "Rótulo HEX", "HEX"], "swRgb": ["Marca · Cores", "Rótulo RGB", "RGB"], "swUso": ["Marca · Cores", "Rótulo Uso", "Uso"], "copy": ["Marca · Contato", "Botão copiar", "Copiar número"], "copied": ["Marca · Contato", "Botão copiado", "Copiado"], "slideAlt": ["Apresentação", "Descrição do slide (acessibilidade)", "Slide {n} da apresentação"]};
+const DEFAULT_CONTENT={"version":1,"meta":{"title":"Felícia para Investidores"},"theme":{"red":"#D8131D","cream":"#FAF5E6","ink":"#161312","bg":"#F4F1EA","sheet":"#FCFBF7","redDeep":"#9E0E15","muted":"#6E6762","line":"#E3DED6","fontBody":"Outfit","fontDisplay":"Outfit"},"palette":[{"name":"Vermelho Felícia","hex":"#D8131D","use":"Fachada, posts, embalagens"},{"name":"Creme Massa","hex":"#FAF5E6","use":"Logo, papel, respiro"},{"name":"Preto Forno","hex":"#161312","use":"Noite, textos, contraste"},{"name":"Vermelho Vinho","hex":"#9E0E15","use":"Sombras e detalhes"}],"texts":{"t001":"Marca","t002":"Apresentação","t003":"Cálculos","t004":"Simulador","t005":"Manual da marca","t006":"Uma pizzaria de bairro com alma de bar. Jovem, vermelha, bem-humorada e feita para dividir.","t007":"Essência","t008":"Tudo aqui é massa","t009":"Felícia é o lugar onde a pizza napolitana encontra o drink e a música. Um nome de pessoa, como a tia que sempre recebe bem, assinado com um \"ESTD 1933\" que brinca com a tradição sem levar nada a sério demais.","t010":"Calorosa","t011":"Recebe como em casa. Pizza feita para dividir, mesa cheia, conversa alta.","t012":"Autêntica","t013":"Gente real, comendo com as mãos. Sem pose, sem filtro de revista.","t014":"Bem-humorada","t015":"Fala como o público fala, com trocadilho, coração desenhado e frase curta.","t016":"Feita com cuidado","t017":"Poucos ingredientes, ficha técnica travada, serviço de alto padrão.","t018":"Logo","t019":"Um lettering próprio, redondo e com sotaque","t020":"O nome é desenhado à mão, com hastes que terminam em curva e um acento que vira gesto. \"Pizzabar\" entra embaixo, menor, como uma assinatura.","t021":"Principal · creme sobre vermelho","t022":"Vermelho sobre creme","t023":"Creme sobre preto","t024":"Uma cor · preto","t025":"Assinatura completa","t026":"Com \"ESTD\" e \"1933\" nas laterais. Use em peças de destaque: fachada, porta-copo, embalagem e capa de cardápio. No dia a dia, a versão sem o ano funciona sozinha.","t027":"Respiro mínimo: a altura do \"f\" em volta de toda a marca. Nunca distorcer, contornar ou aplicar sobre fotos sem contraste.","t028":"Cores","t029":"Vermelho e creme, sempre juntos","t030":"O vermelho é o protagonista: fachada, cadeiras, posts e embalagens. O creme é a massa, o papel e o respiro. O preto aparece à noite, no forno e na luz baixa do salão.","t031":"Vermelho 55%","t032":"Creme 30%","t033":"Preto 10%","t034":"Tipografia","t035":"Hemis para falar alto, sans para explicar","t036":"Hemis · logo e títulos de campanha","t037":"A fonte da marca. Redonda, com hastes que terminam em curva, usada no logo e em frases curtas sobre foto: \"pizza com muito amor\", \"seja autêntico\", \"carbonara\".","t038":"Sans geométrica · sistema","t039":"Aa Bb Cc 123","t040":"Títulos em caixa alta com tracking aberto e textos corridos leves. No digital, a família usada é Outfit.","t041":"Tom de voz","t042":"Fala como um amigo que entende de pizza","t043":"Frases curtas, afetivas e com humor. Primeira pessoa, coração desenhado, zero jargão gastronômico.","t044":"“Pizza com muito amor”","t045":"“Seja autêntico”","t046":"“Eu ♥ negroni com pizza”","t047":"“Tudo aqui é massa”","t048":"“Não é só um pizzabar. É experiência.”","t049":"Assim","t050":"Vem dividir uma pizza com a gente hoje?","t051":"Sexta tem DJ, forno quente e negroni gelado.","t052":"Assim não","t053":"Venha conhecer nossa proposta gastronômica diferenciada.","t054":"Aproveite nossas promoções imperdíveis!","t055":"Fotografia","t056":"Flash, cor e gente de verdade","t057":"Luz direta, cores saturadas e o vermelho sempre em cena. Pessoas comendo com as mãos, rindo, de boca cheia. A comida aparece de cima, na mesa compartilhada.","t058":"Aplicações","t059":"A marca em cada ponto de contato","t060":"Pôsteres, redes sociais, embalagem, papelaria e uniforme seguem o mesmo par de cores e o mesmo lettering.","t061":"Sacola de delivery","t062":"Ecobag","t063":"Copo de café","t064":"Porta-copo ESTD 1933","t065":"O espaço","t066":"A marca vira lugar","t067":"Fachada vermelha, cadeiras vermelhas, luz quente e baixa. De dia é pizzaria, à noite é bar.","t068":"Não é só um pizzabar.<br/>É <em>experiência</em>","t069":"Vamos sentar para comer uma pizza?","t070":"(13) 99175-7406","t071":"Felícia pizzabar · Rua da Paz · Santos","t072":"Apresentação","t073":"Deck do investidor · Outubro 2026","t074":"Use as setas do teclado ou toque nas laterais para navegar.","t075":"Projeção de 36 meses","t076":"O negócio em números","t077":"Premissas fixas definidas pelos sócios. Escolha um cenário para comparar. Os números não podem ser alterados nesta página.","t078":"Versão travada para investidores","t079":"Faturamento por mês","t080":"Lucro líquido por mês","t081":"Aporte 100% devolvido","t082":"Lucro líquido em 36 meses","t083":"Como ler","t084":"Como a projeção é feita","t085":"1. Receita","t086":"Pessoas no salão em cada dia (almoço e jantar) × ticket médio de cada serviço, mais pedidos de delivery por dia × ticket do pedido.","t087":"2. Custos variáveis","t088":"Insumos (CMV), imposto do Simples, taxa de cartão e custo do delivery, todos em percentual do faturamento.","t089":"3. Custos fixos","t090":"Equipe com todos os encargos, pró-labore, aluguel, energia, marketing, manutenção e administrativo, reajustados ano a ano.","t091":"4. Crescimento","t092":"Rampa de abertura nos dois primeiros meses e crescimento anual do faturamento nos anos 2 e 3.","t093":"5. Investidor","t094":"Repasse mensal fixo por cota, tirado do lucro líquido até devolver 100% do aporte. Do que sobra, uma parte vira reserva e o resto é distribuído.","t095":"6. Cenários","t096":"Base usa as premissas abaixo. Conservador e Otimista aplicam multiplicadores sobre movimento, delivery, equipe e repasse.","t097":"Um dia na casa","t098":"Quanto a casa gira","t099":"Média de um dia aberto, com a casa madura.","t100":"36 meses","t101":"Lucro e devolução do aporte","t102":"As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.","t103":"Síntese","t104":"12, 24 e 36 meses","t105":"Valores somados desde a abertura.","t106":"Custo de operação","t107":"Para onde vai cada mês","t108":"Mês 12, com a casa madura.","t109":"Equipe","t110":"Custo real de cada funcionário","t111":"Cenários","t112":"Os três cenários lado a lado","t113":"Mesmas premissas, com os multiplicadores de cada cenário.","t114":"Premissas","t115":"Todas as premissas usadas","t116":"Valores do cenário Base. É sobre eles que os outros cenários aplicam os multiplicadores.","t200":"Fale comigo:"},"images":{"img/logo.png":"img/logo.png","img/logo-full-cream.png":"img/logo-full-cream.png","img/post-senhora.jpg":"img/post-senhora.jpg","img/logo-red.png":"img/logo-red.png","img/logo-ink.png":"img/logo-ink.png","img/logo-full-red.png":"img/logo-full-red.png","img/post-amor.jpg":"img/post-amor.jpg","img/post-autentico.jpg":"img/post-autentico.jpg","img/poster-carbonara.jpg":"img/poster-carbonara.jpg","img/poster-camarao.jpg":"img/poster-camarao.jpg","img/publico.jpg":"img/publico.jpg","img/massa.jpg":"img/massa.jpg","img/oportunidade.jpg":"img/oportunidade.jpg","img/pizzas.jpg":"img/pizzas.jpg","img/garcom.jpg":"img/garcom.jpg","img/c-coqueteis.jpg":"img/c-coqueteis.jpg","img/urbana-mesa.jpg":"img/urbana-mesa.jpg","img/poster-negroni.jpg":"img/poster-negroni.jpg","img/c-sobremesas.jpg":"img/c-sobremesas.jpg","img/c-pratos.jpg":"img/c-pratos.jpg","img/merch-sacola.jpg":"img/merch-sacola.jpg","img/merch-bolsa.jpg":"img/merch-bolsa.jpg","img/merch-copo.jpg":"img/merch-copo.jpg","img/merch-mesa.jpg":"img/merch-mesa.jpg","img/fachada.jpg":"img/fachada.jpg","img/salao.jpg":"img/salao.jpg","img/interior.jpg":"img/interior.jpg","img/proj-jardim.jpg":"img/proj-jardim.jpg"},"slides":["slides/s-01.jpg","slides/s-02.jpg","slides/s-03.jpg","slides/s-04.jpg","slides/s-05.jpg","slides/s-06.jpg","slides/s-07.jpg","slides/s-08.jpg","slides/s-09.jpg","slides/s-10.jpg","slides/s-11.jpg","slides/s-12.jpg","slides/s-13.jpg","slides/s-14.jpg","slides/s-15.jpg","slides/s-16.jpg","slides/s-17.jpg","slides/s-18.jpg","slides/s-19.jpg"],"premissas":{}};
 let CONTENT=DEFAULT_CONTENT, URLP=null;
 let P={...DEFAULTS,...(CONTENT.premissas||{})};
 try{const q=new URLSearchParams(location.search).get("p");if(q){const j=JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,"+").replace(/_/g,"/")))));URLP=j;P={...DEFAULTS,...j}}}catch(e){}
@@ -682,9 +683,9 @@ window.addEventListener("hashchange",show);
 function hexRgb(h){const m=/^#?([0-9a-f]{6})$/i.exec(h||"");if(!m)return [0,0,0];const n=parseInt(m[1],16);return [n>>16&255,n>>8&255,n&255]}
 function lum(h){const [r,g,b]=hexRgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function renderPalette(){document.getElementById("swatches").innerHTML=(CONTENT.palette||[]).map(p=>`<div class="sw"><div class="chip" style="background:${esc(p.hex)};color:${lum(p.hex)>.5?"#161312":"#FAF5E6"}">${esc(p.name)}</div><dl><dt>HEX</dt><dd>${esc((p.hex||"").toUpperCase())}</dd><dt>RGB</dt><dd>${hexRgb(p.hex).join(" · ")}</dd><dt>Uso</dt><dd>${esc(p.use)}</dd></dl></div>`).join("")}
+function renderPalette(){document.getElementById("swatches").innerHTML=(CONTENT.palette||[]).map(p=>`<div class="sw"><div class="chip" style="background:${esc(p.hex)};color:${lum(p.hex)>.5?"#161312":"#FAF5E6"}">${esc(p.name)}</div><dl><dt>${esc(T("swHex"))}</dt><dd>${esc((p.hex||"").toUpperCase())}</dd><dt>${esc(T("swRgb"))}</dt><dd>${hexRgb(p.hex).join(" · ")}</dd><dt>${esc(T("swUso"))}</dt><dd>${esc(p.use)}</dd></dl></div>`).join("")}
 document.getElementById("copyPhone").addEventListener("click",e=>{const b=e.currentTarget,t=document.getElementById("phone").textContent;
-  const done=()=>{b.textContent="Copiado";setTimeout(()=>b.textContent="Copiar número",1800)};
+  const done=()=>{b.textContent=T("copied");setTimeout(()=>b.textContent=T("copy"),1800)};
   try{navigator.clipboard.writeText(t).then(done,()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("phone"));const s=getSelection();s.removeAllRanges();s.addRange(r)})}catch(err){}});
 
 // ---------- apresentação ----------
@@ -692,7 +693,7 @@ let SLIDES=CONTENT.slides||[],N=SLIDES.length;let cur=1;
 const slide=document.getElementById("slide"),thumbs=document.getElementById("thumbs");
 const src=i=>SLIDES[i-1]||"";
 function renderSlides(){SLIDES=CONTENT.slides||[];N=SLIDES.length;thumbs.innerHTML=Array.from({length:N},(_,i)=>`<button type="button" data-i="${i+1}" aria-label="Ir para o slide ${i+1}"><img src="${src(i+1)}" alt="" loading="lazy"><span class="n">${i+1}</span></button>`).join("");}
-function go(i){if(!N){document.getElementById("count").textContent="0 / 0";return}cur=Math.min(N,Math.max(1,i));slide.src=src(cur);slide.alt="Slide "+cur+" da apresentação";
+function go(i){if(!N){document.getElementById("count").textContent="0 / 0";return}cur=Math.min(N,Math.max(1,i));slide.src=src(cur);slide.alt=T("slideAlt",{n:cur});
   document.getElementById("count").textContent=cur+" / "+N;
   document.getElementById("prev").disabled=cur===1;document.getElementById("next").disabled=cur===N;
   thumbs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-current",String(+b.dataset.i===cur)));
@@ -708,61 +709,53 @@ renderSlides();go(1);
 // ---------- cálculos ----------
 let chart=null;
 document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;update()}));
+function T(k,v){let s=(CONTENT.ui&&CONTENT.ui[k]!=null)?CONTENT.ui[k]:(UI_DEF[k]?UI_DEF[k][2]:k);if(v)for(const x in v)s=s.split("{"+x+"}").join(v[x]);return s}
 function update(){
   document.querySelectorAll("[data-sc]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sc===SC)));
   const E=eff(P,SC),R=run(E);
   document.getElementById("k-fat").textContent=brl(R.mature);
-  document.getElementById("k-fat-s").textContent="Casa madura · "+brl(R.mature*12)+" por ano";
+  document.getElementById("k-fat-s").textContent=T("fatSub",{ano:brl(R.mature*12)});
   document.getElementById("k-luc").textContent=brl(R.lucroM);
-  document.getElementById("k-luc-s").textContent="Margem de "+nf(R.mature>0?R.lucroM/R.mature*100:0,1)+"%";
-  document.getElementById("k-pay").textContent=P.aporte<=0?"Sem aporte":R.quit?("Mês "+R.quit):(R.pq?("Mês ~"+R.pq):"Após 36 meses");
-  document.getElementById("k-pay-s").textContent=brl(P.aporte)+" em "+P.cotas+(P.cotas>1?" cotas de ":" cota de ")+brl(P.cotas>0?P.aporte/P.cotas:0);
+  document.getElementById("k-luc-s").textContent=T("lucSub",{pct:nf(R.mature>0?R.lucroM/R.mature*100:0,1)});
+  document.getElementById("k-pay").textContent=P.aporte<=0?T("paySem"):R.quit?T("payMes",{mes:R.quit}):(R.pq?T("payPrev",{mes:R.pq}):T("payDepois"));
+  document.getElementById("k-pay-s").textContent=T(P.cotas>1?"paySub":"paySub1",{aporte:brl(P.aporte),n:P.cotas,cota:brl(P.cotas>0?P.aporte/P.cotas:0)});
   document.getElementById("k-36").textContent=brl(R.cum[36].L);
-  document.getElementById("k-36-s").textContent=brl(R.cum[36].dist)+" para distribuição";
-
+  document.getElementById("k-36-s").textContent=T("l36Sub",{valor:brl(R.cum[36].dist)});
   document.getElementById("night").innerHTML=[
-    [nf(R.pessoas,0),"Clientes no salão por dia"+(R.almocoM>0?" · almoço e jantar":"")],
-    ["R$ "+nf(R.ticketMedio,0),R.almocoM>0?"Ticket médio no salão · jantar R$ "+nf(R.ticket,0)+", almoço R$ "+nf(R.ticketAl,0):"Ticket médio no salão"],
-    [nf(R.pedidos,0)+" pedidos","Delivery por dia · "+nf(R.delivShare*100,0)+"% do faturamento"],
-    [brl(R.total/R.dias),"Faturamento por dia"],
-    [brl(R.be),"Ponto de equilíbrio por mês"],
-    [nf(R.giroImp,2)+"x","Giro médio por dia"]
-  ].map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
-
-  const wk=document.getElementById("week"),names=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+    [nf(R.pessoas,0),T(R.almocoM>0?"nPessoasAJ":"nPessoas")],
+    ["R$ "+nf(R.ticketMedio,0),R.almocoM>0?T("nTicketAJ",{jantar:nf(R.ticket,0),almoco:nf(R.ticketAl,0)}):T("nTicket")],
+    [T("nPedidosV",{n:nf(R.pedidos,0)}),T("nPedidos",{pct:nf(R.delivShare*100,0)})],
+    [brl(R.total/R.dias),T("nFatDia")],[brl(R.be),T("nBE")],[nf(R.giroImp,2)+"x",T("nGiro")]
+  ].map(([v,l])=>`<div class="stat"><span class="v">${esc(v)}</span><span class="l">${esc(l)}</span></div>`).join("");
+  const wk=document.getElementById("week"),names=T("wkDias").split(",").map(x=>x.trim());
   const J=P.modo==="dias"?R.DAYS:R.DAYS.map(()=>Math.round(P.lugares*E.giro*P.aprov/100)),A=R.LUNCH;
   const mx=Math.max(1,...J.map((d,i)=>d+A[i])),wkTot=J.reduce((a,b)=>a+b,0)+A.reduce((a,b)=>a+b,0);
-  wk.innerHTML=`<p class="note">Semana típica · ${nf(wkTot,0)} pessoas no salão por semana, ${nf(wkTot*R.WK,0)} por mês · ${nf(P.lugares,0)} lugares</p><div class="legend"><span><i style="background:var(--red)"></i>Jantar</span><span><i style="background:var(--red-deep);opacity:.45"></i>Almoço</span></div><div class="bars">`+
-    J.map((d,i)=>{const a=A[i],t=d+a;return `<span class="n">${names[i]}</span><span class="t"><div style="width:${d/mx*100}%"></div><div class="al" style="width:${a/mx*100}%"></div></span><span class="val">${t?`${nf(t,0)} pessoas<small>${a?"almoço "+nf(a,0)+" · ":""}jantar ${nf(d,0)} · ${brl(d*R.ticket+a*R.ticketAl)}</small>`:"fechado"}</span>`}).join("")+`</div>`;
-
-  const rows=[["Faturamento total","F"],["Lucro bruto total","B"],["Custo total","C"],["Lucro líquido total","L",1],["Repasse aos cotistas total","Pg"],["Sobra após repasse total","sob"],["Reserva ("+P.reserva+"%) total","res"],["Distribuição ("+(100-P.reserva)+"%) total","dist",1]];
-  let h=`<thead><tr><th></th><th>12 meses total</th><th>24 meses total</th><th class="hl">36 meses total</th></tr></thead><tbody>`;
-  rows.forEach(([n,k,key])=>{h+=`<tr${key?' class="key"':""}><td>${n}</td>${[12,24,36].map(x=>`<td>${brl(R.cum[x][k])}</td>`).join("")}</tr>`});
-  h+=`<tr><td>Aporte devolvido</td>${[12,24,36].map(x=>{const c=R.cum[x],done=R.quit&&R.quit<=x;return `<td>${nf(Math.min(c.pct,1)*100,0)}%${done?" (mês "+R.quit+")":""}</td>`}).join("")}</tr></tbody>`;
+  wk.innerHTML=`<p class="note">${esc(T("wkNote",{semana:nf(wkTot,0),mes:nf(wkTot*R.WK,0),lugares:nf(P.lugares,0)}))}</p><div class="legend"><span><i style="background:var(--red)"></i>${esc(T("wkJantar"))}</span><span><i style="background:var(--red-deep);opacity:.45"></i>${esc(T("wkAlmoco"))}</span></div><div class="bars">`+
+    J.map((d,i)=>{const a=A[i],t=d+a;return `<span class="n">${esc(names[i]||"")}</span><span class="t"><div style="width:${d/mx*100}%"></div><div class="al" style="width:${a/mx*100}%"></div></span><span class="val">${t?`${esc(T("wkPessoas",{n:nf(t,0)}))}<small>${a?esc(T("wkAlm",{n:nf(a,0)}))+" · ":""}${esc(T("wkJan",{n:nf(d,0)}))} · ${brl(d*R.ticket+a*R.ticketAl)}</small>`:esc(T("wkFechado"))}</span>`}).join("")+`</div>`;
+  const rows=[[T("sF"),"F"],[T("sB"),"B"],[T("sC"),"C"],[T("sL"),"L",1],[T("sPg"),"Pg"],[T("sSob"),"sob"],[T("sRes",{pct:P.reserva}),"res"],[T("sDist",{pct:100-P.reserva}),"dist",1]];
+  let h=`<thead><tr><th></th><th>${esc(T("sH12"))}</th><th>${esc(T("sH24"))}</th><th class="hl">${esc(T("sH36"))}</th></tr></thead><tbody>`;
+  rows.forEach(([n,k,key])=>{h+=`<tr${key?' class="key"':""}><td>${esc(n)}</td>${[12,24,36].map(x=>`<td>${brl(R.cum[x][k])}</td>`).join("")}</tr>`});
+  h+=`<tr><td>${esc(T("sAporte"))}</td>${[12,24,36].map(x=>{const c=R.cum[x],done=R.quit&&R.quit<=x;return `<td>${nf(Math.min(c.pct,1)*100,0)}%${done?" "+esc(T("sMes",{mes:R.quit})):""}</td>`}).join("")}</tr></tbody>`;
   document.getElementById("summary").innerHTML=h;
-  document.getElementById("annual").textContent=`Faturamento por ano: ano 1 ${brl(R.annual[0])} · ano 2 ${brl(R.annual[1])} · ano 3 ${brl(R.annual[2])}. Repasse mensal por cota: R$ ${nf(E.rep1,1)} mil no ano 1, R$ ${nf(E.rep2,1)} mil no ano 2 e R$ ${nf(E.rep3,1)} mil no ano 3.`;
-
-  const items=[["Insumos (CMV)",R.cost.cmv],["Equipe ("+nf(E.func,0)+" pessoas)",R.equipe],["Pró-labore",P.prolabore],["Imposto (Simples)",R.cost.simples],["Taxa de cartão",R.cost.cartao],["Aluguel e IPTU",P.aluguel],["Marca e marketing",P.mkt],["Delivery (app e embalagem)",R.cost.del],["Luz, água e gás",P.energia],["Administrativo",P.adm],["Manutenção",P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  document.getElementById("annual").textContent=T("sAnual",{a1:brl(R.annual[0]),a2:brl(R.annual[1]),a3:brl(R.annual[2]),r1:nf(E.rep1,1),r2:nf(E.rep2,1),r3:nf(E.rep3,1)});
+  const items=[[T("cCmv"),R.cost.cmv],[T("cEquipe",{n:nf(E.func,0)}),R.equipe],[T("cPro"),P.prolabore],[T("cImp"),R.cost.simples],[T("cCartao"),R.cost.cartao],[T("cAluguel"),P.aluguel],[T("cMkt"),P.mkt],[T("cDel"),R.cost.del],[T("cEnergia"),P.energia],[T("cAdm"),P.adm],[T("cManut"),P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
   const bm=Math.max(1,...items.map(x=>x[1]));
-  document.getElementById("bars").innerHTML=items.map(([n,v])=>`<span class="n">${n}</span><span class="t"><div style="width:${v/bm*100}%;border-radius:99px"></div></span><span class="val">${brl(v)}<small>${nf(R.mature>0?v/R.mature*100:0,1)}%</small></span>`).join("");
-  document.getElementById("costfoot").innerHTML=`<span>Custo fixo <b>${brl(R.fixoBase)}/mês</b></span><span>Variável <b>${nf(R.varPct*100,1)}% da receita</b></span><span>Custo total <b>${brl(R.fixoBase+R.mature*R.varPct)}/mês</b></span>`;
-
-  const T=R.T,n=E.func,row=(a,b,c,d,k)=>`<tr${k?' class="key"':""}><td>${a}</td><td>${b}</td><td>${c}</td><td>${d}</td></tr>`;
-  document.getElementById("teamLead").textContent=`${nf(n,0)} funcionários. Cada um custa ${nf(T.fator,2)}x o salário bruto, ${P.enc_inss>0?"fora do Simples":"no Simples Nacional, onde INSS patronal, RAT e Terceiros já estão no imposto"}.`;
-  document.getElementById("teamTable").innerHTML=`<thead><tr><th>Item</th><th>% do salário</th><th>Por funcionário</th><th class="hl">Equipe por mês</th></tr></thead><tbody>`+
-    row("Salário bruto","100%",brl(T.sal),brl(T.sal*n))+T.rows.map(([nm,pc,v])=>row(nm,nf(pc,2)+"%",brl(v),brl(v*n))).join("")+
-    row("Total de encargos",nf(T.encPct,1)+"%",brl(T.enc),brl(T.enc*n),1)+
-    (P.enc_vt>0?row("Vale-transporte","–",brl(P.enc_vt),brl(P.enc_vt*n)):"")+(P.enc_ref>0?row("Refeição","–",brl(P.enc_ref),brl(P.enc_ref*n)):"")+
-    row("Custo total da equipe",nf(T.fator*100,0)+"%",brl(T.per),brl(T.total),1)+`</tbody>`;
-
-  const sc=["conservador","base","otimista"],nm={conservador:"Conservador",base:"Base",otimista:"Otimista"},Rs=sc.map(s=>run(eff(P,s)));
-  const crow=(t,f)=>`<tr><td>${t}</td>${Rs.map((r,i)=>`<td class="${sc[i]===SC?"cur":""}">${f(r,sc[i])}</td>`).join("")}</tr>`;
-  document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${nm[s]}</th>`).join("")}</tr></thead><tbody>`+
-    crow("Multiplicador de movimento",(r,k)=>nf(mult(P,k).mov,2)+"x")+crow("Giro médio por dia",r=>nf(r.giroImp,2)+"x")+
-    crow("Pedidos de delivery por dia",r=>nf(r.pedidos,0))+crow("Faturamento por mês",r=>brl(r.mature))+crow("Lucro líquido por mês",r=>brl(r.lucroM))+
-    crow("Margem",r=>nf(r.mature>0?r.lucroM/r.mature*100:0,1)+"%")+crow("Lucro em 36 meses",r=>brl(r.cum[36].L))+
-    crow("Aporte devolvido em",r=>r.quit?"mês "+r.quit:(r.pq?"mês ~"+r.pq:"após 36 meses"))+`</tbody>`;
-
+  document.getElementById("bars").innerHTML=items.map(([n,v])=>`<span class="n">${esc(n)}</span><span class="t"><div style="width:${v/bm*100}%;border-radius:99px"></div></span><span class="val">${brl(v)}<small>${nf(R.mature>0?v/R.mature*100:0,1)}%</small></span>`).join("");
+  document.getElementById("costfoot").innerHTML=`<span>${esc(T("cFixo"))} <b>${brl(R.fixoBase)}${esc(T("cMes"))}</b></span><span>${esc(T("cVar"))} <b>${nf(R.varPct*100,1)}${esc(T("cVarRec"))}</b></span><span>${esc(T("cTotal"))} <b>${brl(R.fixoBase+R.mature*R.varPct)}${esc(T("cMes"))}</b></span>`;
+  const TM=R.T,n=E.func,row=(a,b,c,d,k)=>`<tr${k?' class="key"':""}><td>${esc(a)}</td><td>${b}</td><td>${c}</td><td>${d}</td></tr>`;
+  document.getElementById("teamLead").textContent=T(P.enc_inss>0?"tLeadFora":"tLead",{n:nf(n,0),fator:nf(TM.fator,2)});
+  document.getElementById("teamTable").innerHTML=`<thead><tr><th>${esc(T("tH1"))}</th><th>${esc(T("tH2"))}</th><th>${esc(T("tH3"))}</th><th class="hl">${esc(T("tH4"))}</th></tr></thead><tbody>`+
+    row(T("tSal"),"100%",brl(TM.sal),brl(TM.sal*n))+TM.rows.map(([nm,pc,v])=>row(nm,nf(pc,2)+"%",brl(v),brl(v*n))).join("")+
+    row(T("tEnc"),nf(TM.encPct,1)+"%",brl(TM.enc),brl(TM.enc*n),1)+
+    (P.enc_vt>0?row(T("tVT"),"–",brl(P.enc_vt),brl(P.enc_vt*n)):"")+(P.enc_ref>0?row(T("tRef"),"–",brl(P.enc_ref),brl(P.enc_ref*n)):"")+
+    row(T("tTot"),nf(TM.fator*100,0)+"%",brl(TM.per),brl(TM.total),1)+`</tbody>`;
+  const sc=["conservador","base","otimista"],nm={conservador:T("scCons"),base:T("scBase"),otimista:T("scOtim")},Rs=sc.map(s=>run(eff(P,s)));
+  const crow=(t,f)=>`<tr><td>${esc(t)}</td>${Rs.map((r,i)=>`<td class="${sc[i]===SC?"cur":""}">${f(r,sc[i])}</td>`).join("")}</tr>`;
+  document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${esc(nm[s])}</th>`).join("")}</tr></thead><tbody>`+
+    crow(T("cpMult"),(r,k)=>nf(mult(P,k).mov,2)+"x")+crow(T("cpGiro"),r=>nf(r.giroImp,2)+"x")+
+    crow(T("cpPed"),r=>nf(r.pedidos,0))+crow(T("cpFat"),r=>brl(r.mature))+crow(T("cpLuc"),r=>brl(r.lucroM))+
+    crow(T("cpMarg"),r=>nf(r.mature>0?r.lucroM/r.mature*100:0,1)+"%")+crow(T("cpL36"),r=>brl(r.cum[36].L))+
+    crow(T("cpAporte"),r=>esc(r.quit?T("cpMes",{mes:r.quit}):(r.pq?T("cpPrev",{mes:r.pq}):T("cpDepois"))))+`</tbody>`;
   drawChart(R);
 }
 function fmtP(id,unit,v){if(unit==="R$")return brl(v);if(unit==="%")return nf(v,v%1?1:0)+"%";if(unit==="x")return nf(v,2)+"x";if(unit==="R$ mil/mês")return "R$ "+nf(v,1)+" mil";return nf(v,v%1?2:0)+(unit?" "+unit:"")}
@@ -771,12 +764,12 @@ function renderPrem(){const skip=new Set(P.modo==="dias"?["giro","aprov","dias"]
     return `<section><h3>${g.t}</h3><dl>${items.map(([id,label,, , ,unit])=>`<dt>${label}</dt><dd>${fmtP(id,unit,P[id]??0)}</dd>`).join("")}</dl></section>`}).join("")}
 function drawChart(R){if(!window.Chart)return;const cs=getComputedStyle(document.documentElement),cv=k=>cs.getPropertyValue(k).trim();const red=cv("--red"),ink=cv("--ink"),muted=cv("--muted"),line=cv("--line");
   const data={labels:R.m.map((_,i)=>String(i+1)),datasets:[
-    {type:"bar",label:"Lucro do mês",data:R.m.map(x=>x.lucro),backgroundColor:R.m.map(x=>x.lucro<0?muted:red),borderRadius:3,yAxisID:"y",order:3},
-    {type:"line",label:"Lucro acumulado",data:R.m.map(x=>x.L),borderColor:ink,borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.25,order:1},
-    {type:"line",label:"Aporte devolvido",data:R.m.map(x=>x.Pg),borderColor:muted,borderDash:[5,4],borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.1,order:2}]};
+    {type:"bar",label:T("gLucro"),data:R.m.map(x=>x.lucro),backgroundColor:R.m.map(x=>x.lucro<0?muted:red),borderRadius:3,yAxisID:"y",order:3},
+    {type:"line",label:T("gAcum"),data:R.m.map(x=>x.L),borderColor:ink,borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.25,order:1},
+    {type:"line",label:T("gAporte"),data:R.m.map(x=>x.Pg),borderColor:muted,borderDash:[5,4],borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.1,order:2}]};
   const tick={color:muted,font:{family:"Outfit",size:12}};
   const opts={responsive:true,maintainAspectRatio:false,animation:{duration:250},interaction:{mode:"index",intersect:false},
-    plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>"Mês "+i[0].label,label:c=>c.dataset.label+": "+brl(c.parsed.y)}}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>T("gMes",{mes:i[0].label}),label:c=>c.dataset.label+": "+brl(c.parsed.y)}}},
     scales:{x:{grid:{display:false},ticks:{...tick,callback:(v,i)=>((i+1)%6===0||i===0)?"m"+(i+1):""}},
       y:{position:"left",grid:{color:line},ticks:{...tick,callback:v=>brl(v)}},y2:{position:"right",grid:{display:false},ticks:{...tick,callback:v=>brl(v)}}}};
   if(chart){chart.data=data;chart.options=opts;chart.update()}else chart=new Chart(document.getElementById("chart"),{data,options:opts})}
@@ -793,12 +786,14 @@ function applyContent(c){
   if(th.fontBody)set("--font",`"${th.fontBody}","Helvetica Neue",Arial,sans-serif`);
   if(th.fontDisplay)set("--font-display",`"${th.fontDisplay}","Helvetica Neue",Arial,sans-serif`);
   const tx=c.texts||{};document.querySelectorAll("[data-c]").forEach(el=>{const v=tx[el.dataset.c];if(v==null)return;if(el.hasAttribute("data-c-html"))el.innerHTML=v;else el.textContent=v});
+  document.querySelectorAll("[data-ui]").forEach(el=>{el.textContent=T(el.dataset.ui)});
+  const rad=c.radius||{};document.querySelectorAll("[data-sec]").forEach(el=>{const v=rad[el.dataset.sec];if(v==null||v==="")el.style.removeProperty("--r");else el.style.setProperty("--r",v+"px")});
   const im=c.images||{},pv=c._preview||{};document.querySelectorAll("[data-img]").forEach(el=>{const k=el.dataset.img,v=pv[im[k]]||im[k];if(v)el.src=v});
   if(c.meta&&c.meta.title)document.title=c.meta.title;
   renderPalette();renderSlides();go(Math.min(cur,N)||1);
   if(!URLP){P={...DEFAULTS,...(c.premissas||{})}}
   if(c.defaultScenario&&!c._keepSc)SC=c.defaultScenario;
-  const sn=document.getElementById("scName");if(c.scenarioName){sn.hidden=false;sn.textContent="Cenário publicado: "+c.scenarioName}else sn.hidden=true;
+  const sn=document.getElementById("scName");if(c.scenarioName){sn.hidden=false;sn.textContent=T("scName",{nome:c.scenarioName})}else sn.hidden=true;
   renderPrem();if(!document.getElementById("v-calculos").hidden)update();
 }
 window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="felicia-preview"){const c=e.data.content;if(e.data.view&&e.data.view!==(location.hash||"#marca").slice(1))location.hash=e.data.view;applyContent(c)}});

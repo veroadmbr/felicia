@@ -77,6 +77,11 @@ select{appearance:none;-webkit-appearance:none;padding-right:42px;background-ima
 .icon{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;padding:0;color:var(--ink)}
 .icon:hover{border-color:var(--ink)}
 
+.rad-row{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.rad-row .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.rad-row b{font-weight:600;font-size:13.5px}
+.rad-ctl{display:flex;align-items:center;gap:12px}
+.rad-ctl input[type=range]{flex:1;accent-color:var(--red)}
 .imgs{display:flex;flex-direction:column;gap:10px}
 .img-row{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:10px}
 .img-row .th{width:84px;height:84px;border-radius:9px;background:#ccc center/cover no-repeat;border:1px solid var(--line)}
@@ -141,6 +146,7 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
       <button type="button" role="tab" data-tab="cores" aria-selected="true">Cores e fontes</button>
       <button type="button" role="tab" data-tab="textos">Textos</button>
       <button type="button" role="tab" data-tab="imagens">Imagens</button>
+      <button type="button" role="tab" data-tab="cantos">Cantos</button>
       <button type="button" role="tab" data-tab="slides">Apresentação</button>
       <button type="button" role="tab" data-tab="calculos">Cálculos</button>
       <button type="button" role="tab" data-tab="publicar">Conexão</button>
@@ -182,6 +188,17 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
       <p class="intro">Troque qualquer foto ou logo. Fotos grandes são reduzidas para no máximo 2400 px antes de subir.</p>
       <div class="search"><input type="search" id="qi" placeholder="Buscar imagem…" aria-label="Buscar imagem"></div>
       <div class="imgs" id="images"></div>
+    </div>
+
+    <div class="pane" data-pane="cantos" hidden>
+      <h2>Cantos arredondados</h2>
+      <p class="intro">Ajuste o arredondamento de fotos, cartões e blocos em cada seção. "Padrão" volta ao desenho original.</p>
+      <div class="box">
+        <h3>Todas as seções</h3>
+        <div class="rad-ctl"><input type="range" id="radAll" min="0" max="60" step="1" value="20" aria-label="Cantos de todas as seções"><span class="hint" id="radAllV">20 px</span></div>
+        <button type="button" class="btn sm" id="radReset" style="align-self:flex-start">Voltar tudo ao padrão</button>
+      </div>
+      <div class="pal" id="radius"></div>
     </div>
 
     <div class="pane" data-pane="slides" hidden>
@@ -278,7 +295,7 @@ function PENDING_URLS(){const m={};for(const k in PENDING)m[k]=PENDING[k].url;re
 
 // ---------- tabs ----------
 $$(".tabs [data-tab]").forEach(b=>b.addEventListener("click",()=>{$$(".tabs [data-tab]").forEach(x=>x.setAttribute("aria-selected",String(x===b)));$$("[data-pane]").forEach(p=>p.hidden=p.dataset.pane!==b.dataset.tab);
-  const v={slides:"apresentacao",calculos:"calculos"}[b.dataset.tab];if(v)setView(v);else if(["cores","textos","imagens"].includes(b.dataset.tab))setView("marca")}));
+  const v={slides:"apresentacao",calculos:"calculos"}[b.dataset.tab];if(v)setView(v);else if(["cores","textos","imagens","cantos"].includes(b.dataset.tab))setView("marca")}));
 function setView(v){VIEW=v;$$("[data-view]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===v)));pushPreview()}
 $$("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
 $$("[data-dev]").forEach(b=>b.addEventListener("click",()=>{$$("[data-dev]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));$("#fw").classList.toggle("mobile",b.dataset.dev==="mob")}));
@@ -324,12 +341,18 @@ function buildMeta(doc){
   IMGUSE={};doc.querySelectorAll("[data-img]").forEach(el=>{const k=el.dataset.img;(IMGUSE[k]=IMGUSE[k]||new Set()).add(el.getAttribute("alt")||"");
     const sec=el.closest("section");if(sec&&sec.querySelector(".eyebrow"))IMGUSE[k].add("· "+sec.querySelector(".eyebrow").textContent.trim())});
 }
+let UIDEF={};
+const getV=m=>m.ui?(C.ui&&C.ui[m.key]!=null?C.ui[m.key]:UIDEF[m.key][2]):(C.texts[m.key]??BASE_TEXTS[m.key]??"");
+const baseV=m=>m.ui?UIDEF[m.key][2]:BASE_TEXTS[m.key];
+function allTextMeta(){return [...TEXTMETA,...Object.entries(UIDEF).map(([k,[g,l]])=>({key:k,ui:true,grp:g,label:l}))]}
 function renderTexts(){const q=($("#q").value||"").toLowerCase();const groups={};
-  TEXTMETA.forEach(m=>{const v=C.texts[m.key]??BASE_TEXTS[m.key]??"";if(q&&!(v.toLowerCase().includes(q)||m.grp.toLowerCase().includes(q)))return;(groups[m.grp]=groups[m.grp]||[]).push(m)});
-  const host=$("#texts");host.innerHTML=Object.entries(groups).map(([g,ms],gi)=>`<details class="group"${q||gi===0?" open":""}><summary>${esc(g)}<span class="cnt">${ms.length}</span></summary><div class="gbody">${ms.map(m=>{const v=C.texts[m.key]??BASE_TEXTS[m.key]??"",ch=v!==BASE_TEXTS[m.key];
-    return `<div class="fld${ch?" changed":""}" data-key="${m.key}"><div class="top"><label for="tx-${m.key}">${esc(m.label)}</label>${ch?`<button type="button" class="btn link" data-reset="${m.key}">Restaurar</button>`:""}</div><textarea id="tx-${m.key}" rows="${Math.min(6,Math.max(1,Math.ceil(v.length/48)))}">${esc(v)}</textarea>${m.html?`<span class="hint">Aceita &lt;br&gt; para quebrar linha e &lt;em&gt; para destacar.</span>`:""}</div>`}).join("")}</div></details>`).join("")||`<p class="hint">Nenhum texto encontrado.</p>`;
-  host.querySelectorAll("textarea").forEach(t=>t.addEventListener("input",()=>{const k=t.id.slice(3);C.texts[k]=t.value;const f=t.closest(".fld");const ch=t.value!==BASE_TEXTS[k];f.classList.toggle("changed",ch);changed()}));
-  host.querySelectorAll("[data-reset]").forEach(b=>b.onclick=()=>{const k=b.dataset.reset;C.texts[k]=BASE_TEXTS[k];const o=[...host.querySelectorAll("details")].map(d=>d.open);renderTexts();host.querySelectorAll("details").forEach((d,i)=>d.open=o[i]);changed()});
+  allTextMeta().forEach(m=>{const v=getV(m);if(q&&!(v.toLowerCase().includes(q)||m.grp.toLowerCase().includes(q)||m.label.toLowerCase().includes(q)))return;(groups[m.grp]=groups[m.grp]||[]).push(m)});
+  const host=$("#texts");host.innerHTML=Object.entries(groups).map(([g,ms],gi)=>`<details class="group"${q||gi===0?" open":""}><summary>${esc(g)}<span class="cnt">${ms.length}</span></summary><div class="gbody">${ms.map(m=>{const v=getV(m),ch=v!==baseV(m),id=(m.ui?"ui-":"tx-")+m.key;
+    return `<div class="fld${ch?" changed":""}"><div class="top"><label for="${id}">${esc(m.label)}</label>${ch?`<button type="button" class="btn link" data-reset="${id}">Restaurar</button>`:""}</div><textarea id="${id}" rows="${Math.min(6,Math.max(1,Math.ceil(v.length/48)))}">${esc(v)}</textarea>${m.html?`<span class="hint">Aceita &lt;br&gt; para quebrar linha e &lt;em&gt; para destacar.</span>`:""}${/\{[a-z0-9]+\}/i.test(baseV(m))?`<span class="hint">Mantenha os campos entre chaves, como ${esc((baseV(m).match(/\{[a-z0-9]+\}/i)||[""])[0])}: eles viram os números.</span>`:""}</div>`}).join("")}</div></details>`).join("")||`<p class="hint">Nenhum texto encontrado.</p>`;
+  const setV=(id,v)=>{const k=id.slice(3);if(id.startsWith("ui-")){C.ui=C.ui||{};C.ui[k]=v}else C.texts[k]=v};
+  const metaOf=id=>allTextMeta().find(m=>(m.ui?"ui-":"tx-")+m.key===id);
+  host.querySelectorAll("textarea").forEach(t=>t.addEventListener("input",()=>{setV(t.id,t.value);t.closest(".fld").classList.toggle("changed",t.value!==baseV(metaOf(t.id)));changed()}));
+  host.querySelectorAll("[data-reset]").forEach(b=>b.onclick=()=>{const id=b.dataset.reset,m=metaOf(id);setV(id,baseV(m));const o=[...host.querySelectorAll("details")].map(d=>d.open);renderTexts();host.querySelectorAll("details").forEach((d,i)=>d.open=o[i]);changed()});
 }
 $("#q").addEventListener("input",renderTexts);
 
@@ -388,6 +411,8 @@ let API=false;
 function log(t){const l=$("#log");if(l.firstElementChild&&l.firstElementChild.textContent==="Nada salvo ainda.")l.innerHTML="";const s=document.createElement("span");s.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+" · "+t;l.prepend(s)}
 function usedPending(){const used=new Set([...Object.values(C.images),...(C.slides||[])]);return Object.keys(PENDING).filter(k=>used.has(k))}
 function cleanContent(){const o=JSON.parse(JSON.stringify(C));delete o._preview;delete o._keepSc;
+  const ui={};for(const k in (o.ui||{}))if(UIDEF[k]&&o.ui[k]!==UIDEF[k][2])ui[k]=o.ui[k];o.ui=ui;
+  const rd={};for(const k in (o.radius||{}))if(o.radius[k]!==""&&o.radius[k]!=null)rd[k]=o.radius[k];o.radius=rd;
   const t={};for(const k in o.texts)if(o.texts[k]!==BASE_TEXTS[k])t[k]=o.texts[k];o.texts=t;
   const im={};for(const k in o.images)if(o.images[k]!==k)im[k]=o.images[k];o.images=im;o.version=(PUB&&PUB.version||1);o.updated=new Date().toISOString();return o}
 function apiState(ok,detail){API=ok;const m=$("#apiMsg");m.className="msg "+(ok?"ok":"warn");m.textContent=ok?"Conectado. Tudo o que você salvar aparece no site na hora.":(detail||"O armazenamento do site ainda não está configurado. Faça a configuração abaixo uma única vez.");$("#setupBox").hidden=ok}
@@ -414,7 +439,14 @@ let dt=null;$("#discard").onclick=e=>{const b=e.currentTarget;if(!b.dataset.c){b
 window.addEventListener("beforeunload",e=>{if(DIRTY){e.preventDefault();e.returnValue=""}});
 
 // ---------- boot ----------
-function renderAll(){renderTheme();renderPalette();renderTexts();renderImages();renderSlides();renderScen()}
+let SECS=[];
+function renderRadius(){C.radius=C.radius||{};
+  $("#radius").innerHTML=SECS.map(s=>{const v=C.radius[s.id];const set=v!=null&&v!=="";return `<div class="rad-row"><div class="top"><b>${esc(s.name)}</b><span class="hint" id="rv-${s.id}">${set?v+" px":"Padrão"}</span></div><div class="rad-ctl"><input type="range" min="0" max="60" step="1" value="${set?v:20}" data-sec="${s.id}" aria-label="Cantos de ${esc(s.name)}"><button type="button" class="btn sm" data-rdef="${s.id}"${set?"":" disabled"}>Padrão</button></div></div>`}).join("");
+  $$("#radius input[type=range]").forEach(r=>r.addEventListener("input",()=>{C.radius[r.dataset.sec]=+r.value;$("#rv-"+r.dataset.sec).textContent=r.value+" px";const b=$(`[data-rdef="${r.dataset.sec}"]`);b.disabled=false;changed()}));
+  $$("[data-rdef]").forEach(b=>b.onclick=()=>{delete C.radius[b.dataset.rdef];renderRadius();changed()});}
+$("#radAll").addEventListener("input",e=>{$("#radAllV").textContent=e.target.value+" px";SECS.forEach(s=>C.radius[s.id]=+e.target.value);renderRadius();changed()});
+$("#radReset").onclick=()=>{C.radius={};renderRadius();changed()};
+function renderAll(){renderTheme();renderPalette();renderTexts();renderImages();renderSlides();renderScen();renderRadius()}
 (async()=>{
   try{const gj=u=>fetch(u,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status));
     const [html,apiC,stat,sc]=await Promise.all([fetch("../",{cache:"no-store"}).then(r=>r.text()),gj("../api/content").catch(e=>({__err:e})),gj("../content.json").catch(()=>({})),gj("../api/scenarios").catch(()=>null)]);
@@ -422,8 +454,10 @@ function renderAll(){renderTheme();renderPalette();renderTexts();renderImages();
     if(Array.isArray(sc))SCEN=sc;
     const pub=(!apiC.__err&&Object.keys(apiC).length)?apiC:stat;
     const doc=new DOMParser().parseFromString(html,"text/html");buildMeta(doc);
+    const mu=html.match(/const UI_DEF=(\{[\s\S]*?\});\nconst DEFAULT_CONTENT/);if(mu)UIDEF=JSON.parse(mu[1]);
+    SECS=[...doc.querySelectorAll("[data-sec]")].map(el=>{const id=el.dataset.sec;let name=id==="apresentacao"?"Apresentação (slides)":id==="calculos"?"Cálculos (blocos e cartões)":"";if(!name){const eb=el.querySelector(".eyebrow");name="Marca · "+(el.classList.contains("hero")?"Abertura":el.classList.contains("contact")?"Contato":eb?eb.textContent.trim():id)}return {id,name}});
     const m=html.match(/const DEFAULT_CONTENT=(\{[\s\S]*?\});\nlet CONTENT/);const def=m?JSON.parse(m[1]):{theme:{},texts:{},images:{},palette:[],slides:[]};
-    const merge=(d,p)=>({...d,...p,theme:{...d.theme,...(p.theme||{})},texts:{...BASE_TEXTS,...(p.texts||{})},images:{...d.images,...(p.images||{})},meta:{...(d.meta||{}),...(p.meta||{})}});
+    const merge=(d,p)=>({...d,...p,ui:{...(p.ui||{})},radius:{...(p.radius||{})},theme:{...d.theme,...(p.theme||{})},texts:{...BASE_TEXTS,...(p.texts||{})},images:{...d.images,...(p.images||{})},meta:{...(d.meta||{}),...(p.meta||{})}});
     PUB=merge(def,pub);
     const draft=LS.get("felicia-cms-draft",null);
     C=draft?merge(def,draft):JSON.parse(JSON.stringify(PUB));
