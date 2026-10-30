@@ -1,7 +1,7 @@
 const MULT_KEYS={mov:"Movimento do salão",del:"Pedidos de delivery",eq:"Tamanho da equipe",rep:"Repasse aos cotistas"};
 const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
   pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,custoFunc:5000,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
-  capex:900000,reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
+  reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
 
 const GROUPS=[
  {t:"Salão",open:true,modeSwitch:true,c:[
@@ -40,7 +40,6 @@ const GROUPS=[
   ["mkt","Marca e marketing",0,30000,500,"R$",""],
   ["manut","Manutenção",0,10000,500,"R$",""],
   ["adm","Administrativo",0,15000,500,"R$","Contador, sistema, seguro"],
-  ["capex","Investimento em obra",200000,2000000,10000,"R$","Depreciado em 10 anos"],
   ["reaj","Reajuste anual dos fixos",0,15,0.5,"%",""]]},
  {t:"Crescimento",c:[
   ["ramp1","Movimento no mês 1",30,100,1,"%",""],
@@ -99,7 +98,6 @@ function run(p){
   const varPct=(p.cmv+p.simples+p.cartao+delivShare*p.custoDeliv)/100;
   const equipe=p.func*p.custoFunc;
   const fixoBase=equipe+p.prolabore+p.aluguel+p.energia+p.mkt+p.manut+p.adm;
-  const dep=p.capex/120;
   const ramp=[p.ramp1/100,p.ramp2/100,...Array(10).fill(1)];
   const y1=ramp.map(f=>total*f), A1=y1.reduce((a,b)=>a+b,0);
   const A2=A1*(1+p.g2/100), A3=A2*(1+p.g3/100);
@@ -108,7 +106,7 @@ function run(p){
   let F=0,L=0,Pg=0,C=0,cash=0,minCash=0,quit=null;
   const m=[],cum={};
   revs.forEach((r,i)=>{const y=Math.floor(i/12);
-    const fixo=fixoBase*Math.pow(1+p.reaj/100,y)+dep;
+    const fixo=fixoBase*Math.pow(1+p.reaj/100,y);
     const lucro=r*(1-varPct)-fixo;
     const pay=Math.max(0,Math.min(rep[y],p.aporte-Pg));
     Pg+=pay;F+=r;L+=lucro;C+=r-lucro;cash+=lucro-pay;minCash=Math.min(minCash,cash);
@@ -119,9 +117,9 @@ function run(p){
   let pq=quit;
   if(pq===null){let pg=Pg,i=36;const last=Math.max(rep[2],0);while(pg<p.aporte&&i<240&&last>0){pg+=last;i++}pq=pg>=p.aporte?i:null}
   const mature=revs[11];
-  const lucroM=mature*(1-varPct)-fixoBase-dep;
-  const be=(fixoBase+dep)/(1-varPct);
-  return {delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,fixoBase,dep,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
+  const lucroM=mature*(1-varPct)-fixoBase;
+  const be=fixoBase/(1-varPct);
+  return {delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
     cost:{cmv:mature*p.cmv/100,simples:mature*p.simples/100,cartao:mature*p.cartao/100,del:mature*delivShare*p.custoDeliv/100}};
 }
 
@@ -203,10 +201,10 @@ function update(){
   // cost bars
   const items=[["Insumos (CMV)",R.cost.cmv],["Equipe ("+nf(E.func,1)+" pessoas)",R.equipe],["Pró-labore",P.prolabore],["Imposto (Simples)",R.cost.simples],["Taxa de cartão",R.cost.cartao],
     ["Aluguel e IPTU",P.aluguel],["Marca e marketing",P.mkt],["Delivery (app e embalagem)",R.cost.del],["Luz, água e gás",P.energia],
-    ["Administrativo",P.adm],["Depreciação",R.dep],["Manutenção",P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+    ["Administrativo",P.adm],["Manutenção",P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
   const mx=Math.max(...items.map(x=>x[1]));
   document.getElementById("bars").innerHTML=items.map(([n,v])=>`<span class="n">${n}</span><span class="t"><div style="width:${v/mx*100}%"></div></span><span class="val">${brl(v)}<small>${nf(v/R.mature*100,1)}%</small></span>`).join("");
-  const fixo=R.fixoBase+R.dep, var$=R.mature*R.varPct;
+  const fixo=R.fixoBase, var$=R.mature*R.varPct;
   document.getElementById("costfoot").innerHTML=`<span>Custo fixo <b>${brl(fixo)}/mês</b></span><span>Variável <b>${nf(R.varPct*100,1)}% da receita</b></span><span>Custo total <b>${brl(fixo+var$)}/mês</b></span>`;
 
   // compare
