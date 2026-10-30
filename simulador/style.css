@@ -78,6 +78,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .modeseg .seg{align-self:flex-start}
 .week{display:flex;flex-direction:column;gap:14px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
 .subhead{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);padding:6px 0 12px}
+.cload body{visibility:hidden}
 .taxban{background:var(--red-soft);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
 .taxban .tb-l{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
 .taxban .tb-big{display:flex;flex-direction:column;gap:2px}

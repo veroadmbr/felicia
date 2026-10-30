@@ -44,6 +44,11 @@ nav.top img{height:42px;width:auto}
 .eyebrow{color:var(--red);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:12px}
 .on-red .eyebrow{color:var(--cream);opacity:.85}
 h1,h2,.big-type,.gostou,.specimen{font-family:var(--font-display,var(--font))}
+.splash{display:none}
+.cload .splash{display:flex;position:fixed;inset:0;z-index:90;background:#D8131D;align-items:center;justify-content:center}
+.cload .splash img{width:min(220px,50vw);opacity:.95;animation:pulse 1.2s ease-in-out infinite alternate}
+.cload body>*:not(.splash):not(#gate):not(script){visibility:hidden}
+@keyframes pulse{from{opacity:.55}to{opacity:1}}
 h1,h2,h3{margin:0;font-weight:500;text-transform:uppercase;text-wrap:balance;letter-spacing:-.01em;line-height:1.02}
 h2{font-size:clamp(28px,4vw,48px)}
 h3{font-size:18px;text-transform:none;font-weight:600;letter-spacing:0}
@@ -244,6 +249,8 @@ th.cur,td.cur{background:var(--red-soft)}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 
+<script>document.documentElement.classList.add("cload")</script>
+<div class="splash" aria-hidden="true"><img src="img/logo.png" alt=""></div>
 <nav aria-label="Seções" class="top gut">
 <div class="in">
 <a aria-label="Felícia pizzabar" href="#marca"><img alt="Felícia pizzabar" data-img="img/logo.png" src="img/logo.png"/></a>
@@ -775,6 +782,8 @@ function drawChart(R){if(!window.Chart)return;const cs=getComputedStyle(document
       y:{position:"left",grid:{color:line},ticks:{...tick,callback:v=>brl(v)}},y2:{position:"right",grid:{display:false},ticks:{...tick,callback:v=>brl(v)}}}};
   if(chart){chart.data=data;chart.options=opts;chart.update()}else chart=new Chart(document.getElementById("chart"),{data,options:opts})}
 // ---------- conteúdo (CMS) ----------
+function revealPage(){const go=()=>document.documentElement.classList.remove("cload");const fl=[...document.fonts?[document.fonts.ready]:[]];Promise.race([Promise.all(fl),new Promise(r=>setTimeout(r,600))]).then(()=>requestAnimationFrame(go))}
+setTimeout(()=>document.documentElement.classList.remove("cload"),4000);
 const FONTS_LOADED=new Set(["Outfit"]);
 function loadFont(f){if(!f||FONTS_LOADED.has(f))return;FONTS_LOADED.add(f);const l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+encodeURIComponent(f).replace(/%20/g,"+")+":wght@300;400;500;600;700;800&display=swap";document.head.appendChild(l)}
 function mix(a,b,w){const x=hexRgb(a),y=hexRgb(b);return "#"+x.map((v,i)=>Math.round(v*w+y[i]*(1-w)).toString(16).padStart(2,"0")).join("")}
@@ -799,7 +808,7 @@ function applyContent(c){
 }
 window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="felicia-preview"){const c=e.data.content;if(e.data.view&&e.data.view!==(location.hash||"#marca").slice(1))location.hash=e.data.view;applyContent(c)}});
 const getJSON=u=>fetch(u,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status));
-getJSON("api/content").then(j=>j&&Object.keys(j).length?j:getJSON("content.json")).catch(()=>getJSON("content.json")).then(j=>{if(j)applyContent({...DEFAULT_CONTENT,...j,theme:{...DEFAULT_CONTENT.theme,...(j.theme||{})},texts:{...DEFAULT_CONTENT.texts,...(j.texts||{})},images:{...DEFAULT_CONTENT.images,...(j.images||{})}})}).catch(()=>{});
+getJSON("api/content").then(j=>j&&Object.keys(j).length?j:getJSON("content.json")).catch(()=>getJSON("content.json")).then(j=>{if(j)applyContent({...DEFAULT_CONTENT,...j,theme:{...DEFAULT_CONTENT.theme,...(j.theme||{})},texts:{...DEFAULT_CONTENT.texts,...(j.texts||{})},images:{...DEFAULT_CONTENT.images,...(j.images||{})}})}).catch(()=>{}).finally(revealPage);
 renderPalette();renderPrem();show();
 </script>
 </body>
