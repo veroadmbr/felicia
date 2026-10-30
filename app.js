@@ -1,12 +1,13 @@
 const MULT_KEYS={mov:"Movimento do salão",del:"Pedidos de delivery",eq:"Tamanho da equipe",rep:"Repasse aos cotistas"};
-const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",a0:0,a1:0,a2:0,a3:0,a4:0,a5:0,a6:0,ticketAlmoco:75,d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
+const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",a0:0,a1:0,a2:0,a3:0,a4:0,a5:0,a6:0,al_pizzas:0.8,al_precoPizza:55,al_bebidas:1.2,al_precoBebida:14,al_sobremesa:0.15,al_precoSobremesa:28,d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
   pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,sal:3500,enc_fgts:8,enc_13:8.33,enc_ferias:11.11,enc_multa:3.2,enc_inss:0,enc_rat:0,enc_terc:0,enc_vt:200,enc_ref:350,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
   reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
 
 const GROUPS=[
  {t:"Salão",open:true,modeSwitch:true,c:[
   ["lugares","Lugares no salão",20,200,1,"","Mesas × cadeiras"]]},
- {t:"Jantar",open:true,c:[
+ {t:"Cálculo Jantar",open:true,c:[
+  ["__sub__","Pessoas por dia"],
   ["d0","Segunda",0,400,1,"pessoas","0 = sem jantar","dias"],
   ["d1","Terça",0,400,1,"pessoas","","dias"],
   ["d2","Quarta",0,400,1,"pessoas","","dias"],
@@ -16,23 +17,32 @@ const GROUPS=[
   ["d6","Domingo",0,400,1,"pessoas","","dias"],
   ["giro","Giro por noite",0.5,3.5,0.05,"x","Quantas vezes cada lugar é ocupado","giro"],
   ["aprov","Aproveitamento dos lugares",50,100,1,"%","Cadeiras vazias em mesas parciais","giro"],
-  ["dias","Dias abertos por mês",16,30,1,"dias","","giro"]]},
- {t:"Almoço",open:true,note:"Pessoas no almoço em cada dia. Deixe 0 nos dias sem almoço.",c:[
-  ["ticketAlmoco","Ticket médio do almoço",0,250,1,"R$","Por cliente"],
-  ["a0","Segunda",0,400,1,"pessoas",""],
+  ["dias","Dias abertos por mês",16,30,1,"dias","","giro"],
+  ["__sub__","Ticket médio do jantar"],
+  ["__calc__","ticket"],
+  ["pizzas","Pizzas por cliente",0,2,0.05,"un",""],
+  ["precoPizza","Preço médio da pizza",0,150,1,"R$",""],
+  ["bebidas","Bebidas por cliente",0,5,0.1,"un","Drinks, vinho, chopp, soft"],
+  ["precoBebida","Preço médio da bebida",0,80,1,"R$",""],
+  ["sobremesa","Sobremesas por cliente",0,1,0.05,"un",""],
+  ["precoSobremesa","Preço da sobremesa",0,60,1,"R$",""]]},
+ {t:"Cálculo Almoço",open:true,c:[
+  ["__sub__","Pessoas por dia"],
+  ["a0","Segunda",0,400,1,"pessoas","0 = sem almoço"],
   ["a1","Terça",0,400,1,"pessoas",""],
   ["a2","Quarta",0,400,1,"pessoas",""],
   ["a3","Quinta",0,400,1,"pessoas",""],
   ["a4","Sexta",0,400,1,"pessoas",""],
   ["a5","Sábado",0,400,1,"pessoas",""],
-  ["a6","Domingo",0,400,1,"pessoas",""]]},
- {t:"Ticket médio do jantar",open:true,calc:"ticket",c:[
-  ["pizzas","Pizzas por cliente",0.3,2,0.05,"un",""],
-  ["precoPizza","Preço médio da pizza",30,150,1,"R$",""],
-  ["bebidas","Bebidas por cliente",0,5,0.1,"un","Drinks, vinho, chopp, soft"],
-  ["precoBebida","Preço médio da bebida",8,80,1,"R$",""],
-  ["sobremesa","Sobremesas por cliente",0,1,0.05,"un",""],
-  ["precoSobremesa","Preço da sobremesa",10,60,1,"R$",""]]},
+  ["a6","Domingo",0,400,1,"pessoas",""],
+  ["__sub__","Ticket médio do almoço"],
+  ["__calc__","ticketAl"],
+  ["al_pizzas","Pizzas por cliente",0,2,0.05,"un",""],
+  ["al_precoPizza","Preço médio da pizza",0,150,1,"R$",""],
+  ["al_bebidas","Bebidas por cliente",0,5,0.1,"un",""],
+  ["al_precoBebida","Preço médio da bebida",0,80,1,"R$",""],
+  ["al_sobremesa","Sobremesas por cliente",0,1,0.05,"un",""],
+  ["al_precoSobremesa","Preço da sobremesa",0,60,1,"R$",""]]},
  {t:"Delivery",c:[
   ["pedidos","Pedidos por dia",0,300,1,"pedidos","Média por dia aberto, somando almoço e jantar"],
   ["ticketDeliv","Ticket por pedido",50,200,1,"R$",""],
@@ -112,7 +122,7 @@ function brl(v){if(!isFinite(v))v=0;const a=Math.abs(v),s=v<0?"–":"";
 function run(p){
   const ticket=p.pizzas*p.precoPizza+p.bebidas*p.precoBebida+p.sobremesa*p.precoSobremesa;
   const WK=4.33, DAYS=[p.d0,p.d1,p.d2,p.d3,p.d4,p.d5,p.d6], LUNCH=[p.a0,p.a1,p.a2,p.a3,p.a4,p.a5,p.a6];
-  const sumA=LUNCH.reduce((a,b)=>a+b,0), almocoM=sumA*WK, salaoAlmoco=almocoM*p.ticketAlmoco;
+  const sumA=LUNCH.reduce((a,b)=>a+b,0), almocoM=sumA*WK, ticketAl=p.al_pizzas*p.al_precoPizza+p.al_bebidas*p.al_precoBebida+p.al_sobremesa*p.al_precoSobremesa, salaoAlmoco=almocoM*ticketAl;
   let pessoas,salao,dias,pico;
   let jantarM;
   if(p.modo==="dias"){const open=DAYS.filter((x,i)=>x>0||LUNCH[i]>0).length;dias=Math.max(open,1)*WK;jantarM=DAYS.reduce((a,b)=>a+b,0)*WK;pico=Math.max(...DAYS,...LUNCH)}
@@ -150,7 +160,7 @@ function run(p){
   const mature=revs[11];
   const lucroM=mature*(1-varPct)-fixoBase;
   const be=fixoBase/(1-varPct);
-  return {LUNCH,jantarM,almocoM,salaoJantar,salaoAlmoco,ticketMedio,delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,T,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
+  return {ticketAl,LUNCH,jantarM,almocoM,salaoJantar,salaoAlmoco,ticketMedio,delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,T,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
     cost:{cmv:mature*p.cmv/100,simples:mature*p.simples/100,cartao:mature*p.cartao/100,del:mature*delivShare*p.custoDeliv/100}};
 }
 
@@ -166,8 +176,9 @@ GROUPS.forEach((g,gi)=>{
     ms.querySelectorAll("[data-reg]").forEach(b=>b.addEventListener("click",()=>{const pr=b.dataset.reg==="simples";P.enc_inss=pr?0:20;P.enc_rat=pr?0:2;P.enc_terc=pr?0:5.8;markCustom();syncControls();update()}))}
   if(g.modeSwitch){const ms=document.createElement("div");ms.className="modeseg";ms.innerHTML=`<span class="hint">Calcular o salão por</span><div class="seg" role="group" aria-label="Forma de cálculo do salão"><button type="button" id="modo-dias" data-modo="dias">Pessoas por dia</button><button type="button" id="modo-giro" data-modo="giro">Giro</button></div>`;d.appendChild(ms);
     ms.querySelectorAll("[data-modo]").forEach(b=>b.addEventListener("click",()=>{P.modo=b.dataset.modo;applyMode();update()}))}
-  if(g.calc==="ticket"){const c=document.createElement("div");c.className="calc";c.innerHTML=`<span>Ticket médio por cliente</span><b id="calc-ticket">–</b>`;d.appendChild(c)}
   g.c.forEach(([id,label,min,max,step,unit,hint,mode])=>{
+    if(id==="__sub__"){const h=document.createElement("div");h.className="subhead";h.textContent=label;d.appendChild(h);return}
+    if(id==="__calc__"){const c=document.createElement("div");c.className="calc";c.innerHTML=`<span>Ticket médio por cliente</span><b id="calc-${label}">–</b>`;d.appendChild(c);return}
     const w=document.createElement("div");w.className="ctl";if(mode)w.dataset.mode=mode;
     w.innerHTML=`<div class="row"><label for="r-${id}">${label}</label><span class="num"><input type="number" id="n-${id}" min="${min}" max="${max}" step="${step}" aria-label="${label}"><span>${unit}</span></span></div>
       <input type="range" id="r-${id}" min="${min}" max="${max}" step="${step}">${hint?`<span class="hint">${hint}</span>`:""}`;
@@ -178,7 +189,7 @@ GROUPS.forEach((g,gi)=>{
   });
   aside.appendChild(d);
 });
-function syncControls(){GROUPS.forEach(g=>g.c.forEach(([id,, , ,step])=>{const r=document.getElementById("r-"+id),n=document.getElementById("n-"+id);r.value=P[id];n.value=fmtVal(P[id],step)}))}
+function syncControls(){GROUPS.forEach(g=>g.c.forEach(([id,, , ,step])=>{if(id.startsWith("__"))return;const r=document.getElementById("r-"+id),n=document.getElementById("n-"+id);r.value=P[id];n.value=fmtVal(P[id],step)}))}
 function markCustom(){if(CUR)DIRTY=true}
 function applyMode(){document.querySelectorAll(".ctl[data-mode]").forEach(el=>el.hidden=el.dataset.mode!==P.modo);document.querySelectorAll("[data-modo]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.modo===P.modo))}
 
@@ -205,6 +216,7 @@ function update(){
   document.querySelectorAll("[data-reg]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.reg==="simples")===(P.enc_inss===0&&P.enc_rat===0&&P.enc_terc===0))));
   const E=eff(P,SC),R=run(E);
   document.getElementById("calc-ticket").textContent="R$ "+nf(R.ticket,2);
+  document.getElementById("calc-ticketAl").textContent="R$ "+nf(R.ticketAl,2);
 
   document.getElementById("k-fat").textContent=brl(R.mature);
   document.getElementById("k-fat-s").textContent="Ano 1 cheio · "+brl(R.mature*12)+" no ano";
@@ -217,11 +229,11 @@ function update(){
 
   const night=[
     [nf(R.pessoas,0),"Clientes no salão por dia"+(R.almocoM>0?" · almoço e jantar":"")],
-    ["R$ "+nf(R.ticketMedio,0),R.almocoM>0?"Ticket médio no salão · jantar R$ "+nf(R.ticket,0)+", almoço R$ "+nf(P.ticketAlmoco,0):"Ticket médio no salão"],
+    ["R$ "+nf(R.ticketMedio,0),R.almocoM>0?"Ticket médio no salão · jantar R$ "+nf(R.ticket,0)+", almoço R$ "+nf(R.ticketAl,0):"Ticket médio no salão"],
     [nf(R.pedidos,0)+" pedidos","Delivery por dia · "+nf(R.delivShare*100,0)+"% do faturamento"],
     [brl(R.total/R.dias),"Faturamento por dia"],
     [brl(R.be),"Ponto de equilíbrio por mês"],
-    [nf(R.giroImp,2)+"x","Giro médio por noite"]
+    [nf(R.giroImp,2)+"x","Giro médio por dia"]
   ];
   document.getElementById("night").innerHTML=night.map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
   const wk=document.getElementById("week");
@@ -230,7 +242,7 @@ function update(){
     const mx=Math.max(1,...J.map((d,i)=>d+A[i])),wkTot=J.reduce((a,b)=>a+b,0)+A.reduce((a,b)=>a+b,0);
     wk.hidden=false;
     wk.innerHTML=`<p class="note">Semana típica · ${nf(wkTot,0)} pessoas no salão por semana, ${nf(wkTot*R.WK,0)} por mês</p><div class="legend" style="margin-top:0"><span><i style="background:var(--red)"></i>Jantar</span><span><i style="background:var(--red-deep);opacity:.45"></i>Almoço</span></div><div class="bars">`+
-      J.map((d,i)=>{const a=A[i],t=d+a;return `<span class="n">${names[i]}</span><span class="t" style="display:flex"><div style="width:${d/mx*100}%;border-radius:0"></div><div style="width:${a/mx*100}%;border-radius:0;background:var(--red-deep);opacity:.45"></div></span><span class="val">${t?`${nf(t,0)} pessoas<small>${a?"almoço "+nf(a,0)+" · ":""}jantar ${nf(d,0)} · ${brl(d*R.ticket+a*P.ticketAlmoco)}</small>`:"fechado"}</span>`}).join("")+`</div>`}
+      J.map((d,i)=>{const a=A[i],t=d+a;return `<span class="n">${names[i]}</span><span class="t" style="display:flex"><div style="width:${d/mx*100}%;border-radius:0"></div><div style="width:${a/mx*100}%;border-radius:0;background:var(--red-deep);opacity:.45"></div></span><span class="val">${t?`${nf(t,0)} pessoas<small>${a?"almoço "+nf(a,0)+" · ":""}jantar ${nf(d,0)} · ${brl(d*R.ticket+a*R.ticketAl)}</small>`:"fechado"}</span>`}).join("")+`</div>`}
   else wk.hidden=true;
 
   // summary table
@@ -266,7 +278,7 @@ function update(){
   const Rs=sc.map(s=>run(eff(P,s)));
   const crow=(n,f)=>`<tr><td>${n}</td>${Rs.map((r,i)=>`<td class="${sc[i]===SC?"cur":""}">${f(r,sc[i])}</td>`).join("")}</tr>`;
   document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${names[s]}</th>`).join("")}</tr></thead><tbody>`+
-    crow("Giro médio por noite",r=>nf(r.giroImp,2)+"x")+
+    crow("Giro médio por dia",r=>nf(r.giroImp,2)+"x")+
     crow("Multiplicador de movimento",(r,k)=>nf(mult(P,k).mov,2)+"x")+
     crow("Pedidos de delivery por dia",r=>nf(r.pedidos,0))+
     crow("Delivery no faturamento",r=>nf(r.delivShare*100,0)+"%")+
