@@ -374,25 +374,13 @@ fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(c=>
 const enc64=o=>btoa(unescape(encodeURIComponent(o)));
 function siteNote(li,cls,txt){let n=li.querySelector(".site-note");if(!n){n=document.createElement("span");n.className="site-note";li.appendChild(n)}n.className="site-note "+cls;n.textContent=txt}
 async function publishToSite(it,btn,li){
-  let g={};try{g=JSON.parse(localStorage.getItem("felicia-cms-gh")||"{}")}catch(e){}
-  const prem={...DEFAULTS,...fromSaved(it)};
-  if(!g.token||!g.owner||!g.repo){
-    const code=enc64(JSON.stringify(prem)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-    const link=new URL("../?p="+code+"#calculos",location.href).href;
-    try{await navigator.clipboard.writeText(link)}catch(e){}
-    siteNote(li,"warn","O GitHub ainda não está conectado. Copiei o link do cenário: cole na aba Cálculos do CMS (endereço do site + /cms) ou envie para o Claude.");return}
-  btn.disabled=true;btn.textContent="Publicando…";
-  const H={Accept:"application/vnd.github+json",Authorization:"Bearer "+g.token,"X-GitHub-Api-Version":"2022-11-28"};
-  const path=(g.dir?g.dir.replace(/^\/|\/$/g,"")+"/":"")+"content.json",branch=g.branch||"main",api="https://api.github.com/repos/"+g.owner+"/"+g.repo+"/contents/"+path;
-  try{const r=await fetch(api+"?ref="+encodeURIComponent(branch),{headers:H});if(!r.ok)throw new Error(r.status===401?"token inválido":r.status===404?"content.json não encontrado no repositório":"erro "+r.status);
-    const cur=await r.json();const c=JSON.parse(decodeURIComponent(escape(atob(cur.content.replace(/\n/g,"")))));
-    c.premissas=prem;c.scenarioId=it.id;c.scenarioName=it.name;c.defaultScenario=it.sc||"base";c.updated=new Date().toISOString();
-    const w=await fetch(api,{method:"PUT",headers:{...H,"Content-Type":"application/json"},body:JSON.stringify({message:"Simulador: cenário principal do site = "+it.name,content:enc64(JSON.stringify(c,null,1)),sha:cur.sha,branch})});
-    if(!w.ok)throw new Error(w.status===403?"o token não tem permissão de escrita":"erro "+w.status);
-    SITE_SC=it.id;renderSaved();const li2=[...document.querySelectorAll("#savedList .saved-item")].find(x=>x.querySelector("b").textContent.startsWith(it.name));
-    if(li2)siteNote(li2,"ok","Publicado. O site mostra este cenário em cerca de 1 minuto.");
-  }catch(e){btn.disabled=false;btn.textContent="Usar no site";siteNote(li,"bad","Não foi possível publicar: "+e.message+".")}
-}
+  btn.disabled=true;btn.textContent="Gerando…";
+  let c={};try{const r=await fetch("../content.json",{cache:"no-store"});if(r.ok)c=await r.json()}catch(e){}
+  c.premissas={...DEFAULTS,...fromSaved(it)};c.scenarioId=it.id;c.scenarioName=it.name;c.defaultScenario=it.sc||"base";c.updated=new Date().toISOString();
+  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(c,null,1)],{type:"application/json"}));a.download="content.json";document.body.appendChild(a);a.click();a.remove();
+    siteNote(li,"ok","Baixei o content.json com este cenário. No GitHub, clique em Add file → Upload files, arraste o content.json para a pasta principal e confirme. Em cerca de 1 minuto o site mostra este cenário.")}
+  catch(e){siteNote(li,"bad","Não foi possível baixar o arquivo neste navegador.")}
+  btn.disabled=false;btn.textContent="Usar no site"}
 function renderSaved(){
   document.getElementById("savedCount").textContent=SAVED.length;
   const ul=document.getElementById("savedList");

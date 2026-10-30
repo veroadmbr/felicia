@@ -7,6 +7,7 @@
 <title>Felícia · CMS</title>
 <link rel="icon" href="../img/logo.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /* Layout: editor à esquerda (abas + campos), prévia ao vivo à direita; barra superior com status e Publicar */
 :root{
@@ -132,7 +133,7 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
   <span class="sp"></span>
   <span class="status" id="status">Carregando…</span>
   <button type="button" class="btn ghost sm" id="discard" hidden>Descartar alterações</button>
-  <button type="button" class="btn cream" id="publish">Publicar no site</button>
+  <button type="button" class="btn cream" id="publish">Baixar atualização</button>
 </header>
 
 <div class="app">
@@ -143,7 +144,7 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
       <button type="button" role="tab" data-tab="imagens">Imagens</button>
       <button type="button" role="tab" data-tab="slides">Apresentação</button>
       <button type="button" role="tab" data-tab="calculos">Cálculos</button>
-      <button type="button" role="tab" data-tab="publicar">Publicação</button>
+      <button type="button" role="tab" data-tab="publicar">Como publicar</button>
     </nav>
 
     <div class="pane" data-pane="cores">
@@ -202,7 +203,7 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
       <div class="box">
         <h3>Cenário publicado</h3>
         <div class="scen" id="scen"></div>
-        <span class="hint">A lista vem dos cenários salvos no simulador deste navegador. Salve no simulador para aparecer aqui.</span>
+        <span class="hint">A lista vem dos cenários salvos no simulador deste navegador. Depois de escolher, clique em Baixar atualização.</span>
       </div>
       <div class="box">
         <h3>Ou cole um link do investidor</h3>
@@ -221,36 +222,21 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
     </div>
 
     <div class="pane" data-pane="publicar" hidden>
-      <h2>Publicação</h2>
-      <p class="intro">O CMS salva as alterações no repositório do GitHub. A Vercel atualiza o site sozinha em cerca de 1 minuto.</p>
+      <h2>Como publicar</h2>
+      <p class="intro">O CMS não precisa de conexão com nada. Ele gera um zip com os arquivos alterados, do mesmo jeito que você já sobe no GitHub.</p>
       <div class="box">
-        <h3>Conexão com o GitHub</h3>
-        <div class="row2">
-          <div class="fld"><label for="ghOwner">Usuário ou organização</label><input type="text" id="ghOwner" placeholder="veroadmbr"></div>
-          <div class="fld"><label for="ghRepo">Repositório</label><input type="text" id="ghRepo" placeholder="felicia"></div>
-        </div>
-        <div class="row2">
-          <div class="fld"><label for="ghBranch">Branch</label><input type="text" id="ghBranch" placeholder="main"></div>
-          <div class="fld"><label for="ghDir">Pasta do site</label><input type="text" id="ghDir" placeholder="vazio = raiz"></div>
-        </div>
-        <div class="fld"><label for="ghToken">Token de acesso</label><input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_…"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn pri sm" id="ghTest">Salvar e testar conexão</button><button type="button" class="btn sm" id="ghForget">Esquecer token</button></div>
-        <p class="msg" id="ghMsg" hidden></p>
+        <h3>Passo a passo</h3>
         <ol class="steps">
-          <li>No GitHub, abra <b>Settings → Developer settings → Fine-grained tokens</b> e crie um token.</li>
-          <li>Em <b>Repository access</b>, escolha só o repositório do site.</li>
-          <li>Em <b>Permissions → Contents</b>, marque <b>Read and write</b>.</li>
-          <li>Cole o token aqui. Ele fica guardado só neste navegador.</li>
+          <li>Clique em <b>Baixar atualização</b>, no topo. O zip traz a pasta <b>felicia</b> só com os arquivos que mudaram.</li>
+          <li>Abra o repositório no GitHub e clique em <b>Add file → Upload files</b>.</li>
+          <li>Abra a pasta <b>felicia</b> do zip e arraste <b>o que está dentro dela</b> para o GitHub.</li>
+          <li>Clique em <b>Commit changes</b>. A Vercel atualiza o site em cerca de 1 minuto.</li>
         </ol>
+        <button type="button" class="btn red sm" id="publish2" style="align-self:flex-start">Baixar atualização</button>
       </div>
       <div class="box">
         <h3>Histórico desta sessão</h3>
-        <div class="log" id="log"><span>Nada publicado ainda.</span></div>
-      </div>
-      <div class="box">
-        <h3>Cópia de segurança</h3>
-        <span class="hint">Baixe o arquivo de conteúdo atual para guardar ou subir manualmente no GitHub.</span>
-        <button type="button" class="btn sm" id="download" style="align-self:flex-start">Baixar content.json</button>
+        <div class="log" id="log"><span>Nada baixado ainda.</span></div>
       </div>
     </div>
   </section>
@@ -280,7 +266,7 @@ const FONTS=["Outfit","DM Sans","Manrope","Plus Jakarta Sans","Sora","Urbanist",
 let PUB=null,C=null,BASE_TEXTS={},TEXTMETA=[],IMGUSE={},PENDING={},VIEW="marca",DIRTY=false;
 
 function status(t){$("#status").textContent=t}
-function setDirty(v){DIRTY=v;$("#discard").hidden=!v;status(v?"Alterações não publicadas":"Tudo publicado")}
+function setDirty(v){DIRTY=v;$("#discard").hidden=!v;status(v?"Alterações ainda não baixadas":"Sem alterações pendentes")}
 function persist(){const ok=LS.set("felicia-cms-draft",C);if(!ok)status("Rascunho grande demais para salvar no navegador. Publique para não perder.")}
 let pt=null;
 function changed(){setDirty(true);persist();clearTimeout(pt);pt=setTimeout(pushPreview,120)}
@@ -392,41 +378,26 @@ function renderScen(){const saved=LS.get("felicia-saved",[]),cur=LS.get("felicia
 $$("[data-def]").forEach(b=>b.addEventListener("click",()=>{C.defaultScenario=b.dataset.def;renderScen();changed()}));
 $("#useLink").onclick=()=>{const m=$("#linkMsg");m.hidden=false;try{const u=new URL($("#pasteLink").value.trim(),location.href);const q=u.searchParams.get("p");if(!q)throw 0;C.premissas=decodeP(q);C.scenarioId="__link";C.scenarioName="Cenário do link";m.className="msg ok";m.textContent="Premissas do link aplicadas.";renderScen();changed();setView("calculos")}catch(e){m.className="msg bad";m.textContent="Esse link não tem premissas. Use o botão Copiar link do investidor, no menu do simulador."}};
 
-// ---------- GitHub ----------
-const GH=()=>LS.get("felicia-cms-gh",{});
-function fillGh(){const g=GH();$("#ghOwner").value=g.owner||"";$("#ghRepo").value=g.repo||"";$("#ghBranch").value=g.branch||"main";$("#ghDir").value=g.dir||"";$("#ghToken").value=g.token||""}
-function readGh(){return {owner:$("#ghOwner").value.trim(),repo:$("#ghRepo").value.trim(),branch:$("#ghBranch").value.trim()||"main",dir:$("#ghDir").value.trim().replace(/^\/|\/$/g,""),token:$("#ghToken").value.trim()}}
-async function gh(g,path,opt={}){const r=await fetch("https://api.github.com/repos/"+g.owner+"/"+g.repo+path,{...opt,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+g.token,"X-GitHub-Api-Version":"2022-11-28",...(opt.body?{"Content-Type":"application/json"}:{})}});
-  if(!r.ok){let m="";try{m=(await r.json()).message}catch(e){}throw new Error(r.status+" "+m)}return r.status===204?null:r.json()}
-function ghMsg(cls,t){const m=$("#ghMsg");m.hidden=false;m.className="msg "+cls;m.textContent=t}
-$("#ghTest").onclick=async()=>{const g=readGh();LS.set("felicia-cms-gh",g);if(!g.owner||!g.repo||!g.token){ghMsg("warn","Preencha usuário, repositório e token.");return}
-  ghMsg("warn","Testando…");try{const r=await gh(g,"");await gh(g,"/git/ref/heads/"+encodeURIComponent(g.branch));ghMsg(r.permissions&&r.permissions.push===false?"bad":"ok",r.permissions&&r.permissions.push===false?"Conectado, mas o token não pode gravar. Dê permissão de escrita em Contents.":"Conectado a "+r.full_name+" ("+g.branch+").")}
-  catch(e){ghMsg("bad",/401/.test(e.message)?"Token inválido ou expirado.":/404/.test(e.message)?"Repositório ou branch não encontrado. Confira os nomes e se o token tem acesso a ele.":"Erro: "+e.message)}};
-$("#ghForget").onclick=()=>{const g=GH();delete g.token;LS.set("felicia-cms-gh",g);$("#ghToken").value="";ghMsg("ok","Token apagado deste navegador.")};
-function log(t){const l=$("#log");if(l.firstElementChild&&l.firstElementChild.textContent==="Nada publicado ainda.")l.innerHTML="";const s=document.createElement("span");s.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+" · "+t;l.prepend(s)}
+// ---------- publicação (zip) ----------
+function log(t){const l=$("#log");if(l.firstElementChild&&l.firstElementChild.textContent==="Nada baixado ainda.")l.innerHTML="";const s=document.createElement("span");s.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+" · "+t;l.prepend(s)}
 function usedPending(){const used=new Set([...Object.values(C.images),...(C.slides||[])]);return Object.keys(PENDING).filter(k=>used.has(k))}
 function cleanContent(){const o=JSON.parse(JSON.stringify(C));delete o._preview;delete o._keepSc;
   const t={};for(const k in o.texts)if(o.texts[k]!==BASE_TEXTS[k])t[k]=o.texts[k];o.texts=t;
   const im={};for(const k in o.images)if(o.images[k]!==k)im[k]=o.images[k];o.images=im;o.version=(PUB&&PUB.version||1);o.updated=new Date().toISOString();return o}
 const b64=s=>btoa(unescape(encodeURIComponent(s)));
-$("#publish").onclick=async()=>{const g=GH();
-  if(!g.owner||!g.repo||!g.token){$$(".tabs [data-tab]").find(b=>b.dataset.tab==="publicar").click();ghMsg("warn","Conecte o GitHub para publicar.");return}
-  const btn=$("#publish");btn.disabled=true;btn.textContent="Publicando…";
-  try{const pre=g.dir?g.dir+"/":"";const files=[];
-    for(const path of usedPending())files.push({path:pre+path,b64:PENDING[path].b64});
-    const out=cleanContent();files.push({path:pre+"content.json",b64:b64(JSON.stringify(out,null,1))});
-    status("Enviando "+files.length+" arquivo(s)…");
-    const ref=await gh(g,"/git/ref/heads/"+encodeURIComponent(g.branch));const base=ref.object.sha;
-    const commit=await gh(g,"/git/commits/"+base);
-    const tree=[];for(const f of files){const bl=await gh(g,"/git/blobs",{method:"POST",body:JSON.stringify({content:f.b64,encoding:"base64"})});tree.push({path:f.path,mode:"100644",type:"blob",sha:bl.sha})}
-    const nt=await gh(g,"/git/trees",{method:"POST",body:JSON.stringify({base_tree:commit.tree.sha,tree})});
-    const nc=await gh(g,"/git/commits",{method:"POST",body:JSON.stringify({message:"CMS: atualiza conteúdo do site",tree:nt.sha,parents:[base]})});
-    await gh(g,"/git/refs/heads/"+encodeURIComponent(g.branch),{method:"PATCH",body:JSON.stringify({sha:nc.sha})});
-    for(const p of usedPending())PENDING[p].sent=true;
-    PUB=JSON.parse(JSON.stringify(C));LS.del("felicia-cms-draft");setDirty(false);status("Publicado. O site atualiza em cerca de 1 minuto.");log("Publicado ("+files.length+" arquivo(s))");
-  }catch(e){status("Erro ao publicar");ghMsg("bad","Não foi possível publicar: "+e.message);log("Erro: "+e.message);$$(".tabs [data-tab]").find(b=>b.dataset.tab==="publicar").click()}
-  btn.disabled=false;btn.textContent="Publicar no site"};
-$("#download").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(cleanContent(),null,1)],{type:"application/json"}));a.download="content.json";a.click()};
+async function download(){
+  if(!window.JSZip){status("Não foi possível carregar o gerador de zip. Recarregue a página.");return}
+  const btns=[$("#publish"),$("#publish2")];btns.forEach(b=>{b.disabled=true;b.textContent="Gerando zip…"});
+  try{const z=new JSZip(),root=z.folder("felicia");const files=usedPending();
+    for(const path of files)root.file(path,PENDING[path].b64,{base64:true});
+    root.file("content.json",JSON.stringify(cleanContent(),null,1));
+    const blob=await z.generateAsync({type:"blob"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="felicia-atualizacao.zip";document.body.appendChild(a);a.click();a.remove();
+    for(const p of files)PENDING[p].sent=true;
+    PUB=JSON.parse(JSON.stringify(C));setDirty(false);status("Zip baixado. Suba no GitHub para atualizar o site.");log("Zip baixado ("+(files.length+1)+" arquivo(s))");
+  }catch(e){status("Erro ao gerar o zip: "+e.message)}
+  btns.forEach(b=>{b.disabled=false;b.textContent="Baixar atualização"})}
+$("#publish").onclick=download;$("#publish2").onclick=download;
 let dt=null;$("#discard").onclick=e=>{const b=e.currentTarget;if(!b.dataset.c){b.dataset.c=1;b.textContent="Confirmar descarte";dt=setTimeout(()=>{delete b.dataset.c;b.textContent="Descartar alterações"},3000);return}
   clearTimeout(dt);delete b.dataset.c;b.textContent="Descartar alterações";C=JSON.parse(JSON.stringify(PUB));PENDING={};LS.del("felicia-cms-draft");renderAll();setDirty(false);pushPreview()};
 window.addEventListener("beforeunload",e=>{if(usedPending().some(p=>!PENDING[p].sent)){e.preventDefault();e.returnValue=""}});
@@ -441,7 +412,7 @@ function renderAll(){renderTheme();renderPalette();renderTexts();renderImages();
     PUB=merge(def,pub);
     const draft=LS.get("felicia-cms-draft",null);
     C=draft?merge(def,draft):JSON.parse(JSON.stringify(PUB));
-    fillGh();renderAll();setDirty(!!draft);if(draft)status("Rascunho restaurado · alterações não publicadas");pushPreview();
+    renderAll();setDirty(!!draft);if(draft)status("Rascunho restaurado · alterações ainda não baixadas");pushPreview();
   }catch(e){status("Não foi possível carregar o site. Recarregue a página.")}
 })();
 </script>
