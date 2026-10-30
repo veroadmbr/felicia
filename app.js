@@ -1,9 +1,5 @@
-const PRESETS={
-  conservador:{giro:1.2,pedidos:18,func:9,rep1:5,rep2:7,rep3:9,d0:0,d1:45,d2:45,d3:50,d4:75,d5:80,d6:55},
-  base:{giro:1.5,pedidos:35,func:12,rep1:7,rep2:9.8,rep3:12.6,d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70},
-  otimista:{giro:2.0,pedidos:55,func:15,rep1:10,rep2:14,rep3:18,d0:0,d1:70,d2:75,d3:85,d4:130,d5:140,d6:95}
-};
-const DEFAULTS={modo:"dias",d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
+const MULT_KEYS={mov:"Movimento do salão",del:"Pedidos de delivery",eq:"Tamanho da equipe",rep:"Repasse aos cotistas"};
+const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
   pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,custoFunc:5000,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
   capex:900000,reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
 
@@ -51,6 +47,15 @@ const GROUPS=[
   ["ramp2","Movimento no mês 2",30,100,1,"%","Do mês 3 em diante: 100%"],
   ["g2","Crescimento no ano 2",-20,60,1,"%",""],
   ["g3","Crescimento no ano 3",-20,60,1,"%",""]]},
+ {t:"Multiplicadores dos cenários",note:"Aplicados sobre as premissas acima. O Base usa 1x em tudo.",c:[
+  ["mc_mov","Conservador · movimento do salão",0.3,1.5,0.01,"x",""],
+  ["mc_del","Conservador · pedidos de delivery",0.2,1.5,0.01,"x",""],
+  ["mc_eq","Conservador · tamanho da equipe",0.3,1.5,0.01,"x",""],
+  ["mc_rep","Conservador · repasse aos cotistas",0.2,1.5,0.001,"x",""],
+  ["mo_mov","Otimista · movimento do salão",0.8,2.5,0.01,"x",""],
+  ["mo_del","Otimista · pedidos de delivery",0.8,3,0.01,"x",""],
+  ["mo_eq","Otimista · tamanho da equipe",0.8,2.5,0.01,"x",""],
+  ["mo_rep","Otimista · repasse aos cotistas",0.8,3,0.001,"x",""]]},
  {t:"Investidor",c:[
   ["aporte","Aporte total",100000,2000000,10000,"R$",""],
   ["cotas","Número de cotas",1,6,1,"cotas",""],
@@ -61,15 +66,16 @@ const GROUPS=[
   ["caixa","Capital de giro",0,600000,10000,"R$",""]]}
 ];
 
-let P={...DEFAULTS}, SC="base", CUR=null, DIRTY=false, SAVED=[], SETS={};
+let P={...DEFAULTS}, SC="base", CUR=null, DIRTY=false, SAVED=[];
 const clone=o=>JSON.parse(JSON.stringify(o));
-function loadSets(sets,sc,fallback){SETS={};["conservador","base","otimista"].forEach(k=>{if(sets&&sets[k])SETS[k]={...DEFAULTS,...sets[k]}});SC=sc||"base";
-  if(!SETS[SC])SETS[SC]=fallback?{...DEFAULTS,...fallback}:{...DEFAULTS,...PRESETS[SC]};P=SETS[SC]}
-function setFor(k){return SETS[k]||{...P,...PRESETS[k]}}
-try{const s=JSON.parse(localStorage.getItem("felicia-sim")||"null");if(s){loadSets(s.sets,s.sc,s.p);CUR=s.cur||null;DIRTY=!!s.dirty}else loadSets(null,"base")}catch(e){loadSets(null,"base")}
+function mult(p,k){const pre=k==="conservador"?"mc_":k==="otimista"?"mo_":null;const g=x=>pre?p[pre+x]:1;return {mov:g("mov"),del:g("del"),eq:g("eq"),rep:g("rep")}}
+function eff(p,k){const m=mult(p,k),e={...p};e.giro=p.giro*m.mov;for(let i=0;i<7;i++)e["d"+i]=Math.round(p["d"+i]*m.mov);
+  e.pedidos=p.pedidos*m.del;e.func=p.func*m.eq;e.rep1=p.rep1*m.rep;e.rep2=p.rep2*m.rep;e.rep3=p.rep3*m.rep;return e}
+function fromSaved(o){if(!o)return {...DEFAULTS};const b=(o.sets&&o.sets.base)||o.p||{};return {...DEFAULTS,...b}}
+try{const s=JSON.parse(localStorage.getItem("felicia-sim")||"null");if(s){P=fromSaved(s);SC=s.sc||"base";CUR=s.cur||null;DIRTY=!!s.dirty}}catch(e){}
 try{SAVED=JSON.parse(localStorage.getItem("felicia-saved")||"[]")||[]}catch(e){SAVED=[]}
 const hhmm=d=>d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-function save(){let ok=true;try{localStorage.setItem("felicia-sim",JSON.stringify({sets:SETS,p:P,sc:SC,cur:CUR,dirty:DIRTY}))}catch(e){ok=false}
+function save(){let ok=true;try{localStorage.setItem("felicia-sim",JSON.stringify({p:P,sc:SC,cur:CUR,dirty:DIRTY}))}catch(e){ok=false}
   const a=document.getElementById("autosave");if(a)a.textContent=ok?"Alterações salvas automaticamente às "+hhmm(new Date())+".":"Este navegador bloqueou o salvamento automático. Use Salvar para guardar um cenário enquanto a página estiver aberta.";}
 function persistSaved(){try{localStorage.setItem("felicia-saved",JSON.stringify(SAVED))}catch(e){}}
 
@@ -121,10 +127,12 @@ function run(p){
 
 // ---------- controls ----------
 const aside=document.getElementById("controls");
+{const n=document.createElement("p");n.className="hint";n.style.margin="4px 0 8px";n.textContent="Tudo que você muda aqui vale para os três cenários. Conservador e Otimista aplicam os multiplicadores do fim da lista.";aside.appendChild(n)}
 function fmtVal(v,step){const d=step<1?(step<0.1?2:1):0;return d?String(+v.toFixed(d)):String(Math.round(v))}
 GROUPS.forEach((g,gi)=>{
   const d=document.createElement("details");if(g.open)d.open=true;
   d.innerHTML=`<summary>${g.t}</summary>`;
+  if(g.note){const n=document.createElement("p");n.className="hint";n.style.margin="0 0 12px";n.textContent=g.note;d.appendChild(n)}
   if(g.modeSwitch){const ms=document.createElement("div");ms.className="modeseg";ms.innerHTML=`<span class="hint">Calcular o salão por</span><div class="seg" role="group" aria-label="Forma de cálculo do salão"><button type="button" id="modo-dias" data-modo="dias">Pessoas por dia</button><button type="button" id="modo-giro" data-modo="giro">Giro</button></div>`;d.appendChild(ms);
     ms.querySelectorAll("[data-modo]").forEach(b=>b.addEventListener("click",()=>{P.modo=b.dataset.modo;applyMode();update()}))}
   if(g.calc==="ticket"){const c=document.createElement("div");c.className="calc";c.innerHTML=`<span>Ticket médio por cliente</span><b id="calc-ticket">–</b>`;d.appendChild(c)}
@@ -143,11 +151,10 @@ function syncControls(){GROUPS.forEach(g=>g.c.forEach(([id,, , ,step])=>{const r
 function markCustom(){if(CUR)DIRTY=true}
 function applyMode(){document.querySelectorAll(".ctl[data-mode]").forEach(el=>el.hidden=el.dataset.mode!==P.modo);document.querySelectorAll("[data-modo]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.modo===P.modo))}
 
-document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.sc;if(k===SC)return;
-  SETS[SC]=P;const nxt=SETS[k]||{...P,...PRESETS[k]};SC=k;P=SETS[k]=nxt;syncControls();applyMode();update()}));
+document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;update()}));
 (()=>{const rb=document.getElementById("resetSc");let t;rb.addEventListener("click",()=>{
   if(!rb.classList.contains("confirm")){rb.classList.add("confirm");rb.textContent="Confirmar: voltar ao padrão";t=setTimeout(()=>{rb.classList.remove("confirm");rb.textContent="Restaurar padrão"},3000);return}
-  clearTimeout(t);rb.classList.remove("confirm");rb.textContent="Restaurar padrão";P=SETS[SC]={...DEFAULTS,...PRESETS[SC]};markCustom();syncControls();applyMode();update()})})();
+  clearTimeout(t);rb.classList.remove("confirm");rb.textContent="Restaurar padrão";P={...DEFAULTS};markCustom();syncControls();applyMode();update()})})();
 document.getElementById("present").addEventListener("click",e=>{const on=document.body.classList.toggle("present");e.currentTarget.textContent=on?"Mostrar premissas":"Modo apresentação";chart&&chart.resize()});
 
 // ---------- render ----------
@@ -156,7 +163,7 @@ function css(v){return getComputedStyle(document.documentElement).getPropertyVal
 function update(){
   save();renderCur&&renderCur();
   document.querySelectorAll("[data-sc]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sc===SC));
-  const R=run(P);
+  const E=eff(P,SC),R=run(E);
   document.getElementById("calc-ticket").textContent="R$ "+nf(R.ticket,2);
 
   document.getElementById("k-fat").textContent=brl(R.mature);
@@ -191,10 +198,10 @@ function update(){
   rows.forEach(([n,k,key])=>{h+=`<tr${key?' class="key"':""}><td>${n}</td>${[12,24,36].map(x=>`<td>${brl(R.cum[x][k])}</td>`).join("")}</tr>`});
   h+=`<tr><td>Aporte devolvido</td>${[12,24,36].map(x=>{const c=R.cum[x];const done=R.quit&&R.quit<=x;return `<td>${nf(Math.min(c.pct,1)*100,0)}%${done?" (mês "+R.quit+")":""}</td>`}).join("")}</tr></tbody>`;
   document.getElementById("summary").innerHTML=h;
-  document.getElementById("annual").textContent=`Faturamento por ano: ano 1 ${brl(R.annual[0])} · ano 2 ${brl(R.annual[1])} · ano 3 ${brl(R.annual[2])}. Repasse por cota: R$ ${nf(P.rep1,1)} mil, R$ ${nf(P.rep2,1)} mil e R$ ${nf(P.rep3,1)} mil por mês.`;
+  document.getElementById("annual").textContent=`Faturamento por ano: ano 1 ${brl(R.annual[0])} · ano 2 ${brl(R.annual[1])} · ano 3 ${brl(R.annual[2])}. Repasse por cota: R$ ${nf(E.rep1,1)} mil, R$ ${nf(E.rep2,1)} mil e R$ ${nf(E.rep3,1)} mil por mês.`;
 
   // cost bars
-  const items=[["Insumos (CMV)",R.cost.cmv],["Equipe ("+P.func+" pessoas)",R.equipe],["Pró-labore",P.prolabore],["Imposto (Simples)",R.cost.simples],["Taxa de cartão",R.cost.cartao],
+  const items=[["Insumos (CMV)",R.cost.cmv],["Equipe ("+nf(E.func,1)+" pessoas)",R.equipe],["Pró-labore",P.prolabore],["Imposto (Simples)",R.cost.simples],["Taxa de cartão",R.cost.cartao],
     ["Aluguel e IPTU",P.aluguel],["Marca e marketing",P.mkt],["Delivery (app e embalagem)",R.cost.del],["Luz, água e gás",P.energia],
     ["Administrativo",P.adm],["Depreciação",R.dep],["Manutenção",P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
   const mx=Math.max(...items.map(x=>x[1]));
@@ -204,10 +211,11 @@ function update(){
 
   // compare
   const sc=["conservador","base","otimista"],names={conservador:"Conservador",base:"Base",otimista:"Otimista"};
-  const Rs=sc.map(s=>run(s===SC?P:setFor(s)));
+  const Rs=sc.map(s=>run(eff(P,s)));
   const crow=(n,f)=>`<tr><td>${n}</td>${Rs.map((r,i)=>`<td class="${sc[i]===SC?"cur":""}">${f(r,sc[i])}</td>`).join("")}</tr>`;
   document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${names[s]}</th>`).join("")}</tr></thead><tbody>`+
     crow("Giro médio por noite",r=>nf(r.giroImp,2)+"x")+
+    crow("Multiplicador de movimento",(r,k)=>nf(mult(P,k).mov,2)+"x")+
     crow("Pedidos de delivery por noite",r=>nf(r.pedidos,0))+
     crow("Delivery no faturamento",r=>nf(r.delivShare*100,0)+"%")+
     crow("Faturamento por mês",r=>brl(r.mature))+
@@ -266,7 +274,7 @@ document.getElementById("saveForm").addEventListener("submit",e=>{e.preventDefau
   const inp=document.getElementById("saveName");const name=inp.value.trim();
   if(!name){inp.placeholder="Dê um nome ao cenário para salvar";inp.focus();return}
   const now=new Date().toISOString();let it=SAVED.find(x=>x.name.toLowerCase()===name.toLowerCase());
-  SETS[SC]=P;if(it){it.p={...P};it.sets=clone(SETS);it.sc=SC;it.date=now}else{it={id:"c"+Date.now(),name,date:now,p:{...P},sets:clone(SETS),sc:SC};SAVED.unshift(it)}
+  if(it){it.p={...P};delete it.sets;it.sc=SC;it.date=now}else{it={id:"c"+Date.now(),name,date:now,p:{...P},sc:SC};SAVED.unshift(it)}
   CUR=it.id;DIRTY=false;persistSaved();inp.value="";save();renderSaved();renderCur()});
 function renderCur(){const c=document.getElementById("curName"),it=SAVED.find(x=>x.id===CUR);
   if(it){c.hidden=false;c.textContent="Cenário: "+it.name+(DIRTY?" · alterado":"")}else c.hidden=true}
@@ -275,13 +283,13 @@ function renderSaved(){
   const ul=document.getElementById("savedList");
   if(!SAVED.length){ul.innerHTML=`<li><p class="empty">Nenhum cenário salvo ainda. Ajuste as premissas, dê um nome e clique em Salvar.</p></li>`;return}
   ul.innerHTML="";
-  SAVED.forEach(it=>{const r=run({...DEFAULTS,...it.p});const d=new Date(it.date);
+  SAVED.forEach(it=>{const r=run(eff(fromSaved(it),it.sc||"base"));const d=new Date(it.date);
     const li=document.createElement("li");li.className="saved-item"+(it.id===CUR?" cur":"");
     li.innerHTML=`<b></b><span class="meta">${d.toLocaleDateString("pt-BR")} às ${hhmm(d)} · ${brl(r.mature)}/mês · lucro ${brl(r.lucroM)}/mês</span>
       <span class="btns"><button type="button" class="btn sm" data-a="open">Abrir</button><button type="button" class="btn sm" data-a="upd">Atualizar com o atual</button><button type="button" class="btn sm danger" data-a="del">Excluir</button></span>`;
     li.querySelector("b").textContent=it.name;
-    li.querySelector('[data-a="open"]').onclick=()=>{loadSets(it.sets?clone(it.sets):null,it.sc||SC,it.p);CUR=it.id;DIRTY=false;syncControls();applyMode();update();renderSaved()};
-    li.querySelector('[data-a="upd"]').onclick=()=>{SETS[SC]=P;it.p={...P};it.sets=clone(SETS);it.sc=SC;it.date=new Date().toISOString();CUR=it.id;DIRTY=false;persistSaved();save();renderSaved();renderCur()};
+    li.querySelector('[data-a="open"]').onclick=()=>{P=fromSaved(it);SC=it.sc||SC;CUR=it.id;DIRTY=false;syncControls();applyMode();update();renderSaved()};
+    li.querySelector('[data-a="upd"]').onclick=()=>{it.p={...P};delete it.sets;it.sc=SC;it.date=new Date().toISOString();CUR=it.id;DIRTY=false;persistSaved();save();renderSaved();renderCur()};
     const del=li.querySelector('[data-a="del"]');let t;
     del.onclick=()=>{if(!del.classList.contains("confirm")){del.classList.add("confirm");del.textContent="Confirmar exclusão";t=setTimeout(()=>{del.classList.remove("confirm");del.textContent="Excluir"},3000);return}
       clearTimeout(t);SAVED=SAVED.filter(x=>x.id!==it.id);if(CUR===it.id){CUR=null;DIRTY=false}persistSaved();save();renderSaved();renderCur()};
