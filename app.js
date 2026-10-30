@@ -24,7 +24,7 @@ const GROUPS=[
   ["sobremesa","Sobremesas por cliente",0,1,0.05,"un",""],
   ["precoSobremesa","Preço da sobremesa",10,60,1,"R$",""]]},
  {t:"Delivery",c:[
-  ["pedidos","Pedidos por noite",0,200,1,"pedidos","Média nas noites em que a casa abre"],
+  ["pedidos","Pedidos por dia",0,300,1,"pedidos","Média por dia aberto, somando almoço e jantar"],
   ["ticketDeliv","Ticket por pedido",50,200,1,"R$",""],
   ["custoDeliv","Custo do delivery",0,35,0.5,"%","App, embalagem e entrega"]]},
  {t:"Custos variáveis",c:[
@@ -183,10 +183,10 @@ function update(){
   document.getElementById("k-36-s").textContent=brl(R.cum[36].dist)+" para distribuição";
 
   const night=[
-    [nf(R.pessoas,0),"Clientes no salão por noite"],
+    [nf(R.pessoas,0),"Clientes no salão por dia"],
     ["R$ "+nf(R.ticket,0),"Ticket médio no salão"],
-    [nf(R.pedidos,0)+" pedidos","Delivery por noite · "+nf(R.delivShare*100,0)+"% do faturamento"],
-    [brl(R.total/R.dias),"Faturamento por noite"],
+    [nf(R.pedidos,0)+" pedidos","Delivery por dia · "+nf(R.delivShare*100,0)+"% do faturamento"],
+    [brl(R.total/R.dias),"Faturamento por dia"],
     [brl(R.be),"Ponto de equilíbrio por mês"],
     [nf(R.giroImp,2)+"x","Giro médio por noite"]
   ];
@@ -223,7 +223,7 @@ function update(){
   document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${names[s]}</th>`).join("")}</tr></thead><tbody>`+
     crow("Giro médio por noite",r=>nf(r.giroImp,2)+"x")+
     crow("Multiplicador de movimento",(r,k)=>nf(mult(P,k).mov,2)+"x")+
-    crow("Pedidos de delivery por noite",r=>nf(r.pedidos,0))+
+    crow("Pedidos de delivery por dia",r=>nf(r.pedidos,0))+
     crow("Delivery no faturamento",r=>nf(r.delivShare*100,0)+"%")+
     crow("Faturamento por mês",r=>brl(r.mature))+
     crow("Lucro líquido por mês",r=>brl(r.lucroM))+
