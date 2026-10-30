@@ -228,6 +228,9 @@ confirmBtn("exampleBtn","Confirmar: carregar exemplo",()=>({...DEFAULTS}));
   document.addEventListener("click",e=>{if(!ml.hidden&&!ml.contains(e.target)&&e.target!==mb)setM(false)});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!ml.hidden){setM(false);mb.focus()}});
   document.getElementById("present").addEventListener("click",()=>setM(false));
+  const db=document.getElementById("dreBtn");db.addEventListener("click",async()=>{db.textContent="Gerando planilha…";db.disabled=true;
+    try{await buildDRE();db.textContent="Planilha baixada"}catch(e){db.textContent="Erro: "+e.message}
+    setTimeout(()=>{db.textContent="Baixar DRE (Excel)";db.disabled=false;setM(false)},1800)});
   const pw=document.getElementById("pwPanel");
   document.getElementById("pwOpen").addEventListener("click",()=>{setM(false);document.getElementById("savedPanel").hidden=true;pw.hidden=false;pw.querySelector("input").focus()});
   document.getElementById("pwClose").addEventListener("click",()=>{pw.hidden=true});
@@ -372,6 +375,91 @@ function drawChart(R){
 }
 try{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>update())}catch(e){}
 new MutationObserver(()=>update()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+// ---------- DRE em Excel ----------
+function loadExcel(){return window.ExcelJS?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js";s.onload=res;s.onerror=()=>rej(new Error("não foi possível carregar o gerador de Excel"));document.head.appendChild(s)})}
+function colL(n){let s="";n++;while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s}
+async function buildDRE(){
+  await loadExcel();
+  const E=eff(P,SC),R=run(E),M=R.m,tot=R.total||1;
+  const shJ=R.total?R.salaoJantar/tot:0,shA=R.total?R.salaoAlmoco/tot:0,shD=R.total?R.deliv/tot:0;
+  const scName={conservador:"Conservador",base:"Base",otimista:"Otimista"}[SC]||SC;
+  const curName=(SAVED.find(x=>x.id===CUR)||{}).name||"";
+  const fixItems=[["Equipe (salários, encargos e benefícios)",R.T.total],["Pró-labore",P.prolabore],["Aluguel e IPTU",P.aluguel],["Luz, água e gás",P.energia],["Marca e marketing",P.mkt],["Manutenção",P.manut],["Administrativo",P.adm]];
+  const months=M.map((x,i)=>{const y=Math.floor(i/12),f=Math.pow(1+P.reaj/100,y),r=x.r;
+    return {r,j:r*shJ,a:r*shA,d:r*shD,simp:r*P.simples/100,cart:r*P.cartao/100,cmv:r*P.cmv/100,del:r*shD*P.custoDeliv/100,fix:fixItems.map(([,v])=>v*f),pay:x.pay}});
+  const wb=new ExcelJS.Workbook();wb.creator="Felícia · Simulador";wb.created=new Date();
+  const RED="FFD8131D",CREAM="FFFAF5E6",SOFT="FFF7E1DF",GREY="FFF3F1EC";
+  const money='"R$" #,##0;[Red]-"R$" #,##0';
+  // ---- mensal
+  const ws=wb.addWorksheet("DRE mensal",{views:[{state:"frozen",xSplit:1,ySplit:4}]});
+  const N=months.length,first=2,lastC=first+N-1,totC=lastC+1;
+  ws.getColumn(1).width=44;for(let c=first;c<=totC;c++)ws.getColumn(c).width=13;
+  ws.getCell("A1").value="Felícia pizzabar · DRE projetada (36 meses)";ws.getCell("A1").font={bold:true,size:14,color:{argb:RED}};
+  ws.getCell("A2").value=`Cenário ${scName}${curName?" · "+curName:""} · gerado em ${new Date().toLocaleDateString("pt-BR")}`;ws.getCell("A2").font={color:{argb:"FF6E6762"}};
+  const hdr=ws.getRow(4);hdr.getCell(1).value="Mês";months.forEach((_,i)=>{hdr.getCell(first+i).value=`Mês ${i+1}`});hdr.getCell(totC).value="Total 36 meses";
+  hdr.eachCell(c=>{c.font={bold:true,color:{argb:CREAM}};c.fill={type:"pattern",pattern:"solid",fgColor:{argb:RED}};c.alignment={horizontal:"center"}});hdr.getCell(1).alignment={horizontal:"left"};
+  let row=5;const ref={};
+  const put=(key,label,vals,opt={})=>{const r=ws.getRow(row);r.getCell(1).value=label;
+    for(let i=0;i<N;i++){const c=r.getCell(first+i);c.value=typeof vals==="function"?{formula:vals(colL(first+i-1))}:vals[i];c.numFmt=money}
+    const t=r.getCell(totC);t.value={formula:`SUM(${colL(first-1)}${row}:${colL(lastC-1)}${row})`};t.numFmt=money;t.font={bold:true};
+    if(opt.sub){r.eachCell({includeEmpty:true},c=>{c.font={bold:true};c.fill={type:"pattern",pattern:"solid",fgColor:{argb:opt.strong?SOFT:GREY}}})}
+    if(opt.indent)r.getCell(1).alignment={indent:1};
+    ref[key]=row;row++};
+  const sec=label=>{const r=ws.getRow(row);r.getCell(1).value=label;r.getCell(1).font={bold:true,color:{argb:RED}};row++};
+  sec("RECEITA");
+  put("j","Salão · jantar",months.map(x=>x.j),{indent:1});put("a","Salão · almoço",months.map(x=>x.a),{indent:1});put("d","Delivery",months.map(x=>x.d),{indent:1});
+  put("rb","(=) Receita bruta",c=>`SUM(${c}${ref.j}:${c}${ref.d})`,{sub:1});
+  put("simp","(−) Imposto (Simples Nacional)",months.map(x=>-x.simp),{indent:1});put("cart","(−) Taxa de cartão",months.map(x=>-x.cart),{indent:1});
+  put("rl","(=) Receita líquida",c=>`${c}${ref.rb}+${c}${ref.simp}+${c}${ref.cart}`,{sub:1});
+  put("cmv","(−) Insumos (CMV)",months.map(x=>-x.cmv),{indent:1});
+  put("lb","(=) Lucro bruto",c=>`${c}${ref.rl}+${c}${ref.cmv}`,{sub:1});
+  put("del","(−) Delivery (app e embalagem)",months.map(x=>-x.del),{indent:1});
+  put("mc","(=) Margem de contribuição",c=>`${c}${ref.lb}+${c}${ref.del}`,{sub:1});
+  sec("DESPESAS FIXAS");
+  const fk=[];fixItems.forEach(([n],k)=>{put("f"+k,"(−) "+n,months.map(x=>-x.fix[k]),{indent:1});fk.push(ref["f"+k])});
+  put("fx","(=) Total de despesas fixas",c=>`SUM(${c}${fk[0]}:${c}${fk[fk.length-1]})`,{sub:1});
+  sec("RESULTADO");
+  put("ll","(=) Lucro líquido",c=>`${c}${ref.mc}+${c}${ref.fx}`,{sub:1,strong:1});
+  put("rep","(−) Repasse aos cotistas",months.map(x=>-x.pay),{indent:1});
+  put("sob","(=) Sobra após repasse",c=>`${c}${ref.ll}+${c}${ref.rep}`,{sub:1,strong:1});
+  // acumulados
+  const accRow=(key,label,src)=>{const r=ws.getRow(row);r.getCell(1).value=label;for(let i=0;i<N;i++){const cl=colL(first+i-1),c=r.getCell(first+i);c.value={formula:i===0?`${cl}${src}`:`${colL(first+i-2)}${row}+${cl}${src}`};c.numFmt=money;c.font={italic:true,color:{argb:"FF6E6762"}}}r.getCell(1).font={italic:true,color:{argb:"FF6E6762"}};ref[key]=row;row++};
+  row++;accRow("acc","Lucro líquido acumulado",ref.ll);
+  const r2=ws.getRow(row);r2.getCell(1).value="Aporte devolvido acumulado";r2.getCell(1).font={italic:true,color:{argb:"FF6E6762"}};for(let i=0;i<N;i++){const cl=colL(first+i-1),c=r2.getCell(first+i);c.value={formula:i===0?`-${cl}${ref.rep}`:`${colL(first+i-2)}${row}-${cl}${ref.rep}`};c.numFmt=money;c.font={italic:true,color:{argb:"FF6E6762"}}}row++;
+  // ---- anual
+  const wa=wb.addWorksheet("DRE anual",{views:[{state:"frozen",xSplit:1,ySplit:4}]});
+  wa.getColumn(1).width=44;[2,3,4,5,6].forEach(c=>wa.getColumn(c).width=16);
+  wa.getCell("A1").value="Felícia pizzabar · DRE anual";wa.getCell("A1").font={bold:true,size:14,color:{argb:RED}};wa.getCell("A2").value=ws.getCell("A2").value;wa.getCell("A2").font={color:{argb:"FF6E6762"}};
+  const h2=wa.getRow(4);["Conta","Ano 1","Ano 2","Ano 3","Total 36 meses","% da receita bruta"].forEach((v,i)=>{const c=h2.getCell(i+1);c.value=v;c.font={bold:true,color:{argb:CREAM}};c.fill={type:"pattern",pattern:"solid",fgColor:{argb:RED}};c.alignment={horizontal:i?"center":"left"}});
+  let ar=5;const yr=y=>[colL(first-1+y*12),colL(first-1+y*12+11)];
+  const lines=[["j"],["a"],["d"],["rb",1],["simp"],["cart"],["rl",1],["cmv"],["lb",1],["del"],["mc",1],...fixItems.map((_,k)=>["f"+k]),["fx",1],["ll",2],["rep"],["sob",2]];
+  const aref={};
+  for(const [k,sub] of lines){const r=wa.getRow(ar);r.getCell(1).value=ws.getRow(ref[k]).getCell(1).value;
+    for(let y=0;y<3;y++){const [a,b]=yr(y);const c=r.getCell(2+y);c.value={formula:`SUM('DRE mensal'!${a}${ref[k]}:${b}${ref[k]})`};c.numFmt=money}
+    const t=r.getCell(5);t.value={formula:`SUM(B${ar}:D${ar})`};t.numFmt=money;t.font={bold:true};
+    if(aref.rb||k==="rb"){const p=r.getCell(6);p.value={formula:`IF($E$${k==="rb"?ar:aref.rb}=0,0,E${ar}/$E$${k==="rb"?ar:aref.rb})`};p.numFmt="0.0%"}
+    if(!sub)r.getCell(1).alignment={indent:1};
+    if(sub)r.eachCell({includeEmpty:true},c=>{c.font={bold:true};c.fill={type:"pattern",pattern:"solid",fgColor:{argb:sub===2?SOFT:GREY}}});
+    aref[k]=ar;ar++}
+  // pct for first rows (before rb existed)
+  ["j","a","d"].forEach(k=>{const p=wa.getRow(aref[k]).getCell(6);p.value={formula:`IF($E$${aref.rb}=0,0,E${aref[k]}/$E$${aref.rb})`};p.numFmt="0.0%"});
+  ar++;
+  const dist=(label,fx)=>{const r=wa.getRow(ar);r.getCell(1).value=label;r.getCell(1).alignment={indent:1};for(let y=0;y<4;y++){const c=r.getCell(2+y),cl=colL(1+y);c.value={formula:fx(cl)};c.numFmt=money}ar++};
+  dist(`Reserva de caixa (${P.reserva}%)`,cl=>`MAX(0,${cl}${aref.sob})*${P.reserva}/100`);
+  dist(`Distribuição aos sócios (${100-P.reserva}%)`,cl=>`MAX(0,${cl}${aref.sob})*${100-P.reserva}/100`);
+  ar++;const nr=wa.getRow(ar);nr.getCell(1).value="Valores com sinal negativo são saídas. As fórmulas recalculam se você mudar os números da aba DRE mensal.";nr.getCell(1).font={italic:true,color:{argb:"FF6E6762"}};
+  // ---- premissas
+  const wp=wb.addWorksheet("Premissas");wp.getColumn(1).width=46;wp.getColumn(2).width=18;wp.getColumn(3).width=14;
+  wp.getCell("A1").value="Premissas usadas";wp.getCell("A1").font={bold:true,size:14,color:{argb:RED}};
+  let pr=3;const ph=wp.getRow(pr);["Premissa","Valor","Unidade"].forEach((v,i)=>{const c=ph.getCell(i+1);c.value=v;c.font={bold:true,color:{argb:CREAM}};c.fill={type:"pattern",pattern:"solid",fgColor:{argb:RED}}});pr++;
+  const skip=new Set(P.modo==="dias"?["giro","aprov","dias"]:["d0","d1","d2","d3","d4","d5","d6"]);
+  GROUPS.forEach(g=>{const it=g.c.filter(([id])=>!id.startsWith("__")&&!skip.has(id));if(!it.length)return;const gr=wp.getRow(pr);gr.getCell(1).value=g.t;gr.getCell(1).font={bold:true,color:{argb:RED}};pr++;
+    it.forEach(([id,label,, , ,unit])=>{const r=wp.getRow(pr);r.getCell(1).value=label;r.getCell(1).alignment={indent:1};const v=(SC!=="base"&&["giro","pedidos","func","rep1","rep2","rep3"].includes(id))?E[id]:(/^[da]\d$/.test(id)?E[id]:P[id]);r.getCell(2).value=typeof v==="number"?Math.round(v*100)/100:v;r.getCell(3).value=unit;pr++})});
+  const buf=await wb.xlsx.writeBuffer();
+  const fn=`DRE-Felicia-${scName}${curName?"-"+curName.replace(/[^\w\-]+/g,"_"):""}.xlsx`;
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download=fn;document.body.appendChild(a);a.click();a.remove();
+}
+
 // ---------- cenários salvos ----------
 const panel=document.getElementById("savedPanel"),fab=document.getElementById("savedBtn");
 function openPanel(focus){document.getElementById("pwPanel").hidden=true;panel.hidden=false;fab.setAttribute("aria-expanded","true");renderSaved();if(focus){const i=document.getElementById("saveName");const cur=SAVED.find(x=>x.id===CUR);if(cur&&!i.value)i.value=cur.name;i.focus();i.select()}}
