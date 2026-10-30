@@ -49,7 +49,8 @@ const GROUPS=[
   ["custoDeliv","Custo do delivery",0,35,0.5,"%","App, embalagem e entrega"]]},
  {t:"Custos variáveis",c:[
   ["cmv","Insumos (CMV)",10,45,0.5,"%","Mercado: 25% a 32%"],
-  ["simples","Imposto (Simples Nacional)",4,19,0.1,"%","Anexo I · cerca de 10% nesta faixa de faturamento"],
+  ["__tax__"],
+  ["simples","Imposto (Simples Nacional)",0,25,0.1,"%","Alíquota efetiva usada nos cálculos"],
   ["cartao","Taxa de cartão",0,6,0.1,"%","Maquininha, média entre débito, crédito e Pix"]]},
  {t:"Equipe e encargos",regime:true,note:"Encargos sobre o salário bruto. No Simples, INSS patronal, RAT e Terceiros já estão no imposto do Simples.",c:[
   ["sal","Salário médio bruto",0,12000,50,"R$","Por funcionário, sem encargos"],
@@ -178,6 +179,7 @@ GROUPS.forEach((g,gi)=>{
     ms.querySelectorAll("[data-modo]").forEach(b=>b.addEventListener("click",()=>{P.modo=b.dataset.modo;applyMode();update()}))}
   g.c.forEach(([id,label,min,max,step,unit,hint,mode])=>{
     if(id==="__sub__"){const h=document.createElement("div");h.className="subhead";h.textContent=label;d.appendChild(h);return}
+    if(id==="__tax__"){const c=document.createElement("div");c.className="taxban";c.id="taxBanner";d.appendChild(c);return}
     if(id==="__calc__"){const c=document.createElement("div");c.className="calc";c.innerHTML=`<span>Ticket médio por cliente</span><b id="calc-${label}">–</b>`;d.appendChild(c);return}
     const w=document.createElement("div");w.className="ctl";if(mode)w.dataset.mode=mode;
     w.innerHTML=`<div class="row"><label for="r-${id}">${label}</label><span class="num"><input type="number" id="n-${id}" min="${min}" max="${max}" step="${step}" aria-label="${label}"><span>${unit}</span></span></div>
@@ -194,6 +196,24 @@ function markCustom(){if(CUR)DIRTY=true}
 function applyMode(){document.querySelectorAll(".ctl[data-mode]").forEach(el=>el.hidden=el.dataset.mode!==P.modo);document.querySelectorAll("[data-modo]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.modo===P.modo))}
 
 document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;update()}));
+const ANEXO1=[[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22500],[3600000,14.3,87300],[4800000,19,378000]];
+function simplesEf(rbt){if(rbt<=0)return {faixa:0,ef:0};for(let i=0;i<ANEXO1.length;i++){const [lim,nom,ded]=ANEXO1[i];if(rbt<=lim)return {faixa:i+1,ef:i===0?nom:(rbt*nom/100-ded)/rbt*100}}
+  const [,nom,ded]=ANEXO1[5];return {faixa:7,ef:(rbt*nom/100-ded)/rbt*100}}
+function renderTax(E,R){const el=document.getElementById("taxBanner");if(!el)return;
+  const mes=R.mature,ano=mes*12,t=simplesEf(ano),usado=P.simples;
+  if(mes<=0){el.innerHTML=`<span class="tb-l">Imposto do cenário</span><p class="tb-n">Preencha o movimento para calcular o imposto.</p>`;return}
+  const yrs=R.annual.map(a=>simplesEf(a).ef);
+  const diff=Math.abs(t.ef-usado)>=0.2;
+  const faixa=t.faixa>6?"acima do limite do Simples":t.faixa+"ª faixa do Anexo I";
+  let warn="";if(ano>4.8e6)warn=`<p class="tb-w">Acima de R$ 4,8 mi por ano a casa sai do Simples Nacional. O imposto real tende a ser maior.</p>`;
+  else if(ano>3.6e6)warn=`<p class="tb-w">Acima de R$ 3,6 mi por ano, o ICMS passa a ser pago fora do Simples. Confirme o valor total com o contador.</p>`;
+  el.innerHTML=`<span class="tb-l">Imposto do cenário ${SC==="base"?"Base":SC==="otimista"?"Otimista":"Conservador"}</span>
+    <div class="tb-big"><b>${brl(mes*t.ef/100)}</b><span>por mês · ${brl(ano*t.ef/100)} por ano</span></div>
+    <p class="tb-n">Faturamento de ${brl(mes)} por mês (${brl(ano)} em 12 meses), ${faixa}. Alíquota efetiva pela tabela: <b>${nf(t.ef,2)}%</b>.</p>
+    <p class="tb-n">Por ano: ${R.annual.map((a,i)=>`ano ${i+1} ${nf(yrs[i],1)}%`).join(" · ")}.</p>
+    ${diff?`<div class="tb-act"><span>Você está usando ${nf(usado,1)}% (${brl(mes*usado/100)} por mês).</span><button type="button" class="btn sm" id="useTax">Usar ${nf(t.ef,2)}%</button></div>`:`<p class="tb-ok">A alíquota usada nos cálculos bate com a tabela.</p>`}${warn}`;
+  const b=document.getElementById("useTax");if(b)b.onclick=()=>{P.simples=Math.round(t.ef*100)/100;markCustom();syncControls();update()};
+}
 function confirmBtn(id,ask,apply){const b=document.getElementById(id),label=b.textContent;let t;b.addEventListener("click",()=>{
   if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent=ask;t=setTimeout(()=>{b.classList.remove("confirm");b.textContent=label},3000);return}
   clearTimeout(t);b.classList.remove("confirm");b.textContent=label;P=apply();markCustom();syncControls();applyMode();update();const ml=document.getElementById("menuList");if(ml){ml.hidden=true;document.getElementById("menuBtn").setAttribute("aria-expanded","false")}})}
@@ -221,6 +241,7 @@ function update(){
   document.querySelectorAll("[data-reg]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.reg==="simples")===(P.enc_inss===0&&P.enc_rat===0&&P.enc_terc===0))));
   const E=eff(P,SC),R=run(E);
   document.getElementById("calc-ticket").textContent="R$ "+nf(R.ticket,2);
+  renderTax(E,R);
   document.getElementById("calc-ticketAl").textContent="R$ "+nf(R.ticketAl,2);
 
   document.getElementById("k-fat").textContent=brl(R.mature);
