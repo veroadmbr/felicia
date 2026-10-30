@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Felícia para Investidores</title>
+<link rel="icon" href="img/logo.png">
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* Layout: brand deck as a site — red nav with three views; Marca is a long landing of alternating cream sheets and red bands; Apresentação a slide viewer; Cálculos a locked dashboard */
+:root{
+  --red:#D8131D; --red-ink:#FAF5E6; --red-soft:#F7E1DF; --red-deep:#9E0E15;
+  --cream:#FAF5E6; --bg:#F4F1EA; --sheet:#FCFBF7; --ink:#161312; --muted:#6E6762; --line:#E3DED6; --track:#DDD8D0;
+  --ok:#2F7D4F; --ok-soft:#E3F1E8; --warn:#A86A00; --warn-soft:#FBF0D9;
+  --font:"Outfit","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--red)}
+img{display:block;max-width:100%}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* nav */
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--red)}
+nav.top .in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+nav.top img{height:42px;width:auto}
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,.14);border-radius:999px;padding:4px}
+.tabs a{color:var(--cream);text-decoration:none;font-weight:500;font-size:14px;padding:8px 16px;border-radius:999px;white-space:nowrap}
+.tabs a[aria-current="page"]{background:var(--cream);color:var(--red)}
+@media (max-width:560px){nav.top img{height:30px}.tabs a{padding:7px 10px;font-size:13px}}
+
+.eyebrow{color:var(--red);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:12px}
+.on-red .eyebrow{color:var(--cream);opacity:.85}
+h1,h2,h3{margin:0;font-weight:500;text-transform:uppercase;text-wrap:balance;letter-spacing:-.01em;line-height:1.02}
+h2{font-size:clamp(28px,4vw,48px)}
+h3{font-size:18px;text-transform:none;font-weight:600;letter-spacing:0}
+p{margin:0}
+.lead{font-size:clamp(17px,1.6vw,20px);font-weight:300;color:var(--muted);max-width:56ch}
+.on-red{background:var(--red);color:var(--cream)}
+.on-red .lead{color:var(--cream);opacity:.9}
+.band{padding-block:clamp(56px,8vw,104px)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:center}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
+.ph{border-radius:22px;overflow:hidden;background:var(--track)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.pts{display:flex;flex-direction:column;gap:20px;margin-top:8px}
+.pt{display:grid;grid-template-columns:10px minmax(0,1fr);gap:4px 14px}
+.pt::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red);margin-top:9px;grid-row:span 2}
+.on-red .pt::before{background:var(--cream)}
+.pt b{font-weight:600;font-size:17px}
+.pt span{color:var(--muted);font-size:15px}
+.on-red .pt span{color:var(--cream);opacity:.85}
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.rc{background:var(--red);color:var(--cream);border-radius:20px;padding:24px 26px;display:flex;flex-direction:column;gap:6px}
+.rc .v{font-size:clamp(32px,3.6vw,46px);font-weight:600;letter-spacing:-.02em;line-height:1}
+.rc .l{font-size:14px;opacity:.9}
+.wc{background:var(--sheet);color:var(--red);border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;gap:6px}
+.wc .v{font-size:clamp(30px,3.2vw,42px);font-weight:600;letter-spacing:-.02em;line-height:1}
+.wc .l{font-size:14px;color:var(--ink)}
+
+/* hero */
+.hero .in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,4vw,56px);align-items:center}
+.hero .logo{width:min(420px,80%)}
+.hero .tag{font-size:clamp(20px,2.2vw,28px);font-weight:300;line-height:1.3;max-width:24ch}
+.hero .meta{font-size:12px;letter-spacing:.32em;text-transform:uppercase;opacity:.85}
+.hero .ph{aspect-ratio:4/3}
+@media (max-width:860px){.hero .in{grid-template-columns:minmax(0,1fr)}}
+
+.big-type{font-size:clamp(56px,11vw,150px);font-weight:800;line-height:.9;letter-spacing:-.03em;text-transform:uppercase}
+.gal{display:grid;gap:14px}
+.gal-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.gal-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:760px){.gal-3,.gal-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gal .ph{aspect-ratio:4/5}
+.space{display:grid;gap:14px;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(150px,18vw,240px)}
+.space .a{grid-column:span 4;grid-row:span 2}
+.space .b{grid-column:span 2;grid-row:span 2}
+.space .c{grid-column:span 1;grid-row:span 2}
+@media (max-width:760px){.space{grid-template-columns:repeat(2,minmax(0,1fr))}.space .a{grid-column:span 2}.space .b{grid-column:span 2}.space .c{grid-column:span 1}}
+.hero-photo{position:relative;border-radius:22px;overflow:hidden}
+.hero-photo .cap{position:absolute;left:clamp(16px,3vw,36px);bottom:clamp(16px,3vw,36px);color:#fff;font-weight:800;text-transform:uppercase;line-height:.95;font-size:clamp(26px,4.4vw,56px);text-shadow:0 2px 24px rgba(0,0,0,.45)}
+.hero-photo .cap em{font-style:normal;color:var(--red);text-shadow:none;background:var(--cream);padding:0 .12em;border-radius:6px}
+
+.menu{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.dish{display:flex;flex-direction:column;gap:10px}
+.dish .ph{aspect-ratio:4/3}
+.dish h3{color:var(--red);text-transform:uppercase;font-size:15px;letter-spacing:.06em}
+.dish .sub{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.dish dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 12px;margin:0;font-size:14px;font-variant-numeric:tabular-nums}
+.dish dt{color:var(--muted)}
+.dish dd{margin:0}
+.timeline{display:flex;flex-direction:column}
+.tl{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding-block:18px;border-bottom:1px solid rgba(250,245,230,.3)}
+.tl:last-child{border-bottom:0}
+.tl b{font-size:13px;letter-spacing:.2em;text-transform:uppercase}
+@media (max-width:520px){.tl{grid-template-columns:minmax(0,1fr);gap:4px}}
+.team{display:grid;gap:22px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:760px){.team{grid-template-columns:minmax(0,1fr)}}
+.person .ph{aspect-ratio:4/4.4;margin-bottom:14px}
+.person h3{color:var(--red);text-transform:uppercase;letter-spacing:.04em}
+.person p{color:var(--muted);font-size:15px}
+.checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px;margin-top:6px}
+@media (max-width:560px){.checklist{grid-template-columns:minmax(0,1fr)}}
+.checklist span{display:flex;gap:12px;align-items:baseline}
+.checklist span::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--red);transform:translateY(-2px)}
+.contact .in{display:flex;flex-direction:column;gap:16px}
+.contact .gostou{font-size:clamp(64px,10vw,130px);font-weight:600;line-height:.9;letter-spacing:-.03em}
+.phone{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:clamp(20px,2.4vw,28px);font-weight:500}
+.phone span{user-select:all}
+.copy{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--cream);background:transparent;color:var(--cream);border-radius:999px;padding:8px 16px;cursor:pointer}
+.copy:hover{background:var(--cream);color:var(--red)}
+.foot{font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.8;margin-top:28px}
+
+/* slides */
+.viewer{display:flex;flex-direction:column;gap:16px;padding-block:28px 56px}
+.stage{position:relative;background:var(--ink);border-radius:18px;overflow:hidden;aspect-ratio:1440/810}
+.stage img{width:100%;height:100%;object-fit:contain}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(250,245,230,.92);color:var(--red);font:inherit;font-size:24px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.arrow.prev{left:14px}.arrow.next{right:14px}
+.arrow[disabled]{opacity:.35;cursor:default}
+.vbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.count{font-variant-numeric:tabular-nums;font-weight:600}
+.hint{color:var(--muted);font-size:14px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.thumbs button{padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:var(--track);cursor:pointer;aspect-ratio:16/9;position:relative}
+.thumbs button[aria-current="true"]{border-color:var(--red)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.thumbs .n{position:absolute;left:6px;bottom:4px;background:rgba(22,19,18,.75);color:#fff;font-size:11px;border-radius:6px;padding:1px 6px}
+
+/* calc */
+.calc-wrap{display:flex;flex-direction:column;gap:20px;padding-block:28px 64px}
+.sheet{background:var(--sheet);border-radius:20px;padding:clamp(20px,3vw,32px)}
+.sec-head{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(22px,2.4vw,28px)}
+.sec-head p{color:var(--muted);max-width:70ch}
+.calc-top{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;justify-content:space-between}
+.seg{display:inline-flex;background:var(--bg);border-radius:999px;padding:4px;gap:2px}
+.seg button{font:inherit;font-size:14px;font-weight:500;border:0;background:transparent;color:var(--muted);padding:9px 16px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--red);color:var(--cream)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.kpi{background:var(--red);color:var(--cream);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi .v{font-size:clamp(26px,2.8vw,38px);font-weight:600;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:14px;opacity:.92}
+.kpi .s{font-size:13px;opacity:.75}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.kpis{grid-template-columns:minmax(0,1fr)}}
+.night{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 28px}
+@media (max-width:760px){.night{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat .v{font-size:28px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat .l{font-size:13px;color:var(--muted)}
+.week{display:flex;flex-direction:column;gap:14px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.note{font-size:13px;color:var(--muted)}
+.bars{display:grid;grid-template-columns:minmax(0,max-content) minmax(80px,1fr) max-content;gap:14px 20px;align-items:center}
+.bars .n{font-size:15px}
+.bars .t{height:12px;background:var(--track);border-radius:99px;overflow:hidden;display:flex}
+.bars .t div{height:100%;background:var(--red)}
+.bars .t div.al{background:var(--red-deep);opacity:.45}
+.bars .val{font-variant-numeric:tabular-nums;font-size:15px;text-align:right}
+.bars .val small{color:var(--muted);margin-left:6px}
+@media (max-width:560px){.bars{grid-template-columns:minmax(0,1fr) max-content}.bars .t{grid-column:1/-1;order:3}}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.chartbox{position:relative;height:320px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+th,td{padding:11px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+thead th{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+thead th.hl{color:var(--red)}
+tr.key td{font-weight:600}
+tr.key td:not(:first-child){color:var(--red)}
+th.cur,td.cur{background:var(--red-soft)}
+.costfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;border-top:1px solid var(--line);margin-top:22px;padding-top:16px;font-size:17px}
+.costfoot b{font-variant-numeric:tabular-nums;font-weight:600}
+.prem{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px 28px}
+.prem section{display:flex;flex-direction:column;gap:0}
+.prem h3{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.prem dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) max-content;font-size:14px}
+.prem dt,.prem dd{padding:7px 0;border-bottom:1px solid var(--line)}
+.prem dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;padding-left:12px}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.how div{background:var(--bg);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.how b{font-size:15px}
+.how span{font-size:14px;color:var(--muted)}
+.lock{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.lock::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.logos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.logos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lg{margin:0;border-radius:18px;aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.lg img{width:72%;height:auto}
+.lg figcaption{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+.lockup{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;background:var(--cream);border-radius:18px;padding:clamp(20px,4vw,44px)}
+@media (max-width:760px){.lockup{grid-template-columns:minmax(0,1fr)}}
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.swatches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sw{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--sheet)}
+.sw .chip{aspect-ratio:4/3;display:flex;align-items:flex-end;padding:16px;font-weight:600;font-size:18px}
+.sw dl{margin:0;padding:14px 16px;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;font-size:13px;font-variant-numeric:tabular-nums}
+.sw dt{color:var(--muted)}.sw dd{margin:0;text-align:right}
+.ratio{display:flex;height:48px;border-radius:12px;overflow:hidden;font-size:12px;font-weight:600;color:var(--cream)}
+.ratio span{display:flex;align-items:center;padding-left:12px;white-space:nowrap;overflow:hidden}
+.type-spec{display:flex;flex-direction:column;gap:10px;padding-block:18px;border-top:1px solid rgba(250,245,230,.3)}
+.type-spec .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+.type-spec p{opacity:.9}
+.specimen{font-size:clamp(44px,6vw,72px);font-weight:500;line-height:1;opacity:1!important}
+.voice{display:flex;flex-wrap:wrap;gap:12px}
+.voice p{background:var(--red);color:var(--cream);border-radius:999px;padding:12px 22px;font-size:clamp(17px,1.8vw,22px);font-weight:500}
+.dodont{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.dodont{grid-template-columns:minmax(0,1fr)}}
+.dodont div{background:var(--sheet);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:10px}
+.dodont b{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ok)}
+.dodont div+div b{color:var(--red)}
+.dodont span{font-size:16px}
+.photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(140px,16vw,220px);gap:14px}
+.photo-grid .p1{grid-column:span 2;grid-row:span 2}.photo-grid .p2,.photo-grid .p4,.photo-grid .p6{grid-row:span 2}
+.photo-grid .p3{grid-column:span 2;grid-row:span 2}.photo-grid .p5{grid-column:span 2;grid-row:span 2}
+@media (max-width:760px){.photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.photo-grid .p1,.photo-grid .p3,.photo-grid .p5{grid-column:span 2}}
+.app{margin:0;display:flex;flex-direction:column;gap:8px}
+.app figcaption{font-size:13px;color:var(--muted)}
+.photo-bleed{display:grid;grid-auto-flow:dense;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:clamp(120px,17vw,320px);gap:6px;padding-inline:max(6px,env(safe-area-inset-left,0px)) max(6px,env(safe-area-inset-right,0px))}
+.photo-bleed .ph{border-radius:6px}
+.photo-bleed .f1{grid-column:span 2;grid-row:span 2}.photo-bleed .f2{grid-column:span 2;grid-row:span 2}.photo-bleed .f3{grid-column:span 2;grid-row:span 3}
+.photo-bleed .f4{grid-column:span 2;grid-row:span 2}.photo-bleed .f5{grid-column:span 2;grid-row:span 2}.photo-bleed .f6{grid-column:span 2;grid-row:span 2}.photo-bleed .f7{grid-column:span 2;grid-row:span 1}.photo-bleed .f8{grid-column:span 2;grid-row:span 1}
+@media (max-width:900px){.photo-bleed{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(110px,24vw,240px)}.photo-bleed .ph{grid-column:span 2!important;grid-row:span 2!important}.photo-bleed .f7,.photo-bleed .f8{grid-row:span 2!important}}
+@media (max-width:520px){.photo-bleed{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:42vw;gap:4px}.photo-bleed .ph{grid-column:span 1!important;grid-row:span 1!important}.photo-bleed .f1,.photo-bleed .f3{grid-column:span 2!important;grid-row:span 2!important}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+</style>
+
+<nav class="top gut" aria-label="Seções">
+  <div class="in">
+    <a href="#marca" aria-label="Felícia pizzabar"><img src="img/logo.png" alt="Felícia pizzabar"></a>
+    <div class="tabs">
+      <a href="#marca" data-view="marca">Marca</a>
+      <a href="#apresentacao" data-view="apresentacao">Apresentação</a>
+      <a href="#calculos" data-view="calculos">Cálculos</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= MARCA ================= -->
+<main id="v-marca" data-v="marca">
+  <section class="hero on-red band gut">
+    <div class="in" style="grid-template-columns:minmax(0,1fr)">
+      <div class="stack" style="gap:30px;align-items:center;text-align:center;padding-block:clamp(20px,5vw,60px)">
+        <span class="eyebrow">Manual da marca</span>
+        <img src="img/logo-full-cream.png" alt="Felícia pizzabar, ESTD 1933" style="width:min(880px,100%)">
+        <p class="tag" style="max-width:34ch">Uma pizzaria de bairro com alma de bar. Jovem, vermelha, bem-humorada e feita para dividir.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gut">
+    <div class="in split">
+      <div class="stack">
+        <span class="eyebrow">Essência</span>
+        <h2>Tudo aqui é massa</h2>
+        <p class="lead">Felícia é o lugar onde a pizza napolitana encontra o drink e a música. Um nome de pessoa, como a tia que sempre recebe bem, assinado com um "ESTD 1933" que brinca com a tradição sem levar nada a sério demais.</p>
+        <div class="pts">
+          <div class="pt"><b>Calorosa</b><span>Recebe como em casa. Pizza feita para dividir, mesa cheia, conversa alta.</span></div>
+          <div class="pt"><b>Autêntica</b><span>Gente real, comendo com as mãos. Sem pose, sem filtro de revista.</span></div>
+          <div class="pt"><b>Bem-humorada</b><span>Fala como o público fala, com trocadilho, coração desenhado e frase curta.</span></div>
+          <div class="pt"><b>Feita com cuidado</b><span>Poucos ingredientes, ficha técnica travada, serviço de alto padrão.</span></div>
+        </div>
+      </div>
+      <div class="ph" style="aspect-ratio:4/5"><img src="img/post-senhora.jpg" alt="Senhora de óculos vermelhos com pizzas e drinks"></div>
+    </div>
+  </section>
+
+  <section class="band gut" style="background:var(--sheet)">
+    <div class="in stack" style="gap:28px">
+      <div class="stack">
+        <span class="eyebrow">Logo</span>
+        <h2>Um lettering próprio, redondo e com sotaque</h2>
+        <p class="lead">O nome é desenhado à mão, com hastes que terminam em curva e um acento que vira gesto. "Pizzabar" entra embaixo, menor, como uma assinatura.</p>
+      </div>
+      <div class="logos">
+        <figure class="lg" style="background:var(--red)"><img src="img/logo.png" alt="Logo creme sobre vermelho"><figcaption style="color:var(--cream)">Principal · creme sobre vermelho</figcaption></figure>
+        <figure class="lg" style="background:var(--cream);border:1px solid var(--line)"><img src="img/logo-red.png" alt="Logo vermelho sobre creme"><figcaption>Vermelho sobre creme</figcaption></figure>
+        <figure class="lg" style="background:var(--ink)"><img src="img/logo.png" alt="Logo creme sobre preto"><figcaption style="color:var(--cream)">Creme sobre preto</figcaption></figure>
+        <figure class="lg" style="background:#fff;border:1px solid var(--line)"><img src="img/logo-ink.png" alt="Logo preto sobre branco"><figcaption>Uma cor · preto</figcaption></figure>
+      </div>
+      <div class="lockup">
+        <img src="img/logo-full-red.png" alt="Assinatura completa com ESTD 1933">
+        <div class="stack" style="gap:10px">
+          <h3>Assinatura completa</h3>
+          <p class="hint" style="font-size:15px">Com "ESTD" e "1933" nas laterais. Use em peças de destaque: fachada, porta-copo, embalagem e capa de cardápio. No dia a dia, a versão sem o ano funciona sozinha.</p>
+          <p class="hint" style="font-size:15px">Respiro mínimo: a altura do "f" em volta de toda a marca. Nunca distorcer, contornar ou aplicar sobre fotos sem contraste.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gut">
+    <div class="in stack" style="gap:28px">
+      <div class="stack">
+        <span class="eyebrow">Cores</span>
+        <h2>Vermelho e creme, sempre juntos</h2>
+        <p class="lead">O vermelho é o protagonista: fachada, cadeiras, posts e embalagens. O creme é a massa, o papel e o respiro. O preto aparece à noite, no forno e na luz baixa do salão.</p>
+      </div>
+      <div class="swatches" id="swatches"></div>
+      <div class="ratio" aria-label="Proporção de uso das cores"><span style="flex:55;background:var(--red)">Vermelho 55%</span><span style="flex:30;background:var(--cream);color:var(--ink)">Creme 30%</span><span style="flex:10;background:var(--ink)">Preto 10%</span><span style="flex:5;background:var(--red-deep)"></span></div>
+    </div>
+  </section>
+
+  <section class="band gut on-red">
+    <div class="in split">
+      <div class="stack" style="gap:18px">
+        <span class="eyebrow">Tipografia</span>
+        <h2>Hemis para falar alto, sans para explicar</h2>
+        <div class="type-spec">
+          <span class="lbl">Hemis · logo e títulos de campanha</span>
+          <img src="img/logo.png" alt="" style="width:min(320px,80%)">
+          <p>A fonte da marca. Redonda, com hastes que terminam em curva, usada no logo e em frases curtas sobre foto: "pizza com muito amor", "seja autêntico", "carbonara".</p>
+        </div>
+        <div class="type-spec">
+          <span class="lbl">Sans geométrica · sistema</span>
+          <p class="specimen">Aa Bb Cc 123</p>
+          <p>Títulos em caixa alta com tracking aberto e textos corridos leves. No digital, a família usada é Outfit.</p>
+        </div>
+      </div>
+      <div class="gal" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="ph" style="aspect-ratio:4/5"><img src="img/post-amor.jpg" alt="Promo com foto: pizza com muito amor"></div>
+        <div class="ph" style="aspect-ratio:4/5"><img src="img/post-autentico.jpg" alt="Promo com foto: seja autêntico"></div>
+        <div class="ph" style="aspect-ratio:4/5"><img src="img/poster-carbonara.jpg" alt="Pôster: carbonara"></div>
+        <div class="ph" style="aspect-ratio:4/5"><img src="img/poster-camarao.jpg" alt="Pôster: camarão com alcachofra"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gut">
+    <div class="in stack" style="gap:28px">
+      <div class="stack">
+        <span class="eyebrow">Tom de voz</span>
+        <h2>Fala como um amigo que entende de pizza</h2>
+        <p class="lead">Frases curtas, afetivas e com humor. Primeira pessoa, coração desenhado, zero jargão gastronômico.</p>
+      </div>
+      <div class="voice">
+        <p>“Pizza com muito amor”</p>
+        <p>“Seja autêntico”</p>
+        <p>“Eu ♥ negroni com pizza”</p>
+        <p>“Tudo aqui é massa”</p>
+        <p>“Não é só um pizzabar. É experiência.”</p>
+      </div>
+      <div class="dodont">
+        <div><b>Assim</b><span>Vem dividir uma pizza com a gente hoje?</span><span>Sexta tem DJ, forno quente e negroni gelado.</span></div>
+        <div><b>Assim não</b><span>Venha conhecer nossa proposta gastronômica diferenciada.</span><span>Aproveite nossas promoções imperdíveis!</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="background:var(--sheet)">
+    <div class="gut"><div class="in stack" style="margin-bottom:clamp(24px,3vw,36px)">
+      <span class="eyebrow">Fotografia</span>
+      <h2>Flash, cor e gente de verdade</h2>
+      <p class="lead">Luz direta, cores saturadas e o vermelho sempre em cena. Pessoas comendo com as mãos, rindo, de boca cheia. A comida aparece de cima, na mesa compartilhada.</p>
+    </div></div>
+    <div class="photo-bleed">
+      <div class="ph f1"><img src="img/publico.jpg" alt="Cliente de óculos amarelos comendo pizza" loading="lazy"></div>
+      <div class="ph f2"><img src="img/massa.jpg" alt="Mesa vista de cima com massas e molhos" loading="lazy"></div>
+      <div class="ph f3"><img src="img/oportunidade.jpg" alt="Cliente com drink e pizza" loading="lazy"></div>
+      <div class="ph f4"><img src="img/post-senhora.jpg" alt="Senhora de óculos vermelhos com pizzas" loading="lazy"></div>
+      <div class="ph f5"><img src="img/pizzas.jpg" alt="Pizzas sobre papel Felícia" loading="lazy"></div>
+      <div class="ph f6"><img src="img/garcom.jpg" alt="Garçom com pizza e drinks" loading="lazy"></div>
+      <div class="ph f7"><img src="img/c-coqueteis.jpg" alt="Negroni na mão sobre fundo vermelho" loading="lazy"></div>
+      <div class="ph f8"><img src="img/urbana-mesa.jpg" alt="Mesa com drinks e petiscos" loading="lazy"></div>
+    </div>
+  </section>
+
+  <section class="band gut">
+    <div class="in stack" style="gap:28px">
+      <div class="stack">
+        <span class="eyebrow">Aplicações</span>
+        <h2>A marca em cada ponto de contato</h2>
+        <p class="lead">Pôsteres, redes sociais, embalagem, papelaria e uniforme seguem o mesmo par de cores e o mesmo lettering.</p>
+      </div>
+      <div class="gal gal-3">
+        <div class="ph"><img src="img/poster-negroni.jpg" alt="Pôster: eu amo negroni com pizza"></div>
+        <div class="ph"><img src="img/c-sobremesas.jpg" alt="Avental Felícia com sobremesa"></div>
+        <div class="ph"><img src="img/c-pratos.jpg" alt="Prato de massa servido sobre fundo vermelho"></div>
+      </div>
+      <div class="gal gal-4">
+        <figure class="app"><div class="ph"><img src="img/merch-sacola.jpg" alt="Sacola de delivery"></div><figcaption>Sacola de delivery</figcaption></figure>
+        <figure class="app"><div class="ph"><img src="img/merch-bolsa.jpg" alt="Ecobag"></div><figcaption>Ecobag</figcaption></figure>
+        <figure class="app"><div class="ph"><img src="img/merch-copo.jpg" alt="Copo de café"></div><figcaption>Copo de café</figcaption></figure>
+        <figure class="app"><div class="ph"><img src="img/merch-mesa.jpg" alt="Porta-copo"></div><figcaption>Porta-copo ESTD 1933</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gut" style="background:var(--ink);color:var(--cream)">
+    <div class="in stack" style="gap:24px">
+      <div class="stack">
+        <span class="eyebrow" style="color:var(--red)">O espaço</span>
+        <h2>A marca vira lugar</h2>
+        <p class="lead" style="color:var(--cream);opacity:.85">Fachada vermelha, cadeiras vermelhas, luz quente e baixa. De dia é pizzaria, à noite é bar.</p>
+      </div>
+      <div class="hero-photo"><img src="img/fachada.jpg" alt="Fachada do Felícia à noite" style="width:100%;aspect-ratio:16/8;object-fit:cover"><p class="cap">Não é só um pizzabar.<br>É <em>experiência</em></p></div>
+      <div class="space">
+        <div class="ph b"><img src="img/salao.jpg" alt="Salão com luminárias redondas"></div>
+        <div class="ph c"><img src="img/interior.jpg" alt="Balcão com parede de pedra"></div>
+        <div class="ph c"><img src="img/proj-jardim.jpg" alt="Área externa com jardim"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gut on-red contact">
+    <div class="in">
+      <img src="img/logo.png" alt="Felícia pizzabar" style="width:min(260px,60%)">
+      <p class="lead" style="font-size:clamp(20px,2.4vw,30px)">Vamos sentar para comer uma pizza?</p>
+      <div class="phone">Fale comigo: <span id="phone">(13) 99175-7406</span><button type="button" class="copy" id="copyPhone">Copiar número</button></div>
+      <p class="foot">Felícia pizzabar · Rua da Paz · Santos</p>
+    </div>
+  </section>
+</main>
+
+<!-- ================= APRESENTAÇÃO ================= -->
+<main id="v-apresentacao" data-v="apresentacao" hidden>
+  <div class="gut"><div class="in viewer">
+    <div class="vbar"><div class="stack" style="gap:6px"><span class="eyebrow">Apresentação</span><h2 style="font-size:clamp(22px,2.6vw,30px)">Deck do investidor · Outubro 2026</h2></div><span class="count" id="count">1 / 19</span></div>
+    <div class="stage" id="stage">
+      <img id="slide" src="slides/s-01.jpg" alt="Slide 1 da apresentação">
+      <button type="button" class="arrow prev" id="prev" aria-label="Slide anterior">‹</button>
+      <button type="button" class="arrow next" id="next" aria-label="Próximo slide">›</button>
+    </div>
+    <p class="hint">Use as setas do teclado ou toque nas laterais para navegar.</p>
+    <div class="thumbs" id="thumbs"></div>
+  </div></div>
+</main>
+
+<!-- ================= CÁLCULOS ================= -->
+<main id="v-calculos" data-v="calculos" hidden>
+  <div class="gut"><div class="in calc-wrap">
+    <section class="sheet">
+      <div class="calc-top">
+        <div class="stack" style="gap:8px;max-width:640px">
+          <span class="eyebrow">Projeção de 36 meses</span>
+          <h2 style="font-size:clamp(26px,3vw,40px)">O negócio em números</h2>
+          <p class="hint" style="font-size:15px">Premissas fixas definidas pelos sócios. Escolha um cenário para comparar. Os números não podem ser alterados nesta página.</p>
+          <span class="lock">Versão travada para investidores</span>
+        </div>
+        <div class="seg" role="group" aria-label="Cenário">
+          <button type="button" data-sc="conservador">Conservador</button>
+          <button type="button" data-sc="base">Base</button>
+          <button type="button" data-sc="otimista">Otimista</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpis" aria-label="Resumo">
+      <div class="kpi"><span class="v" id="k-fat">–</span><span class="l">Faturamento por mês</span><span class="s" id="k-fat-s">–</span></div>
+      <div class="kpi"><span class="v" id="k-luc">–</span><span class="l">Lucro líquido por mês</span><span class="s" id="k-luc-s">–</span></div>
+      <div class="kpi"><span class="v" id="k-pay">–</span><span class="l">Aporte 100% devolvido</span><span class="s" id="k-pay-s">–</span></div>
+      <div class="kpi"><span class="v" id="k-36">–</span><span class="l">Lucro líquido em 36 meses</span><span class="s" id="k-36-s">–</span></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Como ler</span><h2>Como a projeção é feita</h2></div>
+      <div class="how">
+        <div><b>1. Receita</b><span>Pessoas no salão em cada dia (almoço e jantar) × ticket médio de cada serviço, mais pedidos de delivery por dia × ticket do pedido.</span></div>
+        <div><b>2. Custos variáveis</b><span>Insumos (CMV), imposto do Simples, taxa de cartão e custo do delivery, todos em percentual do faturamento.</span></div>
+        <div><b>3. Custos fixos</b><span>Equipe com todos os encargos, pró-labore, aluguel, energia, marketing, manutenção e administrativo, reajustados ano a ano.</span></div>
+        <div><b>4. Crescimento</b><span>Rampa de abertura nos dois primeiros meses e crescimento anual do faturamento nos anos 2 e 3.</span></div>
+        <div><b>5. Investidor</b><span>Repasse mensal fixo por cota, tirado do lucro líquido até devolver 100% do aporte. Do que sobra, uma parte vira reserva e o resto é distribuído.</span></div>
+        <div><b>6. Cenários</b><span>Base usa as premissas abaixo. Conservador e Otimista aplicam multiplicadores sobre movimento, delivery, equipe e repasse.</span></div>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Um dia na casa</span><h2>Quanto a casa gira</h2><p>Média de um dia aberto, com a casa madura.</p></div>
+      <div class="night" id="night"></div>
+      <div class="week" id="week"></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">36 meses</span><h2>Lucro e devolução do aporte</h2><p>As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.</p></div>
+      <div class="chartbox"><canvas id="chart" aria-label="Gráfico de lucro mensal e aporte devolvido"></canvas></div>
+      <div class="legend" style="margin-top:12px"><span><i style="background:var(--red)"></i>Lucro líquido do mês</span><span><i style="background:var(--ink)"></i>Lucro acumulado</span><span><i style="background:var(--muted)"></i>Aporte devolvido</span></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Síntese</span><h2>12, 24 e 36 meses</h2><p>Valores somados desde a abertura.</p></div>
+      <div class="tablewrap"><table id="summary"></table></div>
+      <p class="note" id="annual" style="margin-top:14px"></p>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Custo de operação</span><h2>Para onde vai cada mês</h2><p>Mês 12, com a casa madura.</p></div>
+      <div class="bars" id="bars"></div>
+      <div class="costfoot" id="costfoot"></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Equipe</span><h2>Custo real de cada funcionário</h2><p id="teamLead"></p></div>
+      <div class="tablewrap"><table id="teamTable"></table></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Cenários</span><h2>Os três cenários lado a lado</h2><p>Mesmas premissas, com os multiplicadores de cada cenário.</p></div>
+      <div class="tablewrap"><table id="compare"></table></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sec-head"><span class="eyebrow">Premissas</span><h2>Todas as premissas usadas</h2><p>Valores do cenário Base. É sobre eles que os outros cenários aplicam os multiplicadores.</p></div>
+      <div class="prem" id="prem"></div>
+    </section>
+  </div></div>
+</main>
+
+<script>
+const MULT_KEYS={mov:"Movimento do salão",del:"Pedidos de delivery",eq:"Tamanho da equipe",rep:"Repasse aos cotistas"};
+const DEFAULTS={mc_mov:0.8,mc_del:0.5,mc_eq:0.75,mc_rep:0.714,mo_mov:1.333,mo_del:1.571,mo_eq:1.25,mo_rep:1.429,modo:"dias",a0:0,a1:0,a2:0,a3:0,a4:0,a5:0,a6:0,al_pizzas:0.8,al_precoPizza:55,al_bebidas:1.2,al_precoBebida:14,al_sobremesa:0.15,al_precoSobremesa:28,d0:0,d1:55,d2:55,d3:65,d4:95,d5:100,d6:70,lugares:60,giro:1.5,aprov:85,dias:24,pizzas:0.8,precoPizza:70,bebidas:2,precoBebida:28,sobremesa:0.25,precoSobremesa:32,
+  pedidos:35,ticketDeliv:110,cmv:20,simples:10,cartao:2.5,custoDeliv:20,func:12,sal:3500,enc_fgts:8,enc_13:8.33,enc_ferias:11.11,enc_multa:3.2,enc_inss:0,enc_rat:0,enc_terc:0,enc_vt:200,enc_ref:350,prolabore:24000,aluguel:10000,energia:4000,mkt:10000,manut:2000,adm:4000,
+  reaj:5,ramp1:70,ramp2:85,g2:30,g3:30,aporte:660000,cotas:3,rep1:7,rep2:9.8,rep3:12.6,reserva:30,caixa:200000};
+
+const GROUPS=[
+ {t:"Salão",open:true,modeSwitch:true,c:[
+  ["lugares","Lugares no salão",20,200,1,"","Mesas × cadeiras"]]},
+ {t:"Cálculo Jantar",open:true,c:[
+  ["__sub__","Pessoas por dia"],
+  ["d0","Segunda",0,400,1,"pessoas","0 = sem jantar","dias"],
+  ["d1","Terça",0,400,1,"pessoas","","dias"],
+  ["d2","Quarta",0,400,1,"pessoas","","dias"],
+  ["d3","Quinta",0,400,1,"pessoas","","dias"],
+  ["d4","Sexta",0,400,1,"pessoas","","dias"],
+  ["d5","Sábado",0,400,1,"pessoas","","dias"],
+  ["d6","Domingo",0,400,1,"pessoas","","dias"],
+  ["giro","Giro por noite",0.5,3.5,0.05,"x","Quantas vezes cada lugar é ocupado","giro"],
+  ["aprov","Aproveitamento dos lugares",50,100,1,"%","Cadeiras vazias em mesas parciais","giro"],
+  ["dias","Dias abertos por mês",16,30,1,"dias","","giro"],
+  ["__sub__","Ticket médio do jantar"],
+  ["__calc__","ticket"],
+  ["pizzas","Pizzas por cliente",0,2,0.05,"un",""],
+  ["precoPizza","Preço médio da pizza",0,150,1,"R$",""],
+  ["bebidas","Bebidas por cliente",0,5,0.1,"un","Drinks, vinho, chopp, soft"],
+  ["precoBebida","Preço médio da bebida",0,80,1,"R$",""],
+  ["sobremesa","Sobremesas por cliente",0,1,0.05,"un",""],
+  ["precoSobremesa","Preço da sobremesa",0,60,1,"R$",""]]},
+ {t:"Cálculo Almoço",open:true,c:[
+  ["__sub__","Pessoas por dia"],
+  ["a0","Segunda",0,400,1,"pessoas","0 = sem almoço"],
+  ["a1","Terça",0,400,1,"pessoas",""],
+  ["a2","Quarta",0,400,1,"pessoas",""],
+  ["a3","Quinta",0,400,1,"pessoas",""],
+  ["a4","Sexta",0,400,1,"pessoas",""],
+  ["a5","Sábado",0,400,1,"pessoas",""],
+  ["a6","Domingo",0,400,1,"pessoas",""],
+  ["__sub__","Ticket médio do almoço"],
+  ["__calc__","ticketAl"],
+  ["al_pizzas","Pizzas por cliente",0,2,0.05,"un",""],
+  ["al_precoPizza","Preço médio da pizza",0,150,1,"R$",""],
+  ["al_bebidas","Bebidas por cliente",0,5,0.1,"un",""],
+  ["al_precoBebida","Preço médio da bebida",0,80,1,"R$",""],
+  ["al_sobremesa","Sobremesas por cliente",0,1,0.05,"un",""],
+  ["al_precoSobremesa","Preço da sobremesa",0,60,1,"R$",""]]},
+ {t:"Delivery",c:[
+  ["pedidos","Pedidos por dia",0,300,1,"pedidos","Média por dia aberto, somando almoço e jantar"],
+  ["ticketDeliv","Ticket por pedido",50,200,1,"R$",""],
+  ["custoDeliv","Custo do delivery",0,35,0.5,"%","App, embalagem e entrega"]]},
+ {t:"Custos variáveis",c:[
+  ["cmv","Insumos (CMV)",10,45,0.5,"%","Mercado: 25% a 32%"],
+  ["simples","Imposto (Simples Nacional)",4,19,0.1,"%","Anexo I · cerca de 10% nesta faixa de faturamento"],
+  ["cartao","Taxa de cartão",0,6,0.1,"%","Maquininha, média entre débito, crédito e Pix"]]},
+ {t:"Equipe e encargos",regime:true,note:"Encargos sobre o salário bruto. No Simples, INSS patronal, RAT e Terceiros já estão no imposto do Simples.",c:[
+  ["sal","Salário médio bruto",0,12000,50,"R$","Por funcionário, sem encargos"],
+  ["enc_fgts","FGTS",0,12,0.01,"%",""],
+  ["enc_13","13º salário (provisão)",0,12,0.01,"%","1/12 do salário"],
+  ["enc_ferias","Férias + 1/3 (provisão)",0,15,0.01,"%","1/12 de 4/3 do salário"],
+  ["enc_multa","Multa do FGTS (provisão)",0,6,0.1,"%","40% do FGTS em demissões sem justa causa"],
+  ["enc_inss","INSS patronal",0,25,0.1,"%","0% no Simples · 20% no Lucro Presumido"],
+  ["enc_rat","RAT (acidente de trabalho)",0,6,0.1,"%","0% no Simples · 1% a 3% fora dele"],
+  ["enc_terc","Terceiros (Sistema S)",0,8,0.1,"%","0% no Simples · 5,8% fora dele"],
+  ["enc_vt","Vale-transporte",0,800,10,"R$","Por funcionário, já descontados os 6% do salário"],
+  ["enc_ref","Refeição",0,1200,10,"R$","Por funcionário, por mês"]]},
+ {t:"Custos fixos",c:[
+  ["func","Funcionários",3,30,1,"pessoas",""],
+  ["prolabore","Pró-labore",0,60000,1000,"R$",""],
+  ["aluguel","Aluguel e IPTU",0,40000,500,"R$",""],
+  ["energia","Luz, água e gás",0,15000,500,"R$",""],
+  ["mkt","Marca e marketing",0,30000,500,"R$",""],
+  ["manut","Manutenção",0,10000,500,"R$",""],
+  ["adm","Administrativo",0,15000,500,"R$","Contador, sistema, seguro"],
+  ["reaj","Reajuste anual dos fixos",0,15,0.5,"%",""]]},
+ {t:"Crescimento",c:[
+  ["ramp1","Movimento no mês 1",30,100,1,"%",""],
+  ["ramp2","Movimento no mês 2",30,100,1,"%","Do mês 3 em diante: 100%"],
+  ["g2","Crescimento no ano 2",-20,60,1,"%",""],
+  ["g3","Crescimento no ano 3",-20,60,1,"%",""]]},
+ {t:"Multiplicadores dos cenários",note:"Aplicados sobre as premissas acima. O Base usa 1x em tudo.",c:[
+  ["mc_mov","Conservador · movimento do salão",0.3,1.5,0.01,"x",""],
+  ["mc_del","Conservador · pedidos de delivery",0.2,1.5,0.01,"x",""],
+  ["mc_eq","Conservador · tamanho da equipe",0.3,1.5,0.01,"x",""],
+  ["mc_rep","Conservador · repasse aos cotistas",0.2,1.5,0.001,"x",""],
+  ["mo_mov","Otimista · movimento do salão",0.8,2.5,0.01,"x",""],
+  ["mo_del","Otimista · pedidos de delivery",0.8,3,0.01,"x",""],
+  ["mo_eq","Otimista · tamanho da equipe",0.8,2.5,0.01,"x",""],
+  ["mo_rep","Otimista · repasse aos cotistas",0.8,3,0.001,"x",""]]},
+ {t:"Investidor",c:[
+  ["aporte","Aporte total",100000,2000000,10000,"R$",""],
+  ["cotas","Número de cotas",1,6,1,"cotas",""],
+  ["rep1","Repasse por cota · ano 1",0,40,0.1,"R$ mil/mês",""],
+  ["rep2","Repasse por cota · ano 2",0,40,0.1,"R$ mil/mês",""],
+  ["rep3","Repasse por cota · ano 3",0,40,0.1,"R$ mil/mês",""],
+  ["reserva","Reserva de caixa",0,60,1,"%","Do que sobra após o repasse"],
+  ["caixa","Capital de giro",0,600000,10000,"R$",""]]}
+];
+
+const ZERO=(()=>{const z={};for(const k in DEFAULTS){const v=DEFAULTS[k];z[k]=(typeof v!=="number"||k.startsWith("mc_")||k.startsWith("mo_")||k.startsWith("enc_"))?v:0}z.ramp1=100;z.ramp2=100;return z})();
+function mult(p,k){const pre=k==="conservador"?"mc_":k==="otimista"?"mo_":null;const g=x=>pre?p[pre+x]:1;return {mov:g("mov"),del:g("del"),eq:g("eq"),rep:g("rep")}}
+const ENC=[["enc_fgts","FGTS"],["enc_13","13º salário"],["enc_ferias","Férias + 1/3"],["enc_multa","Multa do FGTS"],["enc_inss","INSS patronal"],["enc_rat","RAT"],["enc_terc","Terceiros (Sistema S)"]];
+function team(p){const sal=p.sal||0,rows=ENC.map(([k,n])=>[n,p[k]||0,sal*(p[k]||0)/100]).filter(r=>r[1]>0);
+  const enc=rows.reduce((a,r)=>a+r[2],0),ben=(p.enc_vt||0)+(p.enc_ref||0),per=sal+enc+ben;
+  return {sal,rows,enc,ben,per,total:per*p.func,encPct:sal>0?enc/sal*100:0,fator:sal>0?per/sal:0}}
+function eff(p,k){const m=mult(p,k),e={...p};e.giro=p.giro*m.mov;for(let i=0;i<7;i++){e["d"+i]=Math.round(p["d"+i]*m.mov);e["a"+i]=Math.round(p["a"+i]*m.mov)}
+  e.pedidos=p.pedidos*m.del;e.func=p.func*m.eq;e.rep1=p.rep1*m.rep;e.rep2=p.rep2*m.rep;e.rep3=p.rep3*m.rep;return e}
+const nf=(v,d=0)=>(isFinite(v)?v:0).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+function brl(v){if(!isFinite(v))v=0;const a=Math.abs(v),s=v<0?"–":"";
+  if(a>=1e6)return s+"R$ "+nf(a/1e6,2)+" mi";
+  if(a>=1e3)return s+"R$ "+nf(a/1e3,0)+" mil";
+  return s+"R$ "+nf(a,0)}
+
+function run(p){
+  const ticket=p.pizzas*p.precoPizza+p.bebidas*p.precoBebida+p.sobremesa*p.precoSobremesa;
+  const WK=4.33, DAYS=[p.d0,p.d1,p.d2,p.d3,p.d4,p.d5,p.d6], LUNCH=[p.a0,p.a1,p.a2,p.a3,p.a4,p.a5,p.a6];
+  const sumA=LUNCH.reduce((a,b)=>a+b,0), almocoM=sumA*WK, ticketAl=p.al_pizzas*p.al_precoPizza+p.al_bebidas*p.al_precoBebida+p.al_sobremesa*p.al_precoSobremesa, salaoAlmoco=almocoM*ticketAl;
+  let pessoas,salao,dias,pico;
+  let jantarM;
+  if(p.modo==="dias"){const open=DAYS.filter((x,i)=>x>0||LUNCH[i]>0).length;dias=Math.max(open,1)*WK;jantarM=DAYS.reduce((a,b)=>a+b,0)*WK;pico=Math.max(...DAYS,...LUNCH)}
+  else{dias=p.dias;jantarM=p.lugares*p.giro*p.aprov/100*dias;pico=Math.max(p.lugares*p.giro*p.aprov/100,...LUNCH)}
+  pessoas=(jantarM+almocoM)/dias;
+  const salaoJantar=jantarM*ticket;
+  salao=salaoJantar+salaoAlmoco;
+  const ticketMedio=(jantarM+almocoM)>0?salao/(jantarM+almocoM):0;
+  const giroImp=p.lugares>0?pessoas/p.lugares:0;
+  const deliv=p.pedidos*p.ticketDeliv*dias;
+  const total=salao+deliv;
+  const pedidos=p.pedidos;
+  const delivShare=total>0?deliv/total:0;
+  const varPct=(p.cmv+p.simples+p.cartao+delivShare*p.custoDeliv)/100;
+  const T=team(p),equipe=T.total;
+  const fixoBase=equipe+p.prolabore+p.aluguel+p.energia+p.mkt+p.manut+p.adm;
+  const ramp=[p.ramp1/100,p.ramp2/100,...Array(10).fill(1)];
+  const y1=ramp.map(f=>total*f), A1=y1.reduce((a,b)=>a+b,0);
+  const A2=A1*(1+p.g2/100), A3=A2*(1+p.g3/100);
+  const revs=[...y1,...Array(12).fill(A2/12),...Array(12).fill(A3/12)];
+  const rep=[p.rep1,p.rep2,p.rep3].map(x=>x*1000*p.cotas);
+  let F=0,L=0,Pg=0,C=0,cash=0,minCash=0,quit=null;
+  const m=[],cum={};
+  revs.forEach((r,i)=>{const y=Math.floor(i/12);
+    const fixo=fixoBase*Math.pow(1+p.reaj/100,y);
+    const lucro=r*(1-varPct)-fixo;
+    const pay=Math.max(0,Math.min(rep[y],p.aporte-Pg));
+    Pg+=pay;F+=r;L+=lucro;C+=r-lucro;cash+=lucro-pay;minCash=Math.min(minCash,cash);
+    if(quit===null&&p.aporte>0&&Pg>=p.aporte-0.5)quit=i+1;
+    m.push({r,lucro,pay,L,Pg});
+    if((i+1)%12===0){const sob=L-Pg;cum[i+1]={F,B:F*(1-p.cmv/100),C,L,Pg,sob,res:Math.max(0,sob)*p.reserva/100,dist:Math.max(0,sob)*(1-p.reserva/100),pct:p.aporte>0?Pg/p.aporte:0}}
+  });
+  let pq=quit;
+  if(pq===null){let pg=Pg,i=36;const last=Math.max(rep[2],0);while(pg<p.aporte&&i<240&&last>0){pg+=last;i++}pq=pg>=p.aporte?i:null}
+  const mature=revs[11];
+  const lucroM=mature*(1-varPct)-fixoBase;
+  const be=fixoBase/(1-varPct);
+  return {ticketAl,LUNCH,jantarM,almocoM,salaoJantar,salaoAlmoco,ticketMedio,delivShare,dias,giroImp,pico,DAYS,WK,ticket,pessoas,salao,total,deliv,pedidos,varPct,equipe,T,fixoBase,m,cum,quit,pq,mature,lucroM,be,minCash,annual:[A1,A2,A3],
+    cost:{cmv:mature*p.cmv/100,simples:mature*p.simples/100,cartao:mature*p.cartao/100,del:mature*delivShare*p.custoDeliv/100}};
+}
+
+
+const BASE_PREMISSAS={};
+let P={...DEFAULTS,...BASE_PREMISSAS};
+try{const q=new URLSearchParams(location.search).get("p");if(q){const j=JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,"+").replace(/_/g,"/")))));P={...DEFAULTS,...j}}}catch(e){}
+let SC="base";
+
+// ---------- views ----------
+const VIEWS=["marca","apresentacao","calculos"];
+function show(){let v=(location.hash||"").slice(1);if(!VIEWS.includes(v))v="marca";
+  document.querySelectorAll("main[data-v]").forEach(m=>m.hidden=m.dataset.v!==v);
+  document.querySelectorAll(".tabs a").forEach(a=>a.toggleAttribute("aria-current",a.dataset.view===v)||a.setAttribute("aria-current","page"));
+  document.querySelectorAll(".tabs a").forEach(a=>{if(a.dataset.view===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  window.scrollTo(0,0);if(v==="calculos")update();}
+window.addEventListener("hashchange",show);
+
+// ---------- marca: cores ----------
+const SW=[["Vermelho Felícia","#D8131D","216 · 19 · 29","Fachada, posts, embalagens",""],["Creme Massa","#FAF5E6","250 · 245 · 230","Logo, papel, respiro","dark"],["Preto Forno","#161312","22 · 19 · 18","Noite, textos, contraste",""],["Vermelho Vinho","#9E0E15","158 · 14 · 21","Sombras e detalhes",""]];
+document.getElementById("swatches").innerHTML=SW.map(([n,h,rgb,u,d])=>`<div class="sw"><div class="chip" style="background:${h};color:${d?"#161312":"#FAF5E6"}">${n}</div><dl><dt>HEX</dt><dd>${h}</dd><dt>RGB</dt><dd>${rgb}</dd><dt>Uso</dt><dd>${u}</dd></dl></div>`).join("");
+document.getElementById("copyPhone").addEventListener("click",e=>{const b=e.currentTarget,t=document.getElementById("phone").textContent;
+  const done=()=>{b.textContent="Copiado";setTimeout(()=>b.textContent="Copiar número",1800)};
+  try{navigator.clipboard.writeText(t).then(done,()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("phone"));const s=getSelection();s.removeAllRanges();s.addRange(r)})}catch(err){}});
+
+// ---------- apresentação ----------
+const N=19;let cur=1;
+const slide=document.getElementById("slide"),thumbs=document.getElementById("thumbs");
+const src=i=>`slides/s-${String(i).padStart(2,"0")}.jpg`;
+thumbs.innerHTML=Array.from({length:N},(_,i)=>`<button type="button" data-i="${i+1}" aria-label="Ir para o slide ${i+1}"><img src="${src(i+1)}" alt="" loading="lazy"><span class="n">${i+1}</span></button>`).join("");
+function go(i){cur=Math.min(N,Math.max(1,i));slide.src=src(cur);slide.alt="Slide "+cur+" da apresentação";
+  document.getElementById("count").textContent=cur+" / "+N;
+  document.getElementById("prev").disabled=cur===1;document.getElementById("next").disabled=cur===N;
+  thumbs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-current",String(+b.dataset.i===cur)));
+  if(cur<N){const pre=new Image();pre.src=src(cur+1)}}
+thumbs.addEventListener("click",e=>{const b=e.target.closest("button");if(b){go(+b.dataset.i);document.getElementById("stage").scrollIntoView({block:"nearest"})}});
+document.getElementById("prev").onclick=()=>go(cur-1);document.getElementById("next").onclick=()=>go(cur+1);
+document.addEventListener("keydown",e=>{if(document.getElementById("v-apresentacao").hidden)return;if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1)});
+let tx=null;const st=document.getElementById("stage");
+st.addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+st.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(cur+(dx<0?1:-1));tx=null});
+go(1);
+
+// ---------- cálculos ----------
+let chart=null;
+document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;update()}));
+function update(){
+  document.querySelectorAll("[data-sc]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sc===SC)));
+  const E=eff(P,SC),R=run(E);
+  document.getElementById("k-fat").textContent=brl(R.mature);
+  document.getElementById("k-fat-s").textContent="Casa madura · "+brl(R.mature*12)+" por ano";
+  document.getElementById("k-luc").textContent=brl(R.lucroM);
+  document.getElementById("k-luc-s").textContent="Margem de "+nf(R.mature>0?R.lucroM/R.mature*100:0,1)+"%";
+  document.getElementById("k-pay").textContent=P.aporte<=0?"Sem aporte":R.quit?("Mês "+R.quit):(R.pq?("Mês ~"+R.pq):"Após 36 meses");
+  document.getElementById("k-pay-s").textContent=brl(P.aporte)+" em "+P.cotas+(P.cotas>1?" cotas de ":" cota de ")+brl(P.cotas>0?P.aporte/P.cotas:0);
+  document.getElementById("k-36").textContent=brl(R.cum[36].L);
+  document.getElementById("k-36-s").textContent=brl(R.cum[36].dist)+" para distribuição";
+
+  document.getElementById("night").innerHTML=[
+    [nf(R.pessoas,0),"Clientes no salão por dia"+(R.almocoM>0?" · almoço e jantar":"")],
+    ["R$ "+nf(R.ticketMedio,0),R.almocoM>0?"Ticket médio no salão · jantar R$ "+nf(R.ticket,0)+", almoço R$ "+nf(R.ticketAl,0):"Ticket médio no salão"],
+    [nf(R.pedidos,0)+" pedidos","Delivery por dia · "+nf(R.delivShare*100,0)+"% do faturamento"],
+    [brl(R.total/R.dias),"Faturamento por dia"],
+    [brl(R.be),"Ponto de equilíbrio por mês"],
+    [nf(R.giroImp,2)+"x","Giro médio por dia"]
+  ].map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
+
+  const wk=document.getElementById("week"),names=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+  const J=P.modo==="dias"?R.DAYS:R.DAYS.map(()=>Math.round(P.lugares*E.giro*P.aprov/100)),A=R.LUNCH;
+  const mx=Math.max(1,...J.map((d,i)=>d+A[i])),wkTot=J.reduce((a,b)=>a+b,0)+A.reduce((a,b)=>a+b,0);
+  wk.innerHTML=`<p class="note">Semana típica · ${nf(wkTot,0)} pessoas no salão por semana, ${nf(wkTot*R.WK,0)} por mês · ${nf(P.lugares,0)} lugares</p><div class="legend"><span><i style="background:var(--red)"></i>Jantar</span><span><i style="background:var(--red-deep);opacity:.45"></i>Almoço</span></div><div class="bars">`+
+    J.map((d,i)=>{const a=A[i],t=d+a;return `<span class="n">${names[i]}</span><span class="t"><div style="width:${d/mx*100}%"></div><div class="al" style="width:${a/mx*100}%"></div></span><span class="val">${t?`${nf(t,0)} pessoas<small>${a?"almoço "+nf(a,0)+" · ":""}jantar ${nf(d,0)} · ${brl(d*R.ticket+a*R.ticketAl)}</small>`:"fechado"}</span>`}).join("")+`</div>`;
+
+  const rows=[["Faturamento total","F"],["Lucro bruto total","B"],["Custo total","C"],["Lucro líquido total","L",1],["Repasse aos cotistas total","Pg"],["Sobra após repasse total","sob"],["Reserva ("+P.reserva+"%) total","res"],["Distribuição ("+(100-P.reserva)+"%) total","dist",1]];
+  let h=`<thead><tr><th></th><th>12 meses total</th><th>24 meses total</th><th class="hl">36 meses total</th></tr></thead><tbody>`;
+  rows.forEach(([n,k,key])=>{h+=`<tr${key?' class="key"':""}><td>${n}</td>${[12,24,36].map(x=>`<td>${brl(R.cum[x][k])}</td>`).join("")}</tr>`});
+  h+=`<tr><td>Aporte devolvido</td>${[12,24,36].map(x=>{const c=R.cum[x],done=R.quit&&R.quit<=x;return `<td>${nf(Math.min(c.pct,1)*100,0)}%${done?" (mês "+R.quit+")":""}</td>`}).join("")}</tr></tbody>`;
+  document.getElementById("summary").innerHTML=h;
+  document.getElementById("annual").textContent=`Faturamento por ano: ano 1 ${brl(R.annual[0])} · ano 2 ${brl(R.annual[1])} · ano 3 ${brl(R.annual[2])}. Repasse mensal por cota: R$ ${nf(E.rep1,1)} mil no ano 1, R$ ${nf(E.rep2,1)} mil no ano 2 e R$ ${nf(E.rep3,1)} mil no ano 3.`;
+
+  const items=[["Insumos (CMV)",R.cost.cmv],["Equipe ("+nf(E.func,0)+" pessoas)",R.equipe],["Pró-labore",P.prolabore],["Imposto (Simples)",R.cost.simples],["Taxa de cartão",R.cost.cartao],["Aluguel e IPTU",P.aluguel],["Marca e marketing",P.mkt],["Delivery (app e embalagem)",R.cost.del],["Luz, água e gás",P.energia],["Administrativo",P.adm],["Manutenção",P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  const bm=Math.max(1,...items.map(x=>x[1]));
+  document.getElementById("bars").innerHTML=items.map(([n,v])=>`<span class="n">${n}</span><span class="t"><div style="width:${v/bm*100}%;border-radius:99px"></div></span><span class="val">${brl(v)}<small>${nf(R.mature>0?v/R.mature*100:0,1)}%</small></span>`).join("");
+  document.getElementById("costfoot").innerHTML=`<span>Custo fixo <b>${brl(R.fixoBase)}/mês</b></span><span>Variável <b>${nf(R.varPct*100,1)}% da receita</b></span><span>Custo total <b>${brl(R.fixoBase+R.mature*R.varPct)}/mês</b></span>`;
+
+  const T=R.T,n=E.func,row=(a,b,c,d,k)=>`<tr${k?' class="key"':""}><td>${a}</td><td>${b}</td><td>${c}</td><td>${d}</td></tr>`;
+  document.getElementById("teamLead").textContent=`${nf(n,0)} funcionários. Cada um custa ${nf(T.fator,2)}x o salário bruto, ${P.enc_inss>0?"fora do Simples":"no Simples Nacional, onde INSS patronal, RAT e Terceiros já estão no imposto"}.`;
+  document.getElementById("teamTable").innerHTML=`<thead><tr><th>Item</th><th>% do salário</th><th>Por funcionário</th><th class="hl">Equipe por mês</th></tr></thead><tbody>`+
+    row("Salário bruto","100%",brl(T.sal),brl(T.sal*n))+T.rows.map(([nm,pc,v])=>row(nm,nf(pc,2)+"%",brl(v),brl(v*n))).join("")+
+    row("Total de encargos",nf(T.encPct,1)+"%",brl(T.enc),brl(T.enc*n),1)+
+    (P.enc_vt>0?row("Vale-transporte","–",brl(P.enc_vt),brl(P.enc_vt*n)):"")+(P.enc_ref>0?row("Refeição","–",brl(P.enc_ref),brl(P.enc_ref*n)):"")+
+    row("Custo total da equipe",nf(T.fator*100,0)+"%",brl(T.per),brl(T.total),1)+`</tbody>`;
+
+  const sc=["conservador","base","otimista"],nm={conservador:"Conservador",base:"Base",otimista:"Otimista"},Rs=sc.map(s=>run(eff(P,s)));
+  const crow=(t,f)=>`<tr><td>${t}</td>${Rs.map((r,i)=>`<td class="${sc[i]===SC?"cur":""}">${f(r,sc[i])}</td>`).join("")}</tr>`;
+  document.getElementById("compare").innerHTML=`<thead><tr><th></th>${sc.map(s=>`<th class="${s===SC?"cur hl":""}">${nm[s]}</th>`).join("")}</tr></thead><tbody>`+
+    crow("Multiplicador de movimento",(r,k)=>nf(mult(P,k).mov,2)+"x")+crow("Giro médio por dia",r=>nf(r.giroImp,2)+"x")+
+    crow("Pedidos de delivery por dia",r=>nf(r.pedidos,0))+crow("Faturamento por mês",r=>brl(r.mature))+crow("Lucro líquido por mês",r=>brl(r.lucroM))+
+    crow("Margem",r=>nf(r.mature>0?r.lucroM/r.mature*100:0,1)+"%")+crow("Lucro em 36 meses",r=>brl(r.cum[36].L))+
+    crow("Aporte devolvido em",r=>r.quit?"mês "+r.quit:(r.pq?"mês ~"+r.pq:"após 36 meses"))+`</tbody>`;
+
+  drawChart(R);
+}
+function fmtP(id,unit,v){if(unit==="R$")return brl(v);if(unit==="%")return nf(v,v%1?1:0)+"%";if(unit==="x")return nf(v,2)+"x";if(unit==="R$ mil/mês")return "R$ "+nf(v,1)+" mil";return nf(v,v%1?2:0)+(unit?" "+unit:"")}
+function renderPrem(){const skip=new Set(P.modo==="dias"?["giro","aprov","dias"]:["d0","d1","d2","d3","d4","d5","d6"]);
+  document.getElementById("prem").innerHTML=GROUPS.map(g=>{const items=g.c.filter(([id])=>!id.startsWith("__")&&!skip.has(id));if(!items.length)return "";
+    return `<section><h3>${g.t}</h3><dl>${items.map(([id,label,, , ,unit])=>`<dt>${label}</dt><dd>${fmtP(id,unit,P[id]??0)}</dd>`).join("")}</dl></section>`}).join("")}
+function drawChart(R){if(!window.Chart)return;const red="#D8131D",ink="#161312",muted="#6E6762",line="#E3DED6";
+  const data={labels:R.m.map((_,i)=>String(i+1)),datasets:[
+    {type:"bar",label:"Lucro do mês",data:R.m.map(x=>x.lucro),backgroundColor:R.m.map(x=>x.lucro<0?muted:red),borderRadius:3,yAxisID:"y",order:3},
+    {type:"line",label:"Lucro acumulado",data:R.m.map(x=>x.L),borderColor:ink,borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.25,order:1},
+    {type:"line",label:"Aporte devolvido",data:R.m.map(x=>x.Pg),borderColor:muted,borderDash:[5,4],borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.1,order:2}]};
+  const tick={color:muted,font:{family:"Outfit",size:12}};
+  const opts={responsive:true,maintainAspectRatio:false,animation:{duration:250},interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>"Mês "+i[0].label,label:c=>c.dataset.label+": "+brl(c.parsed.y)}}},
+    scales:{x:{grid:{display:false},ticks:{...tick,callback:(v,i)=>((i+1)%6===0||i===0)?"m"+(i+1):""}},
+      y:{position:"left",grid:{color:line},ticks:{...tick,callback:v=>brl(v)}},y2:{position:"right",grid:{display:false},ticks:{...tick,callback:v=>brl(v)}}}};
+  if(chart){chart.data=data;chart.options=opts;chart.update()}else chart=new Chart(document.getElementById("chart"),{data,options:opts})}
+renderPrem();show();
+</script>
+</body>
+</html>
