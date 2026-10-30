@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Felícia · CMS</title>
+<link rel="icon" href="../img/logo.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout: editor à esquerda (abas + campos), prévia ao vivo à direita; barra superior com status e Publicar */
+:root{
+  --red:#D8131D; --cream:#FAF5E6; --ink:#1B1716; --bg:#F1EEE8; --panel:#FFFFFF; --field:#F6F4F0; --line:#E2DDD5; --muted:#6F6862;
+  --ok:#2F7D4F; --ok-soft:#E3F1E8; --warn:#A86A00; --warn-soft:#FBF0D9; --bad-soft:#F8E0DE;
+  --font:"Outfit","Helvetica Neue",Arial,sans-serif; color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+header.bar{flex:none;background:var(--red);color:var(--cream);display:flex;align-items:center;gap:14px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));flex-wrap:wrap}
+header.bar img{height:30px;width:auto;display:block}
+header.bar .ttl{font-weight:600;letter-spacing:.24em;text-transform:uppercase;font-size:12px;opacity:.9}
+header.bar .sp{flex:1}
+.status{font-size:13px;background:rgba(0,0,0,.18);border-radius:999px;padding:6px 12px}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 16px;font-weight:500;font-size:14px}
+.btn:hover{border-color:var(--ink)}
+.btn.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.red{background:var(--red);color:var(--cream);border-color:var(--red)}
+.btn.cream{background:var(--cream);color:var(--red);border-color:var(--cream);font-weight:600}
+.btn.ghost{background:transparent;border-color:rgba(250,245,230,.5);color:var(--cream)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btn.link{border:0;background:none;padding:2px 4px;color:var(--red);font-size:12.5px;text-decoration:underline}
+.btn[disabled]{opacity:.5;cursor:default}
+
+.app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(360px,460px) minmax(0,1fr)}
+@media (max-width:900px){.app{grid-template-columns:minmax(0,1fr)}.preview{display:none}}
+.editor{min-height:0;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--line)}
+.tabs{flex:none;display:flex;gap:2px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:999px;white-space:nowrap;font-weight:500}
+.tabs button[aria-selected="true"]{background:var(--ink);color:#fff}
+.pane{flex:1;min-height:0;overflow:auto;padding:18px max(18px,env(safe-area-inset-left,0px)) 40px 18px}
+.pane h2{font-size:18px;font-weight:600;margin:0 0 4px}
+.pane .intro{color:var(--muted);margin:0 0 18px}
+.group{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.group>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;background:var(--field)}
+.group>summary::-webkit-details-marker{display:none}
+.group>summary::after{content:"+";color:var(--muted);font-weight:400;font-size:18px}
+.group[open]>summary::after{content:"–"}
+.group .cnt{font-size:12px;color:var(--muted);font-weight:400;margin-left:auto}
+.gbody{padding:12px 14px;display:flex;flex-direction:column;gap:14px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.fld label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fld.changed label{color:var(--red)}
+textarea,input[type=text],input[type=password],input[type=search],select{font:inherit;font-size:14px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+textarea{resize:vertical;min-height:40px;line-height:1.45}
+select{appearance:none;-webkit-appearance:none;padding-right:42px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231B1716' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:12px 8px}
+.hint{font-size:12px;color:var(--muted)}
+.search{position:sticky;top:-18px;background:var(--panel);padding:4px 0 12px;z-index:2}
+
+.colors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.color{display:flex;gap:10px;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:8px}
+.color input[type=color]{width:42px;height:42px;border:0;padding:0;background:none;border-radius:8px;cursor:pointer;flex:none}
+.color input[type=color]::-webkit-color-swatch-wrapper{padding:0}.color input[type=color]::-webkit-color-swatch{border:1px solid var(--line);border-radius:8px}
+.color .m{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.color b{font-size:13px;font-weight:600}
+.color input[type=text]{padding:4px 6px;font-size:13px;font-variant-numeric:tabular-nums;background:#fff}
+.pal{display:flex;flex-direction:column;gap:10px}
+.pal-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:start;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:10px}
+.pal-row .stack{display:flex;flex-direction:column;gap:6px}
+.pal-row .acts{display:flex;flex-direction:column;gap:4px}
+.icon{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;padding:0;color:var(--ink)}
+.icon:hover{border-color:var(--ink)}
+
+.imgs{display:flex;flex-direction:column;gap:10px}
+.img-row{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:10px}
+.img-row .th{width:84px;height:84px;border-radius:9px;background:#ccc center/cover no-repeat;border:1px solid var(--line)}
+.img-row.dark .th{background-color:var(--red)}
+.img-row .meta{display:flex;flex-direction:column;gap:4px;min-width:0}
+.img-row b{font-size:13px;word-break:break-all}
+.img-row .used{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.img-row .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:2px 8px;background:var(--warn-soft);color:var(--warn)}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+
+.slides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sl{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#222;aspect-ratio:16/9}
+.sl img{width:100%;height:100%;object-fit:cover;display:block}
+.sl .n{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;border-radius:6px;padding:1px 6px}
+.sl .acts{position:absolute;right:6px;bottom:6px;display:flex;gap:4px}
+.sl .icon{width:28px;height:28px;background:rgba(255,255,255,.92)}
+
+.scen{display:flex;flex-direction:column;gap:8px}
+.sc-card{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--field);cursor:pointer;text-align:left;width:100%;color:var(--ink)}
+.sc-card[aria-pressed="true"]{border-color:var(--red);background:#fff;box-shadow:0 0 0 1px var(--red)}
+.sc-card .dot{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);margin-top:1px}
+.sc-card[aria-pressed="true"] .dot{border-color:var(--red);background:radial-gradient(var(--red) 45%,transparent 50%)}
+.sc-card b{display:block;font-weight:600}
+.sc-card span{font-size:12.5px;color:var(--muted)}
+.seg{display:inline-flex;background:var(--field);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--muted);padding:7px 14px;border-radius:999px;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--red);color:var(--cream)}
+
+.box{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.box h3{margin:0;font-size:15px;font-weight:600}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.msg{border-radius:10px;padding:10px 12px;font-size:13px}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.warn{background:var(--warn-soft);color:var(--warn)}
+.msg.bad{background:var(--bad-soft);color:#9E0E15}
+ol.steps{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:var(--muted)}
+ol.steps b{color:var(--ink)}
+.log{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-height:160px;overflow:auto}
+
+.preview{min-height:0;display:flex;flex-direction:column;background:#E6E2DA}
+.ptools{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap}
+.frame-wrap{flex:1;min-height:0;display:flex;justify-content:center;padding:0 14px 14px}
+iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-shadow:0 4px 24px rgba(0,0,0,.08);transition:width .2s}
+.mobile iframe{width:390px}
+@media (prefers-reduced-motion:reduce){iframe{transition:none}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <img src="../img/logo.png" alt="Felícia">
+  <span class="ttl">CMS</span>
+  <span class="sp"></span>
+  <span class="status" id="status">Carregando…</span>
+  <button type="button" class="btn ghost sm" id="discard" hidden>Descartar alterações</button>
+  <button type="button" class="btn cream" id="publish">Publicar no site</button>
+</header>
+
+<div class="app">
+  <section class="editor" aria-label="Editor">
+    <nav class="tabs" role="tablist" aria-label="Seções do CMS">
+      <button type="button" role="tab" data-tab="cores" aria-selected="true">Cores e fontes</button>
+      <button type="button" role="tab" data-tab="textos">Textos</button>
+      <button type="button" role="tab" data-tab="imagens">Imagens</button>
+      <button type="button" role="tab" data-tab="slides">Apresentação</button>
+      <button type="button" role="tab" data-tab="calculos">Cálculos</button>
+      <button type="button" role="tab" data-tab="publicar">Publicação</button>
+    </nav>
+
+    <div class="pane" data-pane="cores">
+      <h2>Cores e fontes</h2>
+      <p class="intro">As cores do site inteiro, incluindo o simulador. A prévia muda na hora.</p>
+      <div class="colors" id="themeColors"></div>
+      <div class="box" style="margin-top:16px">
+        <h3>Fontes</h3>
+        <div class="row2">
+          <div class="fld"><label for="fontDisplay">Títulos</label><select id="fontDisplay"></select></div>
+          <div class="fld"><label for="fontBody">Textos</label><select id="fontBody"></select></div>
+        </div>
+        <span class="hint">Fontes do Google Fonts. A Hemis, da marca, aparece no logo e nas imagens.</span>
+      </div>
+      <div class="box">
+        <h3>Paleta da marca</h3>
+        <span class="hint">As cores mostradas na seção "Cores" da página Marca.</span>
+        <div class="pal" id="palette"></div>
+        <button type="button" class="btn sm" id="addColor" style="align-self:flex-start">Adicionar cor</button>
+      </div>
+      <div class="box">
+        <h3>Geral</h3>
+        <div class="fld"><label for="metaTitle">Título da aba do navegador</label><input type="text" id="metaTitle"></div>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="textos" hidden>
+      <h2>Textos</h2>
+      <p class="intro">Todos os textos do site, agrupados por seção. Campos em vermelho foram alterados.</p>
+      <div class="search"><input type="search" id="q" placeholder="Buscar texto…" aria-label="Buscar texto"></div>
+      <div id="texts"></div>
+    </div>
+
+    <div class="pane" data-pane="imagens" hidden>
+      <h2>Imagens</h2>
+      <p class="intro">Troque qualquer foto ou logo. Fotos grandes são reduzidas para no máximo 2400 px antes de subir.</p>
+      <div class="search"><input type="search" id="qi" placeholder="Buscar imagem…" aria-label="Buscar imagem"></div>
+      <div class="imgs" id="images"></div>
+    </div>
+
+    <div class="pane" data-pane="slides" hidden>
+      <h2>Apresentação</h2>
+      <p class="intro">Os slides da aba Apresentação. Exporte cada slide como JPG ou PNG (no Canva: Compartilhar → Baixar → JPG, todas as páginas) e suba aqui.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <label class="btn red" for="slideUp" style="display:inline-block">Adicionar slides</label>
+        <input type="file" id="slideUp" accept="image/*" multiple hidden>
+        <button type="button" class="btn" id="replaceSlides">Substituir todos</button>
+        <input type="file" id="slideRep" accept="image/*" multiple hidden>
+      </div>
+      <div class="slides" id="slides"></div>
+    </div>
+
+    <div class="pane" data-pane="calculos" hidden>
+      <h2>Cálculos</h2>
+      <p class="intro">Escolha qual cenário salvo do simulador aparece no site para o investidor.</p>
+      <div class="box">
+        <h3>Cenário publicado</h3>
+        <div class="scen" id="scen"></div>
+        <span class="hint">A lista vem dos cenários salvos no simulador deste navegador. Salve no simulador para aparecer aqui.</span>
+      </div>
+      <div class="box">
+        <h3>Ou cole um link do investidor</h3>
+        <div class="fld"><input type="text" id="pasteLink" placeholder="Cole aqui o link gerado em Copiar link do investidor"></div>
+        <button type="button" class="btn sm" id="useLink" style="align-self:flex-start">Usar este link</button>
+        <p class="msg" id="linkMsg" hidden></p>
+      </div>
+      <div class="box">
+        <h3>Visão que abre primeiro</h3>
+        <div class="seg" role="group" aria-label="Visão inicial">
+          <button type="button" data-def="conservador">Conservador</button>
+          <button type="button" data-def="base">Base</button>
+          <button type="button" data-def="otimista">Otimista</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="publicar" hidden>
+      <h2>Publicação</h2>
+      <p class="intro">O CMS salva as alterações no repositório do GitHub. A Vercel atualiza o site sozinha em cerca de 1 minuto.</p>
+      <div class="box">
+        <h3>Conexão com o GitHub</h3>
+        <div class="row2">
+          <div class="fld"><label for="ghOwner">Usuário ou organização</label><input type="text" id="ghOwner" placeholder="veroadmbr"></div>
+          <div class="fld"><label for="ghRepo">Repositório</label><input type="text" id="ghRepo" placeholder="felicia"></div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label for="ghBranch">Branch</label><input type="text" id="ghBranch" placeholder="main"></div>
+          <div class="fld"><label for="ghDir">Pasta do site</label><input type="text" id="ghDir" placeholder="vazio = raiz"></div>
+        </div>
+        <div class="fld"><label for="ghToken">Token de acesso</label><input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_…"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn pri sm" id="ghTest">Salvar e testar conexão</button><button type="button" class="btn sm" id="ghForget">Esquecer token</button></div>
+        <p class="msg" id="ghMsg" hidden></p>
+        <ol class="steps">
+          <li>No GitHub, abra <b>Settings → Developer settings → Fine-grained tokens</b> e crie um token.</li>
+          <li>Em <b>Repository access</b>, escolha só o repositório do site.</li>
+          <li>Em <b>Permissions → Contents</b>, marque <b>Read and write</b>.</li>
+          <li>Cole o token aqui. Ele fica guardado só neste navegador.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <h3>Histórico desta sessão</h3>
+        <div class="log" id="log"><span>Nada publicado ainda.</span></div>
+      </div>
+      <div class="box">
+        <h3>Cópia de segurança</h3>
+        <span class="hint">Baixe o arquivo de conteúdo atual para guardar ou subir manualmente no GitHub.</span>
+        <button type="button" class="btn sm" id="download" style="align-self:flex-start">Baixar content.json</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview" aria-label="Prévia">
+    <div class="ptools">
+      <div class="seg" role="group" aria-label="Página da prévia">
+        <button type="button" data-view="marca" aria-pressed="true">Marca</button>
+        <button type="button" data-view="apresentacao">Apresentação</button>
+        <button type="button" data-view="calculos">Cálculos</button>
+      </div>
+      <div class="seg" role="group" aria-label="Tamanho da prévia">
+        <button type="button" data-dev="desk" aria-pressed="true">Computador</button>
+        <button type="button" data-dev="mob">Celular</button>
+      </div>
+    </div>
+    <div class="frame-wrap" id="fw"><iframe id="pv" src="../#marca" title="Prévia do site"></iframe></div>
+  </section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const THEME=[["red","Vermelho principal"],["cream","Creme"],["ink","Texto escuro"],["bg","Fundo da página"],["sheet","Fundo dos blocos"],["redDeep","Vermelho escuro"],["muted","Texto secundário"],["line","Linhas e trilhos"]];
+const FONTS=["Outfit","DM Sans","Manrope","Plus Jakarta Sans","Sora","Urbanist","Poppins","Montserrat","Work Sans","Inter","Space Grotesk","Syne","Bricolage Grotesque","Fraunces","Playfair Display","DM Serif Display","Libre Baskerville","Archivo Black","Bebas Neue"];
+let PUB=null,C=null,BASE_TEXTS={},TEXTMETA=[],IMGUSE={},PENDING={},VIEW="marca",DIRTY=false;
+
+function status(t){$("#status").textContent=t}
+function setDirty(v){DIRTY=v;$("#discard").hidden=!v;status(v?"Alterações não publicadas":"Tudo publicado")}
+function persist(){const ok=LS.set("felicia-cms-draft",C);if(!ok)status("Rascunho grande demais para salvar no navegador. Publique para não perder.")}
+let pt=null;
+function changed(){setDirty(true);persist();clearTimeout(pt);pt=setTimeout(pushPreview,120)}
+function pushPreview(){const f=$("#pv");try{f.contentWindow.postMessage({type:"felicia-preview",content:{...C,_preview:PENDING_URLS()},view:VIEW},location.origin)}catch(e){}}
+function PENDING_URLS(){const m={};for(const k in PENDING)m[k]=PENDING[k].url;return m}
+
+// ---------- tabs ----------
+$$(".tabs [data-tab]").forEach(b=>b.addEventListener("click",()=>{$$(".tabs [data-tab]").forEach(x=>x.setAttribute("aria-selected",String(x===b)));$$("[data-pane]").forEach(p=>p.hidden=p.dataset.pane!==b.dataset.tab);
+  const v={slides:"apresentacao",calculos:"calculos"}[b.dataset.tab];if(v)setView(v);else if(["cores","textos","imagens"].includes(b.dataset.tab))setView("marca")}));
+function setView(v){VIEW=v;$$("[data-view]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===v)));pushPreview()}
+$$("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+$$("[data-dev]").forEach(b=>b.addEventListener("click",()=>{$$("[data-dev]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));$("#fw").classList.toggle("mobile",b.dataset.dev==="mob")}));
+$("#pv").addEventListener("load",()=>setTimeout(pushPreview,200));
+
+// ---------- cores ----------
+function renderTheme(){
+  $("#themeColors").innerHTML=THEME.map(([k,l])=>`<div class="color"><input type="color" id="c-${k}" value="${esc(C.theme[k]||"#000000")}" aria-label="${l}"><div class="m"><b>${l}</b><input type="text" id="h-${k}" value="${esc((C.theme[k]||"").toUpperCase())}" aria-label="${l} em HEX"></div></div>`).join("");
+  THEME.forEach(([k])=>{const c=$("#c-"+k),h=$("#h-"+k);
+    c.addEventListener("input",()=>{C.theme[k]=c.value;h.value=c.value.toUpperCase();changed()});
+    h.addEventListener("change",()=>{let v=h.value.trim();if(!v.startsWith("#"))v="#"+v;if(/^#[0-9a-f]{6}$/i.test(v)){C.theme[k]=v;c.value=v;changed()}else h.value=(C.theme[k]||"").toUpperCase()})});
+  ["fontDisplay","fontBody"].forEach(k=>{const s=$("#"+k),cur=C.theme[k]||"Outfit";s.innerHTML=[...new Set([cur,...FONTS])].map(f=>`<option${f===cur?" selected":""}>${esc(f)}</option>`).join("");s.onchange=()=>{C.theme[k]=s.value;changed()}});
+  $("#metaTitle").value=(C.meta&&C.meta.title)||"";
+}
+$("#metaTitle").addEventListener("input",e=>{C.meta=C.meta||{};C.meta.title=e.target.value;changed()});
+function renderPalette(){const el=$("#palette");const P=C.palette||[];
+  el.innerHTML=P.map((p,i)=>`<div class="pal-row"><input type="color" value="${esc(p.hex)}" data-i="${i}" data-k="hex" aria-label="Cor ${i+1}" style="width:42px;height:42px;border:0;padding:0;background:none;cursor:pointer"><div class="stack"><input type="text" value="${esc(p.name)}" data-i="${i}" data-k="name" aria-label="Nome da cor"><input type="text" value="${esc(p.use)}" data-i="${i}" data-k="use" aria-label="Uso da cor" placeholder="Onde usar"></div><div class="acts"><button type="button" class="icon" data-mv="-1" data-i="${i}" aria-label="Subir">↑</button><button type="button" class="icon" data-mv="1" data-i="${i}" aria-label="Descer">↓</button><button type="button" class="icon" data-rm="${i}" aria-label="Remover">×</button></div></div>`).join("");
+  el.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",()=>{C.palette[+inp.dataset.i][inp.dataset.k]=inp.value;changed()}));
+  el.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,j=i+ +b.dataset.mv;if(j<0||j>=C.palette.length)return;[C.palette[i],C.palette[j]]=[C.palette[j],C.palette[i]];renderPalette();changed()});
+  el.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{C.palette.splice(+b.dataset.rm,1);renderPalette();changed()});
+}
+$("#addColor").onclick=()=>{C.palette=C.palette||[];C.palette.push({name:"Nova cor",hex:"#888888",use:""});renderPalette();changed()};
+
+// ---------- textos ----------
+function labelFor(el){const c=el.classList;
+  if(el.closest(".tabs"))return "Item do menu";
+  if(c.contains("eyebrow"))return "Sobretítulo";if(el.tagName==="H2"||el.tagName==="H1"||c.contains("big-type")||c.contains("gostou"))return "Título";
+  if(el.tagName==="H3")return "Subtítulo";if(c.contains("lead")||c.contains("tag"))return "Texto de apoio";
+  if(el.closest(".pt"))return el.tagName==="B"?"Tópico":"Descrição do tópico";
+  if(el.tagName==="FIGCAPTION")return "Legenda";if(c.contains("v"))return "Número";if(c.contains("l"))return "Rótulo";
+  if(el.closest(".voice"))return "Frase";if(el.closest(".dodont"))return el.tagName==="B"?"Título":"Exemplo";
+  if(el.closest(".cap"))return "Frase sobre a foto";if(el.id==="phone")return "Telefone";
+  return "Texto"}
+function buildMeta(doc){
+  const VN={marca:"Marca",apresentacao:"Apresentação",calculos:"Cálculos"};
+  TEXTMETA=[];BASE_TEXTS={};
+  doc.querySelectorAll("[data-c]").forEach(el=>{const key=el.dataset.c,html=el.hasAttribute("data-c-html");
+    BASE_TEXTS[key]=html?el.innerHTML.trim():el.textContent.trim();
+    const main=el.closest("main[data-v]"),sec=el.closest("section");
+    let grp="Menu do topo";
+    if(main){const vn=VN[main.dataset.v];const eb=sec&&sec.querySelector(".eyebrow");grp=vn+" · "+(eb?eb.textContent.trim():(sec&&sec.classList.contains("hero")?"Abertura":"Geral"));if(sec&&sec.classList.contains("hero"))grp=vn+" · Abertura"}
+    TEXTMETA.push({key,html,grp,label:labelFor(el)})});
+  IMGUSE={};doc.querySelectorAll("[data-img]").forEach(el=>{const k=el.dataset.img;(IMGUSE[k]=IMGUSE[k]||new Set()).add(el.getAttribute("alt")||"");
+    const sec=el.closest("section");if(sec&&sec.querySelector(".eyebrow"))IMGUSE[k].add("· "+sec.querySelector(".eyebrow").textContent.trim())});
+}
+function renderTexts(){const q=($("#q").value||"").toLowerCase();const groups={};
+  TEXTMETA.forEach(m=>{const v=C.texts[m.key]??BASE_TEXTS[m.key]??"";if(q&&!(v.toLowerCase().includes(q)||m.grp.toLowerCase().includes(q)))return;(groups[m.grp]=groups[m.grp]||[]).push(m)});
+  const host=$("#texts");host.innerHTML=Object.entries(groups).map(([g,ms],gi)=>`<details class="group"${q||gi===0?" open":""}><summary>${esc(g)}<span class="cnt">${ms.length}</span></summary><div class="gbody">${ms.map(m=>{const v=C.texts[m.key]??BASE_TEXTS[m.key]??"",ch=v!==BASE_TEXTS[m.key];
+    return `<div class="fld${ch?" changed":""}" data-key="${m.key}"><div class="top"><label for="tx-${m.key}">${esc(m.label)}</label>${ch?`<button type="button" class="btn link" data-reset="${m.key}">Restaurar</button>`:""}</div><textarea id="tx-${m.key}" rows="${Math.min(6,Math.max(1,Math.ceil(v.length/48)))}">${esc(v)}</textarea>${m.html?`<span class="hint">Aceita &lt;br&gt; para quebrar linha e &lt;em&gt; para destacar.</span>`:""}</div>`}).join("")}</div></details>`).join("")||`<p class="hint">Nenhum texto encontrado.</p>`;
+  host.querySelectorAll("textarea").forEach(t=>t.addEventListener("input",()=>{const k=t.id.slice(3);C.texts[k]=t.value;const f=t.closest(".fld");const ch=t.value!==BASE_TEXTS[k];f.classList.toggle("changed",ch);changed()}));
+  host.querySelectorAll("[data-reset]").forEach(b=>b.onclick=()=>{const k=b.dataset.reset;C.texts[k]=BASE_TEXTS[k];const o=[...host.querySelectorAll("details")].map(d=>d.open);renderTexts();host.querySelectorAll("details").forEach((d,i)=>d.open=o[i]);changed()});
+}
+$("#q").addEventListener("input",renderTexts);
+
+// ---------- imagens ----------
+async function prepImage(file,maxSide=2400){
+  const url=URL.createObjectURL(file);const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
+  const png=file.type==="image/png"||file.type==="image/webp"&&false;const s=Math.min(1,maxSide/Math.max(img.width,img.height));
+  const cv=document.createElement("canvas");cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
+  const type=png?"image/png":"image/jpeg";const blob=await new Promise(r=>cv.toBlob(r,type,.86));URL.revokeObjectURL(url);
+  const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(",")[1]);fr.readAsDataURL(blob)});
+  return {blob,b64,ext:png?"png":"jpg",url:URL.createObjectURL(blob)}}
+const slug=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\.[a-z0-9]+$/,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"imagem";
+function imgSrc(path){return PENDING[path]?PENDING[path].url:"../"+path}
+function renderImages(){const q=($("#qi").value||"").toLowerCase();const keys=Object.keys(C.images).filter(k=>!q||k.toLowerCase().includes(q)||[...(IMGUSE[k]||[])].join(" ").toLowerCase().includes(q));
+  $("#images").innerHTML=keys.map(k=>{const cur=C.images[k],ch=cur!==k,pend=!!PENDING[cur];const logo=/logo/.test(k)&&!/red|ink/.test(k);
+    return `<div class="img-row${logo?" dark":""}"><div class="th" style="background-image:url('${esc(imgSrc(cur))}')"></div><div class="meta"><b>${esc(k.replace(/^img\//,""))}</b>${pend?`<span class="badge">Nova · aguardando publicar</span>`:ch?`<span class="badge ok">Trocada</span>`:""}<span class="used">${esc([...(IMGUSE[k]||[])].filter(Boolean).join(" · "))}</span><div class="acts"><label class="btn sm red" for="up-${esc(k)}">Trocar imagem</label><input type="file" accept="image/*" id="up-${esc(k)}" data-k="${esc(k)}" hidden>${ch?`<button type="button" class="btn sm" data-restore="${esc(k)}">Restaurar original</button>`:""}</div></div></div>`}).join("")||`<p class="hint">Nenhuma imagem encontrada.</p>`;
+  $$("#images input[type=file]").forEach(inp=>inp.addEventListener("change",async()=>{const f=inp.files[0];if(!f)return;status("Preparando imagem…");
+    try{const k=inp.dataset.k,p=await prepImage(f);const path=`img/uploads/${Date.now()}-${slug(f.name)}.${p.ext}`;PENDING[path]=p;C.images[k]=path;renderImages();changed()}catch(e){status("Não foi possível ler essa imagem. Use JPG ou PNG.")}}));
+  $$("[data-restore]").forEach(b=>b.onclick=()=>{const k=b.dataset.restore;delete PENDING[C.images[k]];C.images[k]=k;renderImages();changed()});
+}
+$("#qi").addEventListener("input",renderImages);
+
+// ---------- slides ----------
+function renderSlides(){const S=C.slides||[];
+  $("#slides").innerHTML=S.map((s,i)=>`<div class="sl"><img src="${esc(imgSrc(s))}" alt="Slide ${i+1}" loading="lazy"><span class="n">${i+1}</span><div class="acts"><button type="button" class="icon" data-smv="-1" data-i="${i}" aria-label="Mover para antes">←</button><button type="button" class="icon" data-smv="1" data-i="${i}" aria-label="Mover para depois">→</button><button type="button" class="icon" data-srm="${i}" aria-label="Remover slide">×</button></div></div>`).join("")||`<p class="hint">Nenhum slide. Adicione imagens.</p>`;
+  $$("[data-smv]").forEach(b=>b.onclick=()=>{const i=+b.dataset.i,j=i+ +b.dataset.smv;if(j<0||j>=C.slides.length)return;[C.slides[i],C.slides[j]]=[C.slides[j],C.slides[i]];renderSlides();changed()});
+  $$("[data-srm]").forEach(b=>b.onclick=()=>{C.slides.splice(+b.dataset.srm,1);renderSlides();changed()});
+}
+async function addSlides(files,replace){if(!files.length)return;status("Preparando slides…");const out=[];const ts=Date.now();
+  const list=[...files].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  for(let i=0;i<list.length;i++){const p=await prepImage(list[i],2000);const path=`slides/uploads/${ts}-${String(i+1).padStart(2,"0")}.${p.ext}`;PENDING[path]=p;out.push(path)}
+  C.slides=replace?out:[...(C.slides||[]),...out];renderSlides();changed()}
+$("#slideUp").addEventListener("change",e=>{addSlides(e.target.files,false);e.target.value=""});
+$("#replaceSlides").onclick=()=>$("#slideRep").click();
+$("#slideRep").addEventListener("change",e=>{addSlides(e.target.files,true);e.target.value=""});
+
+// ---------- cálculos ----------
+function decodeP(q){return JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,"+").replace(/_/g,"/")))))}
+function renderScen(){const saved=LS.get("felicia-saved",[]),cur=LS.get("felicia-sim",null);
+  const items=[{id:"__ex",name:"Premissas de exemplo",sub:"Números de referência de mercado",p:{}}];
+  if(cur&&cur.p)items.push({id:"__cur",name:"Premissas atuais do simulador",sub:"O que está aberto agora no simulador",p:cur.p});
+  saved.forEach(s=>items.push({id:s.id,name:s.name,sub:"Salvo em "+new Date(s.date).toLocaleDateString("pt-BR")+" às "+new Date(s.date).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),p:(s.sets&&s.sets.base)||s.p||{}}));
+  const sel=C.scenarioId||(Object.keys(C.premissas||{}).length?"__custom":"__ex");
+  if(sel==="__custom")items.splice(1,0,{id:"__custom",name:C.scenarioName||"Cenário publicado",sub:"Já publicado no site",p:C.premissas});
+  $("#scen").innerHTML=items.map(it=>`<button type="button" class="sc-card" data-id="${esc(it.id)}" aria-pressed="${it.id===sel}"><span class="dot"></span><span><b>${esc(it.name)}</b><span>${esc(it.sub)}</span></span></button>`).join("");
+  $$("#scen .sc-card").forEach(b=>b.onclick=()=>{const it=items.find(x=>x.id===b.dataset.id);C.premissas={...it.p};C.scenarioId=it.id==="__ex"?"":it.id;C.scenarioName=it.id==="__ex"?"":it.name;renderScen();changed();setView("calculos")});
+  $$("[data-def]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.def===(C.defaultScenario||"base"))));
+}
+$$("[data-def]").forEach(b=>b.addEventListener("click",()=>{C.defaultScenario=b.dataset.def;renderScen();changed()}));
+$("#useLink").onclick=()=>{const m=$("#linkMsg");m.hidden=false;try{const u=new URL($("#pasteLink").value.trim(),location.href);const q=u.searchParams.get("p");if(!q)throw 0;C.premissas=decodeP(q);C.scenarioId="__link";C.scenarioName="Cenário do link";m.className="msg ok";m.textContent="Premissas do link aplicadas.";renderScen();changed();setView("calculos")}catch(e){m.className="msg bad";m.textContent="Esse link não tem premissas. Use o botão Copiar link do investidor, no menu do simulador."}};
+
+// ---------- GitHub ----------
+const GH=()=>LS.get("felicia-cms-gh",{});
+function fillGh(){const g=GH();$("#ghOwner").value=g.owner||"";$("#ghRepo").value=g.repo||"";$("#ghBranch").value=g.branch||"main";$("#ghDir").value=g.dir||"";$("#ghToken").value=g.token||""}
+function readGh(){return {owner:$("#ghOwner").value.trim(),repo:$("#ghRepo").value.trim(),branch:$("#ghBranch").value.trim()||"main",dir:$("#ghDir").value.trim().replace(/^\/|\/$/g,""),token:$("#ghToken").value.trim()}}
+async function gh(g,path,opt={}){const r=await fetch("https://api.github.com/repos/"+g.owner+"/"+g.repo+path,{...opt,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+g.token,"X-GitHub-Api-Version":"2022-11-28",...(opt.body?{"Content-Type":"application/json"}:{})}});
+  if(!r.ok){let m="";try{m=(await r.json()).message}catch(e){}throw new Error(r.status+" "+m)}return r.status===204?null:r.json()}
+function ghMsg(cls,t){const m=$("#ghMsg");m.hidden=false;m.className="msg "+cls;m.textContent=t}
+$("#ghTest").onclick=async()=>{const g=readGh();LS.set("felicia-cms-gh",g);if(!g.owner||!g.repo||!g.token){ghMsg("warn","Preencha usuário, repositório e token.");return}
+  ghMsg("warn","Testando…");try{const r=await gh(g,"");await gh(g,"/git/ref/heads/"+encodeURIComponent(g.branch));ghMsg(r.permissions&&r.permissions.push===false?"bad":"ok",r.permissions&&r.permissions.push===false?"Conectado, mas o token não pode gravar. Dê permissão de escrita em Contents.":"Conectado a "+r.full_name+" ("+g.branch+").")}
+  catch(e){ghMsg("bad",/401/.test(e.message)?"Token inválido ou expirado.":/404/.test(e.message)?"Repositório ou branch não encontrado. Confira os nomes e se o token tem acesso a ele.":"Erro: "+e.message)}};
+$("#ghForget").onclick=()=>{const g=GH();delete g.token;LS.set("felicia-cms-gh",g);$("#ghToken").value="";ghMsg("ok","Token apagado deste navegador.")};
+function log(t){const l=$("#log");if(l.firstElementChild&&l.firstElementChild.textContent==="Nada publicado ainda.")l.innerHTML="";const s=document.createElement("span");s.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+" · "+t;l.prepend(s)}
+function usedPending(){const used=new Set([...Object.values(C.images),...(C.slides||[])]);return Object.keys(PENDING).filter(k=>used.has(k))}
+function cleanContent(){const o=JSON.parse(JSON.stringify(C));delete o._preview;delete o._keepSc;
+  const t={};for(const k in o.texts)if(o.texts[k]!==BASE_TEXTS[k])t[k]=o.texts[k];o.texts=t;
+  const im={};for(const k in o.images)if(o.images[k]!==k)im[k]=o.images[k];o.images=im;o.version=(PUB&&PUB.version||1);o.updated=new Date().toISOString();return o}
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+$("#publish").onclick=async()=>{const g=GH();
+  if(!g.owner||!g.repo||!g.token){$$(".tabs [data-tab]").find(b=>b.dataset.tab==="publicar").click();ghMsg("warn","Conecte o GitHub para publicar.");return}
+  const btn=$("#publish");btn.disabled=true;btn.textContent="Publicando…";
+  try{const pre=g.dir?g.dir+"/":"";const files=[];
+    for(const path of usedPending())files.push({path:pre+path,b64:PENDING[path].b64});
+    const out=cleanContent();files.push({path:pre+"content.json",b64:b64(JSON.stringify(out,null,1))});
+    status("Enviando "+files.length+" arquivo(s)…");
+    const ref=await gh(g,"/git/ref/heads/"+encodeURIComponent(g.branch));const base=ref.object.sha;
+    const commit=await gh(g,"/git/commits/"+base);
+    const tree=[];for(const f of files){const bl=await gh(g,"/git/blobs",{method:"POST",body:JSON.stringify({content:f.b64,encoding:"base64"})});tree.push({path:f.path,mode:"100644",type:"blob",sha:bl.sha})}
+    const nt=await gh(g,"/git/trees",{method:"POST",body:JSON.stringify({base_tree:commit.tree.sha,tree})});
+    const nc=await gh(g,"/git/commits",{method:"POST",body:JSON.stringify({message:"CMS: atualiza conteúdo do site",tree:nt.sha,parents:[base]})});
+    await gh(g,"/git/refs/heads/"+encodeURIComponent(g.branch),{method:"PATCH",body:JSON.stringify({sha:nc.sha})});
+    for(const p of usedPending())PENDING[p].sent=true;
+    PUB=JSON.parse(JSON.stringify(C));LS.del("felicia-cms-draft");setDirty(false);status("Publicado. O site atualiza em cerca de 1 minuto.");log("Publicado ("+files.length+" arquivo(s))");
+  }catch(e){status("Erro ao publicar");ghMsg("bad","Não foi possível publicar: "+e.message);log("Erro: "+e.message);$$(".tabs [data-tab]").find(b=>b.dataset.tab==="publicar").click()}
+  btn.disabled=false;btn.textContent="Publicar no site"};
+$("#download").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(cleanContent(),null,1)],{type:"application/json"}));a.download="content.json";a.click()};
+let dt=null;$("#discard").onclick=e=>{const b=e.currentTarget;if(!b.dataset.c){b.dataset.c=1;b.textContent="Confirmar descarte";dt=setTimeout(()=>{delete b.dataset.c;b.textContent="Descartar alterações"},3000);return}
+  clearTimeout(dt);delete b.dataset.c;b.textContent="Descartar alterações";C=JSON.parse(JSON.stringify(PUB));PENDING={};LS.del("felicia-cms-draft");renderAll();setDirty(false);pushPreview()};
+window.addEventListener("beforeunload",e=>{if(usedPending().some(p=>!PENDING[p].sent)){e.preventDefault();e.returnValue=""}});
+
+// ---------- boot ----------
+function renderAll(){renderTheme();renderPalette();renderTexts();renderImages();renderSlides();renderScen()}
+(async()=>{
+  try{const [html,pub]=await Promise.all([fetch("../",{cache:"no-store"}).then(r=>r.text()),fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).catch(()=>({}))]);
+    const doc=new DOMParser().parseFromString(html,"text/html");buildMeta(doc);
+    const m=html.match(/const DEFAULT_CONTENT=(\{[\s\S]*?\});\nlet CONTENT/);const def=m?JSON.parse(m[1]):{theme:{},texts:{},images:{},palette:[],slides:[]};
+    const merge=(d,p)=>({...d,...p,theme:{...d.theme,...(p.theme||{})},texts:{...BASE_TEXTS,...(p.texts||{})},images:{...d.images,...(p.images||{})},meta:{...(d.meta||{}),...(p.meta||{})}});
+    PUB=merge(def,pub);
+    const draft=LS.get("felicia-cms-draft",null);
+    C=draft?merge(def,draft):JSON.parse(JSON.stringify(PUB));
+    fillGh();renderAll();setDirty(!!draft);if(draft)status("Rascunho restaurado · alterações não publicadas");pushPreview();
+  }catch(e){status("Não foi possível carregar o site. Recarregue a página.")}
+})();
+</script>
+</body>
+</html>

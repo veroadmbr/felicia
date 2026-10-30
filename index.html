@@ -43,6 +43,7 @@ nav.top img{height:42px;width:auto}
 
 .eyebrow{color:var(--red);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:12px}
 .on-red .eyebrow{color:var(--cream);opacity:.85}
+h1,h2,.big-type,.gostou,.specimen{font-family:var(--font-display,var(--font))}
 h1,h2,h3{margin:0;font-weight:500;text-transform:uppercase;text-wrap:balance;letter-spacing:-.01em;line-height:1.02}
 h2{font-size:clamp(28px,4vw,48px)}
 h3{font-size:18px;text-transform:none;font-weight:600;letter-spacing:0}
@@ -240,285 +241,265 @@ th.cur,td.cur{background:var(--red-soft)}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 
-<nav class="top gut" aria-label="Seções">
-  <div class="in">
-    <a href="#marca" aria-label="Felícia pizzabar"><img src="img/logo.png" alt="Felícia pizzabar"></a>
-    <div class="tabs">
-      <a href="#marca" data-view="marca">Marca</a>
-      <a href="#apresentacao" data-view="apresentacao">Apresentação</a>
-      <a href="#calculos" data-view="calculos">Cálculos</a>
-      <a href="simulador/">Simulador</a>
-    </div>
-  </div>
+<nav aria-label="Seções" class="top gut">
+<div class="in">
+<a aria-label="Felícia pizzabar" href="#marca"><img alt="Felícia pizzabar" data-img="img/logo.png" src="img/logo.png"/></a>
+<div class="tabs">
+<a data-c="t001" data-view="marca" href="#marca">Marca</a>
+<a data-c="t002" data-view="apresentacao" href="#apresentacao">Apresentação</a>
+<a data-c="t003" data-view="calculos" href="#calculos">Cálculos</a>
+<a data-c="t004" href="simulador/">Simulador</a>
+</div>
+</div>
 </nav>
-
 <!-- ================= MARCA ================= -->
-<main id="v-marca" data-v="marca">
-  <section class="hero on-red band gut">
-    <div class="in" style="grid-template-columns:minmax(0,1fr)">
-      <div class="stack" style="gap:30px;align-items:center;text-align:center;padding-block:clamp(20px,5vw,60px)">
-        <span class="eyebrow">Manual da marca</span>
-        <img src="img/logo-full-cream.png" alt="Felícia pizzabar, ESTD 1933" style="width:min(880px,100%)">
-        <p class="tag" style="max-width:34ch">Uma pizzaria de bairro com alma de bar. Jovem, vermelha, bem-humorada e feita para dividir.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="band gut">
-    <div class="in split">
-      <div class="stack">
-        <span class="eyebrow">Essência</span>
-        <h2>Tudo aqui é massa</h2>
-        <p class="lead">Felícia é o lugar onde a pizza napolitana encontra o drink e a música. Um nome de pessoa, como a tia que sempre recebe bem, assinado com um "ESTD 1933" que brinca com a tradição sem levar nada a sério demais.</p>
-        <div class="pts">
-          <div class="pt"><b>Calorosa</b><span>Recebe como em casa. Pizza feita para dividir, mesa cheia, conversa alta.</span></div>
-          <div class="pt"><b>Autêntica</b><span>Gente real, comendo com as mãos. Sem pose, sem filtro de revista.</span></div>
-          <div class="pt"><b>Bem-humorada</b><span>Fala como o público fala, com trocadilho, coração desenhado e frase curta.</span></div>
-          <div class="pt"><b>Feita com cuidado</b><span>Poucos ingredientes, ficha técnica travada, serviço de alto padrão.</span></div>
-        </div>
-      </div>
-      <div class="ph" style="aspect-ratio:4/5"><img src="img/post-senhora.jpg" alt="Senhora de óculos vermelhos com pizzas e drinks"></div>
-    </div>
-  </section>
-
-  <section class="band gut" style="background:var(--sheet)">
-    <div class="in stack" style="gap:28px">
-      <div class="stack">
-        <span class="eyebrow">Logo</span>
-        <h2>Um lettering próprio, redondo e com sotaque</h2>
-        <p class="lead">O nome é desenhado à mão, com hastes que terminam em curva e um acento que vira gesto. "Pizzabar" entra embaixo, menor, como uma assinatura.</p>
-      </div>
-      <div class="logos">
-        <figure class="lg" style="background:var(--red)"><img src="img/logo.png" alt="Logo creme sobre vermelho"><figcaption style="color:var(--cream)">Principal · creme sobre vermelho</figcaption></figure>
-        <figure class="lg" style="background:var(--cream);border:1px solid var(--line)"><img src="img/logo-red.png" alt="Logo vermelho sobre creme"><figcaption>Vermelho sobre creme</figcaption></figure>
-        <figure class="lg" style="background:var(--ink)"><img src="img/logo.png" alt="Logo creme sobre preto"><figcaption style="color:var(--cream)">Creme sobre preto</figcaption></figure>
-        <figure class="lg" style="background:#fff;border:1px solid var(--line)"><img src="img/logo-ink.png" alt="Logo preto sobre branco"><figcaption>Uma cor · preto</figcaption></figure>
-      </div>
-      <div class="lockup">
-        <img src="img/logo-full-red.png" alt="Assinatura completa com ESTD 1933">
-        <div class="stack" style="gap:10px">
-          <h3>Assinatura completa</h3>
-          <p class="hint" style="font-size:15px">Com "ESTD" e "1933" nas laterais. Use em peças de destaque: fachada, porta-copo, embalagem e capa de cardápio. No dia a dia, a versão sem o ano funciona sozinha.</p>
-          <p class="hint" style="font-size:15px">Respiro mínimo: a altura do "f" em volta de toda a marca. Nunca distorcer, contornar ou aplicar sobre fotos sem contraste.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band gut">
-    <div class="in stack" style="gap:28px">
-      <div class="stack">
-        <span class="eyebrow">Cores</span>
-        <h2>Vermelho e creme, sempre juntos</h2>
-        <p class="lead">O vermelho é o protagonista: fachada, cadeiras, posts e embalagens. O creme é a massa, o papel e o respiro. O preto aparece à noite, no forno e na luz baixa do salão.</p>
-      </div>
-      <div class="swatches" id="swatches"></div>
-      <div class="ratio" aria-label="Proporção de uso das cores"><span style="flex:55;background:var(--red)">Vermelho 55%</span><span style="flex:30;background:var(--cream);color:var(--ink)">Creme 30%</span><span style="flex:10;background:var(--ink)">Preto 10%</span><span style="flex:5;background:var(--red-deep)"></span></div>
-    </div>
-  </section>
-
-  <section class="band gut on-red">
-    <div class="in split">
-      <div class="stack" style="gap:18px">
-        <span class="eyebrow">Tipografia</span>
-        <h2>Hemis para falar alto, sans para explicar</h2>
-        <div class="type-spec">
-          <span class="lbl">Hemis · logo e títulos de campanha</span>
-          <img src="img/logo.png" alt="" style="width:min(320px,80%)">
-          <p>A fonte da marca. Redonda, com hastes que terminam em curva, usada no logo e em frases curtas sobre foto: "pizza com muito amor", "seja autêntico", "carbonara".</p>
-        </div>
-        <div class="type-spec">
-          <span class="lbl">Sans geométrica · sistema</span>
-          <p class="specimen">Aa Bb Cc 123</p>
-          <p>Títulos em caixa alta com tracking aberto e textos corridos leves. No digital, a família usada é Outfit.</p>
-        </div>
-      </div>
-      <div class="gal" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-        <div class="ph" style="aspect-ratio:4/5"><img src="img/post-amor.jpg" alt="Promo com foto: pizza com muito amor"></div>
-        <div class="ph" style="aspect-ratio:4/5"><img src="img/post-autentico.jpg" alt="Promo com foto: seja autêntico"></div>
-        <div class="ph" style="aspect-ratio:4/5"><img src="img/poster-carbonara.jpg" alt="Pôster: carbonara"></div>
-        <div class="ph" style="aspect-ratio:4/5"><img src="img/poster-camarao.jpg" alt="Pôster: camarão com alcachofra"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band gut">
-    <div class="in stack" style="gap:28px">
-      <div class="stack">
-        <span class="eyebrow">Tom de voz</span>
-        <h2>Fala como um amigo que entende de pizza</h2>
-        <p class="lead">Frases curtas, afetivas e com humor. Primeira pessoa, coração desenhado, zero jargão gastronômico.</p>
-      </div>
-      <div class="voice">
-        <p>“Pizza com muito amor”</p>
-        <p>“Seja autêntico”</p>
-        <p>“Eu ♥ negroni com pizza”</p>
-        <p>“Tudo aqui é massa”</p>
-        <p>“Não é só um pizzabar. É experiência.”</p>
-      </div>
-      <div class="dodont">
-        <div><b>Assim</b><span>Vem dividir uma pizza com a gente hoje?</span><span>Sexta tem DJ, forno quente e negroni gelado.</span></div>
-        <div><b>Assim não</b><span>Venha conhecer nossa proposta gastronômica diferenciada.</span><span>Aproveite nossas promoções imperdíveis!</span></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band" style="background:var(--sheet)">
-    <div class="gut"><div class="in stack" style="margin-bottom:clamp(24px,3vw,36px)">
-      <span class="eyebrow">Fotografia</span>
-      <h2>Flash, cor e gente de verdade</h2>
-      <p class="lead">Luz direta, cores saturadas e o vermelho sempre em cena. Pessoas comendo com as mãos, rindo, de boca cheia. A comida aparece de cima, na mesa compartilhada.</p>
-    </div></div>
-    <div class="photo-bleed">
-      <div class="ph f1"><img src="img/publico.jpg" alt="Cliente de óculos amarelos comendo pizza" loading="lazy"></div>
-      <div class="ph f2"><img src="img/massa.jpg" alt="Mesa vista de cima com massas e molhos" loading="lazy"></div>
-      <div class="ph f3"><img src="img/oportunidade.jpg" alt="Cliente com drink e pizza" loading="lazy"></div>
-      <div class="ph f4"><img src="img/post-senhora.jpg" alt="Senhora de óculos vermelhos com pizzas" loading="lazy"></div>
-      <div class="ph f5"><img src="img/pizzas.jpg" alt="Pizzas sobre papel Felícia" loading="lazy"></div>
-      <div class="ph f6"><img src="img/garcom.jpg" alt="Garçom com pizza e drinks" loading="lazy"></div>
-      <div class="ph f7"><img src="img/c-coqueteis.jpg" alt="Negroni na mão sobre fundo vermelho" loading="lazy"></div>
-      <div class="ph f8"><img src="img/urbana-mesa.jpg" alt="Mesa com drinks e petiscos" loading="lazy"></div>
-    </div>
-  </section>
-
-  <section class="band gut">
-    <div class="in stack" style="gap:28px">
-      <div class="stack">
-        <span class="eyebrow">Aplicações</span>
-        <h2>A marca em cada ponto de contato</h2>
-        <p class="lead">Pôsteres, redes sociais, embalagem, papelaria e uniforme seguem o mesmo par de cores e o mesmo lettering.</p>
-      </div>
-      <div class="gal gal-3">
-        <div class="ph"><img src="img/poster-negroni.jpg" alt="Pôster: eu amo negroni com pizza"></div>
-        <div class="ph"><img src="img/c-sobremesas.jpg" alt="Avental Felícia com sobremesa"></div>
-        <div class="ph"><img src="img/c-pratos.jpg" alt="Prato de massa servido sobre fundo vermelho"></div>
-      </div>
-      <div class="gal gal-4">
-        <figure class="app"><div class="ph"><img src="img/merch-sacola.jpg" alt="Sacola de delivery"></div><figcaption>Sacola de delivery</figcaption></figure>
-        <figure class="app"><div class="ph"><img src="img/merch-bolsa.jpg" alt="Ecobag"></div><figcaption>Ecobag</figcaption></figure>
-        <figure class="app"><div class="ph"><img src="img/merch-copo.jpg" alt="Copo de café"></div><figcaption>Copo de café</figcaption></figure>
-        <figure class="app"><div class="ph"><img src="img/merch-mesa.jpg" alt="Porta-copo"></div><figcaption>Porta-copo ESTD 1933</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="band gut" style="background:var(--ink);color:var(--cream)">
-    <div class="in stack" style="gap:24px">
-      <div class="stack">
-        <span class="eyebrow" style="color:var(--red)">O espaço</span>
-        <h2>A marca vira lugar</h2>
-        <p class="lead" style="color:var(--cream);opacity:.85">Fachada vermelha, cadeiras vermelhas, luz quente e baixa. De dia é pizzaria, à noite é bar.</p>
-      </div>
-      <div class="hero-photo"><img src="img/fachada.jpg" alt="Fachada do Felícia à noite" style="width:100%;aspect-ratio:16/8;object-fit:cover"><p class="cap">Não é só um pizzabar.<br>É <em>experiência</em></p></div>
-      <div class="space">
-        <div class="ph b"><img src="img/salao.jpg" alt="Salão com luminárias redondas"></div>
-        <div class="ph c"><img src="img/interior.jpg" alt="Balcão com parede de pedra"></div>
-        <div class="ph c"><img src="img/proj-jardim.jpg" alt="Área externa com jardim"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band gut on-red contact">
-    <div class="in">
-      <img src="img/logo.png" alt="Felícia pizzabar" style="width:min(260px,60%)">
-      <p class="lead" style="font-size:clamp(20px,2.4vw,30px)">Vamos sentar para comer uma pizza?</p>
-      <div class="phone">Fale comigo: <span id="phone">(13) 99175-7406</span><button type="button" class="copy" id="copyPhone">Copiar número</button></div>
-      <p class="foot">Felícia pizzabar · Rua da Paz · Santos</p>
-    </div>
-  </section>
+<main data-v="marca" id="v-marca">
+<section class="hero on-red band gut">
+<div class="in" style="grid-template-columns:minmax(0,1fr)">
+<div class="stack" style="gap:30px;align-items:center;text-align:center;padding-block:clamp(20px,5vw,60px)">
+<span class="eyebrow" data-c="t005">Manual da marca</span>
+<img alt="Felícia pizzabar, ESTD 1933" data-img="img/logo-full-cream.png" src="img/logo-full-cream.png" style="width:min(880px,100%)"/>
+<p class="tag" data-c="t006" style="max-width:34ch">Uma pizzaria de bairro com alma de bar. Jovem, vermelha, bem-humorada e feita para dividir.</p>
+</div>
+</div>
+</section>
+<section class="band gut">
+<div class="in split">
+<div class="stack">
+<span class="eyebrow" data-c="t007">Essência</span>
+<h2 data-c="t008">Tudo aqui é massa</h2>
+<p class="lead" data-c="t009">Felícia é o lugar onde a pizza napolitana encontra o drink e a música. Um nome de pessoa, como a tia que sempre recebe bem, assinado com um "ESTD 1933" que brinca com a tradição sem levar nada a sério demais.</p>
+<div class="pts">
+<div class="pt"><b data-c="t010">Calorosa</b><span data-c="t011">Recebe como em casa. Pizza feita para dividir, mesa cheia, conversa alta.</span></div>
+<div class="pt"><b data-c="t012">Autêntica</b><span data-c="t013">Gente real, comendo com as mãos. Sem pose, sem filtro de revista.</span></div>
+<div class="pt"><b data-c="t014">Bem-humorada</b><span data-c="t015">Fala como o público fala, com trocadilho, coração desenhado e frase curta.</span></div>
+<div class="pt"><b data-c="t016">Feita com cuidado</b><span data-c="t017">Poucos ingredientes, ficha técnica travada, serviço de alto padrão.</span></div>
+</div>
+</div>
+<div class="ph" style="aspect-ratio:4/5"><img alt="Senhora de óculos vermelhos com pizzas e drinks" data-img="img/post-senhora.jpg" src="img/post-senhora.jpg"/></div>
+</div>
+</section>
+<section class="band gut" style="background:var(--sheet)">
+<div class="in stack" style="gap:28px">
+<div class="stack">
+<span class="eyebrow" data-c="t018">Logo</span>
+<h2 data-c="t019">Um lettering próprio, redondo e com sotaque</h2>
+<p class="lead" data-c="t020">O nome é desenhado à mão, com hastes que terminam em curva e um acento que vira gesto. "Pizzabar" entra embaixo, menor, como uma assinatura.</p>
+</div>
+<div class="logos">
+<figure class="lg" style="background:var(--red)"><img alt="Logo creme sobre vermelho" data-img="img/logo.png" src="img/logo.png"/><figcaption data-c="t021" style="color:var(--cream)">Principal · creme sobre vermelho</figcaption></figure>
+<figure class="lg" style="background:var(--cream);border:1px solid var(--line)"><img alt="Logo vermelho sobre creme" data-img="img/logo-red.png" src="img/logo-red.png"/><figcaption data-c="t022">Vermelho sobre creme</figcaption></figure>
+<figure class="lg" style="background:var(--ink)"><img alt="Logo creme sobre preto" data-img="img/logo.png" src="img/logo.png"/><figcaption data-c="t023" style="color:var(--cream)">Creme sobre preto</figcaption></figure>
+<figure class="lg" style="background:#fff;border:1px solid var(--line)"><img alt="Logo preto sobre branco" data-img="img/logo-ink.png" src="img/logo-ink.png"/><figcaption data-c="t024">Uma cor · preto</figcaption></figure>
+</div>
+<div class="lockup">
+<img alt="Assinatura completa com ESTD 1933" data-img="img/logo-full-red.png" src="img/logo-full-red.png"/>
+<div class="stack" style="gap:10px">
+<h3 data-c="t025">Assinatura completa</h3>
+<p class="hint" data-c="t026" style="font-size:15px">Com "ESTD" e "1933" nas laterais. Use em peças de destaque: fachada, porta-copo, embalagem e capa de cardápio. No dia a dia, a versão sem o ano funciona sozinha.</p>
+<p class="hint" data-c="t027" style="font-size:15px">Respiro mínimo: a altura do "f" em volta de toda a marca. Nunca distorcer, contornar ou aplicar sobre fotos sem contraste.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="band gut">
+<div class="in stack" style="gap:28px">
+<div class="stack">
+<span class="eyebrow" data-c="t028">Cores</span>
+<h2 data-c="t029">Vermelho e creme, sempre juntos</h2>
+<p class="lead" data-c="t030">O vermelho é o protagonista: fachada, cadeiras, posts e embalagens. O creme é a massa, o papel e o respiro. O preto aparece à noite, no forno e na luz baixa do salão.</p>
+</div>
+<div class="swatches" id="swatches"></div>
+<div aria-label="Proporção de uso das cores" class="ratio"><span data-c="t031" style="flex:55;background:var(--red)">Vermelho 55%</span><span data-c="t032" style="flex:30;background:var(--cream);color:var(--ink)">Creme 30%</span><span data-c="t033" style="flex:10;background:var(--ink)">Preto 10%</span><span style="flex:5;background:var(--red-deep)"></span></div>
+</div>
+</section>
+<section class="band gut on-red">
+<div class="in split">
+<div class="stack" style="gap:18px">
+<span class="eyebrow" data-c="t034">Tipografia</span>
+<h2 data-c="t035">Hemis para falar alto, sans para explicar</h2>
+<div class="type-spec">
+<span class="lbl" data-c="t036">Hemis · logo e títulos de campanha</span>
+<img alt="" data-img="img/logo.png" src="img/logo.png" style="width:min(320px,80%)"/>
+<p data-c="t037">A fonte da marca. Redonda, com hastes que terminam em curva, usada no logo e em frases curtas sobre foto: "pizza com muito amor", "seja autêntico", "carbonara".</p>
+</div>
+<div class="type-spec">
+<span class="lbl" data-c="t038">Sans geométrica · sistema</span>
+<p class="specimen" data-c="t039">Aa Bb Cc 123</p>
+<p data-c="t040">Títulos em caixa alta com tracking aberto e textos corridos leves. No digital, a família usada é Outfit.</p>
+</div>
+</div>
+<div class="gal" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+<div class="ph" style="aspect-ratio:4/5"><img alt="Promo com foto: pizza com muito amor" data-img="img/post-amor.jpg" src="img/post-amor.jpg"/></div>
+<div class="ph" style="aspect-ratio:4/5"><img alt="Promo com foto: seja autêntico" data-img="img/post-autentico.jpg" src="img/post-autentico.jpg"/></div>
+<div class="ph" style="aspect-ratio:4/5"><img alt="Pôster: carbonara" data-img="img/poster-carbonara.jpg" src="img/poster-carbonara.jpg"/></div>
+<div class="ph" style="aspect-ratio:4/5"><img alt="Pôster: camarão com alcachofra" data-img="img/poster-camarao.jpg" src="img/poster-camarao.jpg"/></div>
+</div>
+</div>
+</section>
+<section class="band gut">
+<div class="in stack" style="gap:28px">
+<div class="stack">
+<span class="eyebrow" data-c="t041">Tom de voz</span>
+<h2 data-c="t042">Fala como um amigo que entende de pizza</h2>
+<p class="lead" data-c="t043">Frases curtas, afetivas e com humor. Primeira pessoa, coração desenhado, zero jargão gastronômico.</p>
+</div>
+<div class="voice">
+<p data-c="t044">“Pizza com muito amor”</p>
+<p data-c="t045">“Seja autêntico”</p>
+<p data-c="t046">“Eu ♥ negroni com pizza”</p>
+<p data-c="t047">“Tudo aqui é massa”</p>
+<p data-c="t048">“Não é só um pizzabar. É experiência.”</p>
+</div>
+<div class="dodont">
+<div><b data-c="t049">Assim</b><span data-c="t050">Vem dividir uma pizza com a gente hoje?</span><span data-c="t051">Sexta tem DJ, forno quente e negroni gelado.</span></div>
+<div><b data-c="t052">Assim não</b><span data-c="t053">Venha conhecer nossa proposta gastronômica diferenciada.</span><span data-c="t054">Aproveite nossas promoções imperdíveis!</span></div>
+</div>
+</div>
+</section>
+<section class="band" style="background:var(--sheet)">
+<div class="gut"><div class="in stack" style="margin-bottom:clamp(24px,3vw,36px)">
+<span class="eyebrow" data-c="t055">Fotografia</span>
+<h2 data-c="t056">Flash, cor e gente de verdade</h2>
+<p class="lead" data-c="t057">Luz direta, cores saturadas e o vermelho sempre em cena. Pessoas comendo com as mãos, rindo, de boca cheia. A comida aparece de cima, na mesa compartilhada.</p>
+</div></div>
+<div class="photo-bleed">
+<div class="ph f1"><img alt="Cliente de óculos amarelos comendo pizza" data-img="img/publico.jpg" loading="lazy" src="img/publico.jpg"/></div>
+<div class="ph f2"><img alt="Mesa vista de cima com massas e molhos" data-img="img/massa.jpg" loading="lazy" src="img/massa.jpg"/></div>
+<div class="ph f3"><img alt="Cliente com drink e pizza" data-img="img/oportunidade.jpg" loading="lazy" src="img/oportunidade.jpg"/></div>
+<div class="ph f4"><img alt="Senhora de óculos vermelhos com pizzas" data-img="img/post-senhora.jpg" loading="lazy" src="img/post-senhora.jpg"/></div>
+<div class="ph f5"><img alt="Pizzas sobre papel Felícia" data-img="img/pizzas.jpg" loading="lazy" src="img/pizzas.jpg"/></div>
+<div class="ph f6"><img alt="Garçom com pizza e drinks" data-img="img/garcom.jpg" loading="lazy" src="img/garcom.jpg"/></div>
+<div class="ph f7"><img alt="Negroni na mão sobre fundo vermelho" data-img="img/c-coqueteis.jpg" loading="lazy" src="img/c-coqueteis.jpg"/></div>
+<div class="ph f8"><img alt="Mesa com drinks e petiscos" data-img="img/urbana-mesa.jpg" loading="lazy" src="img/urbana-mesa.jpg"/></div>
+</div>
+</section>
+<section class="band gut">
+<div class="in stack" style="gap:28px">
+<div class="stack">
+<span class="eyebrow" data-c="t058">Aplicações</span>
+<h2 data-c="t059">A marca em cada ponto de contato</h2>
+<p class="lead" data-c="t060">Pôsteres, redes sociais, embalagem, papelaria e uniforme seguem o mesmo par de cores e o mesmo lettering.</p>
+</div>
+<div class="gal gal-3">
+<div class="ph"><img alt="Pôster: eu amo negroni com pizza" data-img="img/poster-negroni.jpg" src="img/poster-negroni.jpg"/></div>
+<div class="ph"><img alt="Avental Felícia com sobremesa" data-img="img/c-sobremesas.jpg" src="img/c-sobremesas.jpg"/></div>
+<div class="ph"><img alt="Prato de massa servido sobre fundo vermelho" data-img="img/c-pratos.jpg" src="img/c-pratos.jpg"/></div>
+</div>
+<div class="gal gal-4">
+<figure class="app"><div class="ph"><img alt="Sacola de delivery" data-img="img/merch-sacola.jpg" src="img/merch-sacola.jpg"/></div><figcaption data-c="t061">Sacola de delivery</figcaption></figure>
+<figure class="app"><div class="ph"><img alt="Ecobag" data-img="img/merch-bolsa.jpg" src="img/merch-bolsa.jpg"/></div><figcaption data-c="t062">Ecobag</figcaption></figure>
+<figure class="app"><div class="ph"><img alt="Copo de café" data-img="img/merch-copo.jpg" src="img/merch-copo.jpg"/></div><figcaption data-c="t063">Copo de café</figcaption></figure>
+<figure class="app"><div class="ph"><img alt="Porta-copo" data-img="img/merch-mesa.jpg" src="img/merch-mesa.jpg"/></div><figcaption data-c="t064">Porta-copo ESTD 1933</figcaption></figure>
+</div>
+</div>
+</section>
+<section class="band gut" style="background:var(--ink);color:var(--cream)">
+<div class="in stack" style="gap:24px">
+<div class="stack">
+<span class="eyebrow" data-c="t065" style="color:var(--red)">O espaço</span>
+<h2 data-c="t066">A marca vira lugar</h2>
+<p class="lead" data-c="t067" style="color:var(--cream);opacity:.85">Fachada vermelha, cadeiras vermelhas, luz quente e baixa. De dia é pizzaria, à noite é bar.</p>
+</div>
+<div class="hero-photo"><img alt="Fachada do Felícia à noite" data-img="img/fachada.jpg" src="img/fachada.jpg" style="width:100%;aspect-ratio:16/8;object-fit:cover"/><p class="cap" data-c="t068" data-c-html="">Não é só um pizzabar.<br/>É <em>experiência</em></p></div>
+<div class="space">
+<div class="ph b"><img alt="Salão com luminárias redondas" data-img="img/salao.jpg" src="img/salao.jpg"/></div>
+<div class="ph c"><img alt="Balcão com parede de pedra" data-img="img/interior.jpg" src="img/interior.jpg"/></div>
+<div class="ph c"><img alt="Área externa com jardim" data-img="img/proj-jardim.jpg" src="img/proj-jardim.jpg"/></div>
+</div>
+</div>
+</section>
+<section class="band gut on-red contact">
+<div class="in">
+<img alt="Felícia pizzabar" data-img="img/logo.png" src="img/logo.png" style="width:min(260px,60%)"/>
+<p class="lead" data-c="t069" style="font-size:clamp(20px,2.4vw,30px)">Vamos sentar para comer uma pizza?</p>
+<div class="phone">Fale comigo: <span data-c="t070" id="phone">(13) 99175-7406</span><button class="copy" id="copyPhone" type="button">Copiar número</button></div>
+<p class="foot" data-c="t071">Felícia pizzabar · Rua da Paz · Santos</p>
+</div>
+</section>
 </main>
-
 <!-- ================= APRESENTAÇÃO ================= -->
-<main id="v-apresentacao" data-v="apresentacao" hidden>
-  <div class="gut"><div class="in viewer">
-    <div class="vbar"><div class="stack" style="gap:6px"><span class="eyebrow">Apresentação</span><h2 style="font-size:clamp(22px,2.6vw,30px)">Deck do investidor · Outubro 2026</h2></div><span class="count" id="count">1 / 19</span></div>
-    <div class="stage" id="stage">
-      <img id="slide" src="slides/s-01.jpg" alt="Slide 1 da apresentação">
-      <button type="button" class="arrow prev" id="prev" aria-label="Slide anterior">‹</button>
-      <button type="button" class="arrow next" id="next" aria-label="Próximo slide">›</button>
-    </div>
-    <p class="hint">Use as setas do teclado ou toque nas laterais para navegar.</p>
-    <div class="thumbs" id="thumbs"></div>
-  </div></div>
+<main data-v="apresentacao" hidden="" id="v-apresentacao">
+<div class="gut"><div class="in viewer">
+<div class="vbar"><div class="stack" style="gap:6px"><span class="eyebrow" data-c="t072">Apresentação</span><h2 data-c="t073" style="font-size:clamp(22px,2.6vw,30px)">Deck do investidor · Outubro 2026</h2></div><span class="count" id="count">1 / 19</span></div>
+<div class="stage" id="stage">
+<img alt="Slide 1 da apresentação" id="slide" src="slides/s-01.jpg"/>
+<button aria-label="Slide anterior" class="arrow prev" id="prev" type="button">‹</button>
+<button aria-label="Próximo slide" class="arrow next" id="next" type="button">›</button>
+</div>
+<p class="hint" data-c="t074">Use as setas do teclado ou toque nas laterais para navegar.</p>
+<div class="thumbs" id="thumbs"></div>
+</div></div>
 </main>
-
 <!-- ================= CÁLCULOS ================= -->
-<main id="v-calculos" data-v="calculos" hidden>
-  <div class="gut"><div class="in calc-wrap">
-    <section class="sheet">
-      <div class="calc-top">
-        <div class="stack" style="gap:8px;max-width:640px">
-          <span class="eyebrow">Projeção de 36 meses</span>
-          <h2 style="font-size:clamp(26px,3vw,40px)">O negócio em números</h2>
-          <p class="hint" style="font-size:15px">Premissas fixas definidas pelos sócios. Escolha um cenário para comparar. Os números não podem ser alterados nesta página.</p>
-          <span class="lock">Versão travada para investidores</span>
-        </div>
-        <div class="seg" role="group" aria-label="Cenário">
-          <button type="button" data-sc="conservador">Conservador</button>
-          <button type="button" data-sc="base">Base</button>
-          <button type="button" data-sc="otimista">Otimista</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="kpis" aria-label="Resumo">
-      <div class="kpi"><span class="v" id="k-fat">–</span><span class="l">Faturamento por mês</span><span class="s" id="k-fat-s">–</span></div>
-      <div class="kpi"><span class="v" id="k-luc">–</span><span class="l">Lucro líquido por mês</span><span class="s" id="k-luc-s">–</span></div>
-      <div class="kpi"><span class="v" id="k-pay">–</span><span class="l">Aporte 100% devolvido</span><span class="s" id="k-pay-s">–</span></div>
-      <div class="kpi"><span class="v" id="k-36">–</span><span class="l">Lucro líquido em 36 meses</span><span class="s" id="k-36-s">–</span></div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Como ler</span><h2>Como a projeção é feita</h2></div>
-      <div class="how">
-        <div><b>1. Receita</b><span>Pessoas no salão em cada dia (almoço e jantar) × ticket médio de cada serviço, mais pedidos de delivery por dia × ticket do pedido.</span></div>
-        <div><b>2. Custos variáveis</b><span>Insumos (CMV), imposto do Simples, taxa de cartão e custo do delivery, todos em percentual do faturamento.</span></div>
-        <div><b>3. Custos fixos</b><span>Equipe com todos os encargos, pró-labore, aluguel, energia, marketing, manutenção e administrativo, reajustados ano a ano.</span></div>
-        <div><b>4. Crescimento</b><span>Rampa de abertura nos dois primeiros meses e crescimento anual do faturamento nos anos 2 e 3.</span></div>
-        <div><b>5. Investidor</b><span>Repasse mensal fixo por cota, tirado do lucro líquido até devolver 100% do aporte. Do que sobra, uma parte vira reserva e o resto é distribuído.</span></div>
-        <div><b>6. Cenários</b><span>Base usa as premissas abaixo. Conservador e Otimista aplicam multiplicadores sobre movimento, delivery, equipe e repasse.</span></div>
-      </div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Um dia na casa</span><h2>Quanto a casa gira</h2><p>Média de um dia aberto, com a casa madura.</p></div>
-      <div class="night" id="night"></div>
-      <div class="week" id="week"></div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">36 meses</span><h2>Lucro e devolução do aporte</h2><p>As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.</p></div>
-      <div class="chartbox"><canvas id="chart" aria-label="Gráfico de lucro mensal e aporte devolvido"></canvas></div>
-      <div class="legend" style="margin-top:12px"><span><i style="background:var(--red)"></i>Lucro líquido do mês</span><span><i style="background:var(--ink)"></i>Lucro acumulado</span><span><i style="background:var(--muted)"></i>Aporte devolvido</span></div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Síntese</span><h2>12, 24 e 36 meses</h2><p>Valores somados desde a abertura.</p></div>
-      <div class="tablewrap"><table id="summary"></table></div>
-      <p class="note" id="annual" style="margin-top:14px"></p>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Custo de operação</span><h2>Para onde vai cada mês</h2><p>Mês 12, com a casa madura.</p></div>
-      <div class="bars" id="bars"></div>
-      <div class="costfoot" id="costfoot"></div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Equipe</span><h2>Custo real de cada funcionário</h2><p id="teamLead"></p></div>
-      <div class="tablewrap"><table id="teamTable"></table></div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Cenários</span><h2>Os três cenários lado a lado</h2><p>Mesmas premissas, com os multiplicadores de cada cenário.</p></div>
-      <div class="tablewrap"><table id="compare"></table></div>
-    </section>
-
-    <section class="sheet">
-      <div class="sec-head"><span class="eyebrow">Premissas</span><h2>Todas as premissas usadas</h2><p>Valores do cenário Base. É sobre eles que os outros cenários aplicam os multiplicadores.</p></div>
-      <div class="prem" id="prem"></div>
-    </section>
-  </div></div>
+<main data-v="calculos" hidden="" id="v-calculos">
+<div class="gut"><div class="in calc-wrap">
+<section class="sheet">
+<div class="calc-top">
+<div class="stack" style="gap:8px;max-width:640px">
+<span class="eyebrow" data-c="t075">Projeção de 36 meses</span>
+<h2 data-c="t076" style="font-size:clamp(26px,3vw,40px)">O negócio em números</h2>
+<p class="hint" data-c="t077" style="font-size:15px">Premissas fixas definidas pelos sócios. Escolha um cenário para comparar. Os números não podem ser alterados nesta página.</p>
+<span class="lock" data-c="t078">Versão travada para investidores</span>
+          <span class="note" id="scName" hidden></span>
+</div>
+<div aria-label="Cenário" class="seg" role="group">
+<button data-sc="conservador" type="button">Conservador</button>
+<button data-sc="base" type="button">Base</button>
+<button data-sc="otimista" type="button">Otimista</button>
+</div>
+</div>
+</section>
+<section aria-label="Resumo" class="kpis">
+<div class="kpi"><span class="v" id="k-fat">–</span><span class="l" data-c="t079">Faturamento por mês</span><span class="s" id="k-fat-s">–</span></div>
+<div class="kpi"><span class="v" id="k-luc">–</span><span class="l" data-c="t080">Lucro líquido por mês</span><span class="s" id="k-luc-s">–</span></div>
+<div class="kpi"><span class="v" id="k-pay">–</span><span class="l" data-c="t081">Aporte 100% devolvido</span><span class="s" id="k-pay-s">–</span></div>
+<div class="kpi"><span class="v" id="k-36">–</span><span class="l" data-c="t082">Lucro líquido em 36 meses</span><span class="s" id="k-36-s">–</span></div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t083">Como ler</span><h2 data-c="t084">Como a projeção é feita</h2></div>
+<div class="how">
+<div><b data-c="t085">1. Receita</b><span data-c="t086">Pessoas no salão em cada dia (almoço e jantar) × ticket médio de cada serviço, mais pedidos de delivery por dia × ticket do pedido.</span></div>
+<div><b data-c="t087">2. Custos variáveis</b><span data-c="t088">Insumos (CMV), imposto do Simples, taxa de cartão e custo do delivery, todos em percentual do faturamento.</span></div>
+<div><b data-c="t089">3. Custos fixos</b><span data-c="t090">Equipe com todos os encargos, pró-labore, aluguel, energia, marketing, manutenção e administrativo, reajustados ano a ano.</span></div>
+<div><b data-c="t091">4. Crescimento</b><span data-c="t092">Rampa de abertura nos dois primeiros meses e crescimento anual do faturamento nos anos 2 e 3.</span></div>
+<div><b data-c="t093">5. Investidor</b><span data-c="t094">Repasse mensal fixo por cota, tirado do lucro líquido até devolver 100% do aporte. Do que sobra, uma parte vira reserva e o resto é distribuído.</span></div>
+<div><b data-c="t095">6. Cenários</b><span data-c="t096">Base usa as premissas abaixo. Conservador e Otimista aplicam multiplicadores sobre movimento, delivery, equipe e repasse.</span></div>
+</div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t097">Um dia na casa</span><h2 data-c="t098">Quanto a casa gira</h2><p data-c="t099">Média de um dia aberto, com a casa madura.</p></div>
+<div class="night" id="night"></div>
+<div class="week" id="week"></div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t100">36 meses</span><h2 data-c="t101">Lucro e devolução do aporte</h2><p data-c="t102">As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.</p></div>
+<div class="chartbox"><canvas aria-label="Gráfico de lucro mensal e aporte devolvido" id="chart"></canvas></div>
+<div class="legend" style="margin-top:12px"><span><i style="background:var(--red)"></i>Lucro líquido do mês</span><span><i style="background:var(--ink)"></i>Lucro acumulado</span><span><i style="background:var(--muted)"></i>Aporte devolvido</span></div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t103">Síntese</span><h2 data-c="t104">12, 24 e 36 meses</h2><p data-c="t105">Valores somados desde a abertura.</p></div>
+<div class="tablewrap"><table id="summary"></table></div>
+<p class="note" id="annual" style="margin-top:14px"></p>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t106">Custo de operação</span><h2 data-c="t107">Para onde vai cada mês</h2><p data-c="t108">Mês 12, com a casa madura.</p></div>
+<div class="bars" id="bars"></div>
+<div class="costfoot" id="costfoot"></div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t109">Equipe</span><h2 data-c="t110">Custo real de cada funcionário</h2><p id="teamLead"></p></div>
+<div class="tablewrap"><table id="teamTable"></table></div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t111">Cenários</span><h2 data-c="t112">Os três cenários lado a lado</h2><p data-c="t113">Mesmas premissas, com os multiplicadores de cada cenário.</p></div>
+<div class="tablewrap"><table id="compare"></table></div>
+</section>
+<section class="sheet">
+<div class="sec-head"><span class="eyebrow" data-c="t114">Premissas</span><h2 data-c="t115">Todas as premissas usadas</h2><p data-c="t116">Valores do cenário Base. É sobre eles que os outros cenários aplicam os multiplicadores.</p></div>
+<div class="prem" id="prem"></div>
+</section>
+</div></div>
 </main>
 
 <script>
@@ -679,10 +660,11 @@ function run(p){
 }
 
 
-const BASE_PREMISSAS={};
-let P={...DEFAULTS,...BASE_PREMISSAS};
-try{const q=new URLSearchParams(location.search).get("p");if(q){const j=JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,"+").replace(/_/g,"/")))));P={...DEFAULTS,...j}}}catch(e){}
-let SC="base";
+const DEFAULT_CONTENT={"version":1,"meta":{"title":"Felícia para Investidores"},"theme":{"red":"#D8131D","cream":"#FAF5E6","ink":"#161312","bg":"#F4F1EA","sheet":"#FCFBF7","redDeep":"#9E0E15","muted":"#6E6762","line":"#E3DED6","fontBody":"Outfit","fontDisplay":"Outfit"},"palette":[{"name":"Vermelho Felícia","hex":"#D8131D","use":"Fachada, posts, embalagens"},{"name":"Creme Massa","hex":"#FAF5E6","use":"Logo, papel, respiro"},{"name":"Preto Forno","hex":"#161312","use":"Noite, textos, contraste"},{"name":"Vermelho Vinho","hex":"#9E0E15","use":"Sombras e detalhes"}],"texts":{"t001":"Marca","t002":"Apresentação","t003":"Cálculos","t004":"Simulador","t005":"Manual da marca","t006":"Uma pizzaria de bairro com alma de bar. Jovem, vermelha, bem-humorada e feita para dividir.","t007":"Essência","t008":"Tudo aqui é massa","t009":"Felícia é o lugar onde a pizza napolitana encontra o drink e a música. Um nome de pessoa, como a tia que sempre recebe bem, assinado com um \"ESTD 1933\" que brinca com a tradição sem levar nada a sério demais.","t010":"Calorosa","t011":"Recebe como em casa. Pizza feita para dividir, mesa cheia, conversa alta.","t012":"Autêntica","t013":"Gente real, comendo com as mãos. Sem pose, sem filtro de revista.","t014":"Bem-humorada","t015":"Fala como o público fala, com trocadilho, coração desenhado e frase curta.","t016":"Feita com cuidado","t017":"Poucos ingredientes, ficha técnica travada, serviço de alto padrão.","t018":"Logo","t019":"Um lettering próprio, redondo e com sotaque","t020":"O nome é desenhado à mão, com hastes que terminam em curva e um acento que vira gesto. \"Pizzabar\" entra embaixo, menor, como uma assinatura.","t021":"Principal · creme sobre vermelho","t022":"Vermelho sobre creme","t023":"Creme sobre preto","t024":"Uma cor · preto","t025":"Assinatura completa","t026":"Com \"ESTD\" e \"1933\" nas laterais. Use em peças de destaque: fachada, porta-copo, embalagem e capa de cardápio. No dia a dia, a versão sem o ano funciona sozinha.","t027":"Respiro mínimo: a altura do \"f\" em volta de toda a marca. Nunca distorcer, contornar ou aplicar sobre fotos sem contraste.","t028":"Cores","t029":"Vermelho e creme, sempre juntos","t030":"O vermelho é o protagonista: fachada, cadeiras, posts e embalagens. O creme é a massa, o papel e o respiro. O preto aparece à noite, no forno e na luz baixa do salão.","t031":"Vermelho 55%","t032":"Creme 30%","t033":"Preto 10%","t034":"Tipografia","t035":"Hemis para falar alto, sans para explicar","t036":"Hemis · logo e títulos de campanha","t037":"A fonte da marca. Redonda, com hastes que terminam em curva, usada no logo e em frases curtas sobre foto: \"pizza com muito amor\", \"seja autêntico\", \"carbonara\".","t038":"Sans geométrica · sistema","t039":"Aa Bb Cc 123","t040":"Títulos em caixa alta com tracking aberto e textos corridos leves. No digital, a família usada é Outfit.","t041":"Tom de voz","t042":"Fala como um amigo que entende de pizza","t043":"Frases curtas, afetivas e com humor. Primeira pessoa, coração desenhado, zero jargão gastronômico.","t044":"“Pizza com muito amor”","t045":"“Seja autêntico”","t046":"“Eu ♥ negroni com pizza”","t047":"“Tudo aqui é massa”","t048":"“Não é só um pizzabar. É experiência.”","t049":"Assim","t050":"Vem dividir uma pizza com a gente hoje?","t051":"Sexta tem DJ, forno quente e negroni gelado.","t052":"Assim não","t053":"Venha conhecer nossa proposta gastronômica diferenciada.","t054":"Aproveite nossas promoções imperdíveis!","t055":"Fotografia","t056":"Flash, cor e gente de verdade","t057":"Luz direta, cores saturadas e o vermelho sempre em cena. Pessoas comendo com as mãos, rindo, de boca cheia. A comida aparece de cima, na mesa compartilhada.","t058":"Aplicações","t059":"A marca em cada ponto de contato","t060":"Pôsteres, redes sociais, embalagem, papelaria e uniforme seguem o mesmo par de cores e o mesmo lettering.","t061":"Sacola de delivery","t062":"Ecobag","t063":"Copo de café","t064":"Porta-copo ESTD 1933","t065":"O espaço","t066":"A marca vira lugar","t067":"Fachada vermelha, cadeiras vermelhas, luz quente e baixa. De dia é pizzaria, à noite é bar.","t068":"Não é só um pizzabar.<br/>É <em>experiência</em>","t069":"Vamos sentar para comer uma pizza?","t070":"(13) 99175-7406","t071":"Felícia pizzabar · Rua da Paz · Santos","t072":"Apresentação","t073":"Deck do investidor · Outubro 2026","t074":"Use as setas do teclado ou toque nas laterais para navegar.","t075":"Projeção de 36 meses","t076":"O negócio em números","t077":"Premissas fixas definidas pelos sócios. Escolha um cenário para comparar. Os números não podem ser alterados nesta página.","t078":"Versão travada para investidores","t079":"Faturamento por mês","t080":"Lucro líquido por mês","t081":"Aporte 100% devolvido","t082":"Lucro líquido em 36 meses","t083":"Como ler","t084":"Como a projeção é feita","t085":"1. Receita","t086":"Pessoas no salão em cada dia (almoço e jantar) × ticket médio de cada serviço, mais pedidos de delivery por dia × ticket do pedido.","t087":"2. Custos variáveis","t088":"Insumos (CMV), imposto do Simples, taxa de cartão e custo do delivery, todos em percentual do faturamento.","t089":"3. Custos fixos","t090":"Equipe com todos os encargos, pró-labore, aluguel, energia, marketing, manutenção e administrativo, reajustados ano a ano.","t091":"4. Crescimento","t092":"Rampa de abertura nos dois primeiros meses e crescimento anual do faturamento nos anos 2 e 3.","t093":"5. Investidor","t094":"Repasse mensal fixo por cota, tirado do lucro líquido até devolver 100% do aporte. Do que sobra, uma parte vira reserva e o resto é distribuído.","t095":"6. Cenários","t096":"Base usa as premissas abaixo. Conservador e Otimista aplicam multiplicadores sobre movimento, delivery, equipe e repasse.","t097":"Um dia na casa","t098":"Quanto a casa gira","t099":"Média de um dia aberto, com a casa madura.","t100":"36 meses","t101":"Lucro e devolução do aporte","t102":"As barras mostram o lucro líquido de cada mês. As linhas mostram o lucro acumulado e quanto do aporte já voltou aos cotistas.","t103":"Síntese","t104":"12, 24 e 36 meses","t105":"Valores somados desde a abertura.","t106":"Custo de operação","t107":"Para onde vai cada mês","t108":"Mês 12, com a casa madura.","t109":"Equipe","t110":"Custo real de cada funcionário","t111":"Cenários","t112":"Os três cenários lado a lado","t113":"Mesmas premissas, com os multiplicadores de cada cenário.","t114":"Premissas","t115":"Todas as premissas usadas","t116":"Valores do cenário Base. É sobre eles que os outros cenários aplicam os multiplicadores."},"images":{"img/logo.png":"img/logo.png","img/logo-full-cream.png":"img/logo-full-cream.png","img/post-senhora.jpg":"img/post-senhora.jpg","img/logo-red.png":"img/logo-red.png","img/logo-ink.png":"img/logo-ink.png","img/logo-full-red.png":"img/logo-full-red.png","img/post-amor.jpg":"img/post-amor.jpg","img/post-autentico.jpg":"img/post-autentico.jpg","img/poster-carbonara.jpg":"img/poster-carbonara.jpg","img/poster-camarao.jpg":"img/poster-camarao.jpg","img/publico.jpg":"img/publico.jpg","img/massa.jpg":"img/massa.jpg","img/oportunidade.jpg":"img/oportunidade.jpg","img/pizzas.jpg":"img/pizzas.jpg","img/garcom.jpg":"img/garcom.jpg","img/c-coqueteis.jpg":"img/c-coqueteis.jpg","img/urbana-mesa.jpg":"img/urbana-mesa.jpg","img/poster-negroni.jpg":"img/poster-negroni.jpg","img/c-sobremesas.jpg":"img/c-sobremesas.jpg","img/c-pratos.jpg":"img/c-pratos.jpg","img/merch-sacola.jpg":"img/merch-sacola.jpg","img/merch-bolsa.jpg":"img/merch-bolsa.jpg","img/merch-copo.jpg":"img/merch-copo.jpg","img/merch-mesa.jpg":"img/merch-mesa.jpg","img/fachada.jpg":"img/fachada.jpg","img/salao.jpg":"img/salao.jpg","img/interior.jpg":"img/interior.jpg","img/proj-jardim.jpg":"img/proj-jardim.jpg"},"slides":["slides/s-01.jpg","slides/s-02.jpg","slides/s-03.jpg","slides/s-04.jpg","slides/s-05.jpg","slides/s-06.jpg","slides/s-07.jpg","slides/s-08.jpg","slides/s-09.jpg","slides/s-10.jpg","slides/s-11.jpg","slides/s-12.jpg","slides/s-13.jpg","slides/s-14.jpg","slides/s-15.jpg","slides/s-16.jpg","slides/s-17.jpg","slides/s-18.jpg","slides/s-19.jpg"],"premissas":{}};
+let CONTENT=DEFAULT_CONTENT, URLP=null;
+let P={...DEFAULTS,...(CONTENT.premissas||{})};
+try{const q=new URLSearchParams(location.search).get("p");if(q){const j=JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,"+").replace(/_/g,"/")))));URLP=j;P={...DEFAULTS,...j}}}catch(e){}
+let SC=(CONTENT.defaultScenario)||"base";
 
 // ---------- views ----------
 const VIEWS=["marca","apresentacao","calculos"];
@@ -694,18 +676,20 @@ function show(){let v=(location.hash||"").slice(1);if(!VIEWS.includes(v))v="marc
 window.addEventListener("hashchange",show);
 
 // ---------- marca: cores ----------
-const SW=[["Vermelho Felícia","#D8131D","216 · 19 · 29","Fachada, posts, embalagens",""],["Creme Massa","#FAF5E6","250 · 245 · 230","Logo, papel, respiro","dark"],["Preto Forno","#161312","22 · 19 · 18","Noite, textos, contraste",""],["Vermelho Vinho","#9E0E15","158 · 14 · 21","Sombras e detalhes",""]];
-document.getElementById("swatches").innerHTML=SW.map(([n,h,rgb,u,d])=>`<div class="sw"><div class="chip" style="background:${h};color:${d?"#161312":"#FAF5E6"}">${n}</div><dl><dt>HEX</dt><dd>${h}</dd><dt>RGB</dt><dd>${rgb}</dd><dt>Uso</dt><dd>${u}</dd></dl></div>`).join("");
+function hexRgb(h){const m=/^#?([0-9a-f]{6})$/i.exec(h||"");if(!m)return [0,0,0];const n=parseInt(m[1],16);return [n>>16&255,n>>8&255,n&255]}
+function lum(h){const [r,g,b]=hexRgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b}
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function renderPalette(){document.getElementById("swatches").innerHTML=(CONTENT.palette||[]).map(p=>`<div class="sw"><div class="chip" style="background:${esc(p.hex)};color:${lum(p.hex)>.5?"#161312":"#FAF5E6"}">${esc(p.name)}</div><dl><dt>HEX</dt><dd>${esc((p.hex||"").toUpperCase())}</dd><dt>RGB</dt><dd>${hexRgb(p.hex).join(" · ")}</dd><dt>Uso</dt><dd>${esc(p.use)}</dd></dl></div>`).join("")}
 document.getElementById("copyPhone").addEventListener("click",e=>{const b=e.currentTarget,t=document.getElementById("phone").textContent;
   const done=()=>{b.textContent="Copiado";setTimeout(()=>b.textContent="Copiar número",1800)};
   try{navigator.clipboard.writeText(t).then(done,()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("phone"));const s=getSelection();s.removeAllRanges();s.addRange(r)})}catch(err){}});
 
 // ---------- apresentação ----------
-const N=19;let cur=1;
+let SLIDES=CONTENT.slides||[],N=SLIDES.length;let cur=1;
 const slide=document.getElementById("slide"),thumbs=document.getElementById("thumbs");
-const src=i=>`slides/s-${String(i).padStart(2,"0")}.jpg`;
-thumbs.innerHTML=Array.from({length:N},(_,i)=>`<button type="button" data-i="${i+1}" aria-label="Ir para o slide ${i+1}"><img src="${src(i+1)}" alt="" loading="lazy"><span class="n">${i+1}</span></button>`).join("");
-function go(i){cur=Math.min(N,Math.max(1,i));slide.src=src(cur);slide.alt="Slide "+cur+" da apresentação";
+const src=i=>SLIDES[i-1]||"";
+function renderSlides(){SLIDES=CONTENT.slides||[];N=SLIDES.length;thumbs.innerHTML=Array.from({length:N},(_,i)=>`<button type="button" data-i="${i+1}" aria-label="Ir para o slide ${i+1}"><img src="${src(i+1)}" alt="" loading="lazy"><span class="n">${i+1}</span></button>`).join("");}
+function go(i){if(!N){document.getElementById("count").textContent="0 / 0";return}cur=Math.min(N,Math.max(1,i));slide.src=src(cur);slide.alt="Slide "+cur+" da apresentação";
   document.getElementById("count").textContent=cur+" / "+N;
   document.getElementById("prev").disabled=cur===1;document.getElementById("next").disabled=cur===N;
   thumbs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-current",String(+b.dataset.i===cur)));
@@ -716,7 +700,7 @@ document.addEventListener("keydown",e=>{if(document.getElementById("v-apresentac
 let tx=null;const st=document.getElementById("stage");
 st.addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
 st.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(cur+(dx<0?1:-1));tx=null});
-go(1);
+renderSlides();go(1);
 
 // ---------- cálculos ----------
 let chart=null;
@@ -782,7 +766,7 @@ function fmtP(id,unit,v){if(unit==="R$")return brl(v);if(unit==="%")return nf(v,
 function renderPrem(){const skip=new Set(P.modo==="dias"?["giro","aprov","dias"]:["d0","d1","d2","d3","d4","d5","d6"]);
   document.getElementById("prem").innerHTML=GROUPS.map(g=>{const items=g.c.filter(([id])=>!id.startsWith("__")&&!skip.has(id));if(!items.length)return "";
     return `<section><h3>${g.t}</h3><dl>${items.map(([id,label,, , ,unit])=>`<dt>${label}</dt><dd>${fmtP(id,unit,P[id]??0)}</dd>`).join("")}</dl></section>`}).join("")}
-function drawChart(R){if(!window.Chart)return;const red="#D8131D",ink="#161312",muted="#6E6762",line="#E3DED6";
+function drawChart(R){if(!window.Chart)return;const cs=getComputedStyle(document.documentElement),cv=k=>cs.getPropertyValue(k).trim();const red=cv("--red"),ink=cv("--ink"),muted=cv("--muted"),line=cv("--line");
   const data={labels:R.m.map((_,i)=>String(i+1)),datasets:[
     {type:"bar",label:"Lucro do mês",data:R.m.map(x=>x.lucro),backgroundColor:R.m.map(x=>x.lucro<0?muted:red),borderRadius:3,yAxisID:"y",order:3},
     {type:"line",label:"Lucro acumulado",data:R.m.map(x=>x.L),borderColor:ink,borderWidth:2,pointRadius:0,yAxisID:"y2",tension:.25,order:1},
@@ -793,7 +777,30 @@ function drawChart(R){if(!window.Chart)return;const red="#D8131D",ink="#161312",
     scales:{x:{grid:{display:false},ticks:{...tick,callback:(v,i)=>((i+1)%6===0||i===0)?"m"+(i+1):""}},
       y:{position:"left",grid:{color:line},ticks:{...tick,callback:v=>brl(v)}},y2:{position:"right",grid:{display:false},ticks:{...tick,callback:v=>brl(v)}}}};
   if(chart){chart.data=data;chart.options=opts;chart.update()}else chart=new Chart(document.getElementById("chart"),{data,options:opts})}
-renderPrem();show();
+// ---------- conteúdo (CMS) ----------
+const FONTS_LOADED=new Set(["Outfit"]);
+function loadFont(f){if(!f||FONTS_LOADED.has(f))return;FONTS_LOADED.add(f);const l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+encodeURIComponent(f).replace(/%20/g,"+")+":wght@300;400;500;600;700;800&display=swap";document.head.appendChild(l)}
+function mix(a,b,w){const x=hexRgb(a),y=hexRgb(b);return "#"+x.map((v,i)=>Math.round(v*w+y[i]*(1-w)).toString(16).padStart(2,"0")).join("")}
+function applyContent(c){
+  CONTENT=c;const th=c.theme||{},rs=document.documentElement.style,set=(k,v)=>{if(v)rs.setProperty(k,v)};
+  set("--red",th.red);set("--cream",th.cream);set("--red-ink",th.cream);set("--ink",th.ink);set("--bg",th.bg);set("--sheet",th.sheet);set("--red-deep",th.redDeep);set("--muted",th.muted);set("--line",th.line);
+  if(th.red&&th.sheet)set("--red-soft",mix(th.red,th.sheet,.13));
+  if(th.line)set("--track",th.line);
+  loadFont(th.fontBody);loadFont(th.fontDisplay);
+  if(th.fontBody)set("--font",`"${th.fontBody}","Helvetica Neue",Arial,sans-serif`);
+  if(th.fontDisplay)set("--font-display",`"${th.fontDisplay}","Helvetica Neue",Arial,sans-serif`);
+  const tx=c.texts||{};document.querySelectorAll("[data-c]").forEach(el=>{const v=tx[el.dataset.c];if(v==null)return;if(el.hasAttribute("data-c-html"))el.innerHTML=v;else el.textContent=v});
+  const im=c.images||{},pv=c._preview||{};document.querySelectorAll("[data-img]").forEach(el=>{const k=el.dataset.img,v=pv[im[k]]||im[k];if(v)el.src=v});
+  if(c.meta&&c.meta.title)document.title=c.meta.title;
+  renderPalette();renderSlides();go(Math.min(cur,N)||1);
+  if(!URLP){P={...DEFAULTS,...(c.premissas||{})}}
+  if(c.defaultScenario&&!c._keepSc)SC=c.defaultScenario;
+  const sn=document.getElementById("scName");if(c.scenarioName){sn.hidden=false;sn.textContent="Cenário publicado: "+c.scenarioName}else sn.hidden=true;
+  renderPrem();if(!document.getElementById("v-calculos").hidden)update();
+}
+window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="felicia-preview"){const c=e.data.content;if(e.data.view&&e.data.view!==(location.hash||"#marca").slice(1))location.hash=e.data.view;applyContent(c)}});
+fetch("content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j)applyContent({...DEFAULT_CONTENT,...j,theme:{...DEFAULT_CONTENT.theme,...(j.theme||{})},texts:{...DEFAULT_CONTENT.texts,...(j.texts||{})},images:{...DEFAULT_CONTENT.images,...(j.images||{})}})}).catch(()=>{});
+renderPalette();renderPrem();show();
 </script>
 </body>
 </html>

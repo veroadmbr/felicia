@@ -1,0 +1,65 @@
+{
+ "version": 1,
+ "meta": {
+  "title": "Felícia para Investidores"
+ },
+ "theme": {
+  "red": "#D8131D",
+  "cream": "#FAF5E6",
+  "ink": "#161312",
+  "bg": "#F4F1EA",
+  "sheet": "#FCFBF7",
+  "redDeep": "#9E0E15",
+  "muted": "#6E6762",
+  "line": "#E3DED6",
+  "fontBody": "Outfit",
+  "fontDisplay": "Outfit"
+ },
+ "palette": [
+  {
+   "name": "Vermelho Felícia",
+   "hex": "#D8131D",
+   "use": "Fachada, posts, embalagens"
+  },
+  {
+   "name": "Creme Massa",
+   "hex": "#FAF5E6",
+   "use": "Logo, papel, respiro"
+  },
+  {
+   "name": "Preto Forno",
+   "hex": "#161312",
+   "use": "Noite, textos, contraste"
+  },
+  {
+   "name": "Vermelho Vinho",
+   "hex": "#9E0E15",
+   "use": "Sombras e detalhes"
+  }
+ ],
+ "slides": [
+  "slides/s-01.jpg",
+  "slides/s-02.jpg",
+  "slides/s-03.jpg",
+  "slides/s-04.jpg",
+  "slides/s-05.jpg",
+  "slides/s-06.jpg",
+  "slides/s-07.jpg",
+  "slides/s-08.jpg",
+  "slides/s-09.jpg",
+  "slides/s-10.jpg",
+  "slides/s-11.jpg",
+  "slides/s-12.jpg",
+  "slides/s-13.jpg",
+  "slides/s-14.jpg",
+  "slides/s-15.jpg",
+  "slides/s-16.jpg",
+  "slides/s-17.jpg",
+  "slides/s-18.jpg",
+  "slides/s-19.jpg"
+ ],
+ "premissas": {},
+ "defaultScenario": "base",
+ "texts": {},
+ "images": {}
+}

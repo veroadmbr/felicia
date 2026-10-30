@@ -366,3 +366,8 @@ function renderSaved(){
     ul.appendChild(li)});
 }
 syncControls();applyMode();update();renderSaved();
+// cores do CMS
+fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(c=>{if(!c||!c.theme)return;const t=c.theme,rs=document.documentElement.style,set=(k,v)=>{if(v)rs.setProperty(k,v)};
+  set("--red",t.red);set("--brand",t.red);set("--cream",t.cream);set("--red-deep",t.redDeep);
+  if(t.red){const h=x=>{const n=parseInt(x.slice(1),16);return [n>>16&255,n>>8&255,n&255]},a=h(t.red),b=[255,255,255];set("--red-soft","#"+a.map((v,i)=>Math.round(v*.13+b[i]*.87).toString(16).padStart(2,"0")).join(""))}
+  update()}).catch(()=>{});
