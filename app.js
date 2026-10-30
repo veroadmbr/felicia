@@ -65,12 +65,13 @@ const GROUPS=[
   ["caixa","Capital de giro",0,600000,10000,"R$",""]]}
 ];
 
-let P={...DEFAULTS}, SC="base", CUR=null, DIRTY=false, SAVED=[];
+const ZERO=(()=>{const z={};for(const k in DEFAULTS){const v=DEFAULTS[k];z[k]=(typeof v!=="number"||k.startsWith("mc_")||k.startsWith("mo_"))?v:0}z.ramp1=100;z.ramp2=100;return z})();
+let P={...ZERO}, SC="base", CUR=null, DIRTY=false, SAVED=[];
 const clone=o=>JSON.parse(JSON.stringify(o));
 function mult(p,k){const pre=k==="conservador"?"mc_":k==="otimista"?"mo_":null;const g=x=>pre?p[pre+x]:1;return {mov:g("mov"),del:g("del"),eq:g("eq"),rep:g("rep")}}
 function eff(p,k){const m=mult(p,k),e={...p};e.giro=p.giro*m.mov;for(let i=0;i<7;i++)e["d"+i]=Math.round(p["d"+i]*m.mov);
   e.pedidos=p.pedidos*m.del;e.func=p.func*m.eq;e.rep1=p.rep1*m.rep;e.rep2=p.rep2*m.rep;e.rep3=p.rep3*m.rep;return e}
-function fromSaved(o){if(!o)return {...DEFAULTS};const b=(o.sets&&o.sets.base)||o.p||{};return {...DEFAULTS,...b}}
+function fromSaved(o){if(!o)return {...ZERO};const b=(o.sets&&o.sets.base)||o.p||{};return {...DEFAULTS,...b}}
 try{const s=JSON.parse(localStorage.getItem("felicia-sim")||"null");if(s){P=fromSaved(s);SC=s.sc||"base";CUR=s.cur||null;DIRTY=!!s.dirty}}catch(e){}
 try{SAVED=JSON.parse(localStorage.getItem("felicia-saved")||"[]")||[]}catch(e){SAVED=[]}
 const hhmm=d=>d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
@@ -78,8 +79,8 @@ function save(){let ok=true;try{localStorage.setItem("felicia-sim",JSON.stringif
   const a=document.getElementById("autosave");if(a)a.textContent=ok?"Alterações salvas automaticamente às "+hhmm(new Date())+".":"Este navegador bloqueou o salvamento automático. Use Salvar para guardar um cenário enquanto a página estiver aberta.";}
 function persistSaved(){try{localStorage.setItem("felicia-saved",JSON.stringify(SAVED))}catch(e){}}
 
-const nf=(v,d=0)=>v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
-function brl(v){const a=Math.abs(v),s=v<0?"–":"";
+const nf=(v,d=0)=>(isFinite(v)?v:0).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+function brl(v){if(!isFinite(v))v=0;const a=Math.abs(v),s=v<0?"–":"";
   if(a>=1e6)return s+"R$ "+nf(a/1e6,2)+" mi";
   if(a>=1e3)return s+"R$ "+nf(a/1e3,0)+" mil";
   return s+"R$ "+nf(a,0)}
@@ -90,7 +91,7 @@ function run(p){
   let pessoas,salao,dias,pico;
   if(p.modo==="dias"){const open=DAYS.filter(x=>x>0).length;dias=Math.max(open,1)*WK;const pm=DAYS.reduce((a,b)=>a+b,0)*WK;pessoas=pm/dias;salao=pm*ticket;pico=Math.max(...DAYS)}
   else{dias=p.dias;pessoas=p.lugares*p.giro*p.aprov/100;salao=pessoas*ticket*dias;pico=pessoas}
-  const giroImp=pessoas/p.lugares;
+  const giroImp=p.lugares>0?pessoas/p.lugares:0;
   const deliv=p.pedidos*p.ticketDeliv*dias;
   const total=salao+deliv;
   const pedidos=p.pedidos;
@@ -110,9 +111,9 @@ function run(p){
     const lucro=r*(1-varPct)-fixo;
     const pay=Math.max(0,Math.min(rep[y],p.aporte-Pg));
     Pg+=pay;F+=r;L+=lucro;C+=r-lucro;cash+=lucro-pay;minCash=Math.min(minCash,cash);
-    if(quit===null&&Pg>=p.aporte-0.5)quit=i+1;
+    if(quit===null&&p.aporte>0&&Pg>=p.aporte-0.5)quit=i+1;
     m.push({r,lucro,pay,L,Pg});
-    if((i+1)%12===0){const sob=L-Pg;cum[i+1]={F,B:F*(1-p.cmv/100),C,L,Pg,sob,res:Math.max(0,sob)*p.reserva/100,dist:Math.max(0,sob)*(1-p.reserva/100),pct:Pg/p.aporte}}
+    if((i+1)%12===0){const sob=L-Pg;cum[i+1]={F,B:F*(1-p.cmv/100),C,L,Pg,sob,res:Math.max(0,sob)*p.reserva/100,dist:Math.max(0,sob)*(1-p.reserva/100),pct:p.aporte>0?Pg/p.aporte:0}}
   });
   let pq=quit;
   if(pq===null){let pg=Pg,i=36;const last=Math.max(rep[2],0);while(pg<p.aporte&&i<240&&last>0){pg+=last;i++}pq=pg>=p.aporte?i:null}
@@ -150,9 +151,11 @@ function markCustom(){if(CUR)DIRTY=true}
 function applyMode(){document.querySelectorAll(".ctl[data-mode]").forEach(el=>el.hidden=el.dataset.mode!==P.modo);document.querySelectorAll("[data-modo]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.modo===P.modo))}
 
 document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;update()}));
-(()=>{const rb=document.getElementById("resetSc");let t;rb.addEventListener("click",()=>{
-  if(!rb.classList.contains("confirm")){rb.classList.add("confirm");rb.textContent="Confirmar: voltar ao padrão";t=setTimeout(()=>{rb.classList.remove("confirm");rb.textContent="Restaurar padrão"},3000);return}
-  clearTimeout(t);rb.classList.remove("confirm");rb.textContent="Restaurar padrão";P={...DEFAULTS};markCustom();syncControls();applyMode();update()})})();
+function confirmBtn(id,ask,apply){const b=document.getElementById(id),label=b.textContent;let t;b.addEventListener("click",()=>{
+  if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent=ask;t=setTimeout(()=>{b.classList.remove("confirm");b.textContent=label},3000);return}
+  clearTimeout(t);b.classList.remove("confirm");b.textContent=label;P=apply();markCustom();syncControls();applyMode();update()})}
+confirmBtn("zeroBtn","Confirmar: zerar tudo",()=>({...ZERO,mc_mov:P.mc_mov,mc_del:P.mc_del,mc_eq:P.mc_eq,mc_rep:P.mc_rep,mo_mov:P.mo_mov,mo_del:P.mo_del,mo_eq:P.mo_eq,mo_rep:P.mo_rep}));
+confirmBtn("exampleBtn","Confirmar: carregar exemplo",()=>({...DEFAULTS}));
 document.getElementById("present").addEventListener("click",e=>{const on=document.body.classList.toggle("present");e.currentTarget.textContent=on?"Mostrar premissas":"Modo apresentação";chart&&chart.resize()});
 
 // ---------- render ----------
@@ -168,8 +171,8 @@ function update(){
   document.getElementById("k-fat-s").textContent="Ano 1 cheio · "+brl(R.mature*12)+" no ano";
   document.getElementById("k-luc").textContent=brl(R.lucroM);
   document.getElementById("k-luc-s").textContent="Margem de "+nf(R.lucroM/R.mature*100,1)+"%";
-  document.getElementById("k-pay").textContent=R.quit?("Mês "+R.quit):(R.pq?("Mês ~"+R.pq):"Não quita");
-  document.getElementById("k-pay-s").textContent=brl(P.aporte)+" em "+P.cotas+(P.cotas>1?" cotas de ":" cota de ")+brl(P.aporte/P.cotas);
+  document.getElementById("k-pay").textContent=P.aporte<=0?"Sem aporte":R.quit?("Mês "+R.quit):(R.pq?("Mês ~"+R.pq):"Não quita");
+  document.getElementById("k-pay-s").textContent=brl(P.aporte)+" em "+P.cotas+(P.cotas>1?" cotas de ":" cota de ")+brl(P.cotas>0?P.aporte/P.cotas:0);
   document.getElementById("k-36").textContent=brl(R.cum[36].L);
   document.getElementById("k-36-s").textContent=brl(R.cum[36].dist)+" para distribuição";
 
@@ -202,7 +205,7 @@ function update(){
   const items=[["Insumos (CMV)",R.cost.cmv],["Equipe ("+nf(E.func,1)+" pessoas)",R.equipe],["Pró-labore",P.prolabore],["Imposto (Simples)",R.cost.simples],["Taxa de cartão",R.cost.cartao],
     ["Aluguel e IPTU",P.aluguel],["Marca e marketing",P.mkt],["Delivery (app e embalagem)",R.cost.del],["Luz, água e gás",P.energia],
     ["Administrativo",P.adm],["Manutenção",P.manut]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
-  const mx=Math.max(...items.map(x=>x[1]));
+  const mx=Math.max(1,...items.map(x=>x[1]));
   document.getElementById("bars").innerHTML=items.map(([n,v])=>`<span class="n">${n}</span><span class="t"><div style="width:${v/mx*100}%"></div></span><span class="val">${brl(v)}<small>${nf(v/R.mature*100,1)}%</small></span>`).join("");
   const fixo=R.fixoBase, var$=R.mature*R.varPct;
   document.getElementById("costfoot").innerHTML=`<span>Custo fixo <b>${brl(fixo)}/mês</b></span><span>Variável <b>${nf(R.varPct*100,1)}% da receita</b></span><span>Custo total <b>${brl(fixo+var$)}/mês</b></span>`;
@@ -237,6 +240,7 @@ function update(){
   A.push(gp>2.2?["warn","Capacidade",`Na noite mais cheia, cada lugar gira ${nf(gp,1)}x. Isso exige mesas rápidas e equipe dimensionada para o pico.`]:["ok","Capacidade",`Na noite mais cheia, cada lugar gira ${nf(gp,1)}x, viável para um pizza bar.`]);
   if(P.g2+P.g3>30&&P.reaj<P.g2/2)A.push(["warn","Crescimento","O faturamento cresce bem mais rápido que os custos fixos. Com mais movimento, a equipe tende a crescer junto."]);
   A.push(R.quit&&R.quit<=36?["ok","Aporte",`Os cotistas recebem 100% do aporte no mês ${R.quit}.`]:["warn","Aporte",`O aporte não volta inteiro em 36 meses${R.pq?" (previsão: mês ~"+R.pq+")":""}.`]);
+  if(R.mature<=0)A.splice(0,A.length,["warn","Premissas","As premissas estão zeradas. Preencha o movimento do salão, o ticket médio e os custos para ver a leitura."]);
   document.getElementById("alerts").innerHTML=A.map(([c,t,x])=>`<div class="alert"><span class="pill ${c}">${t}</span><p>${x}</p></div>`).join("");
 
   drawChart(R);
