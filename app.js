@@ -153,9 +153,15 @@ function applyMode(){document.querySelectorAll(".ctl[data-mode]").forEach(el=>el
 document.querySelectorAll("[data-sc]").forEach(b=>b.addEventListener("click",()=>{SC=b.dataset.sc;update()}));
 function confirmBtn(id,ask,apply){const b=document.getElementById(id),label=b.textContent;let t;b.addEventListener("click",()=>{
   if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent=ask;t=setTimeout(()=>{b.classList.remove("confirm");b.textContent=label},3000);return}
-  clearTimeout(t);b.classList.remove("confirm");b.textContent=label;P=apply();markCustom();syncControls();applyMode();update()})}
+  clearTimeout(t);b.classList.remove("confirm");b.textContent=label;P=apply();markCustom();syncControls();applyMode();update();const ml=document.getElementById("menuList");if(ml){ml.hidden=true;document.getElementById("menuBtn").setAttribute("aria-expanded","false")}})}
 confirmBtn("zeroBtn","Confirmar: zerar tudo",()=>({...ZERO,mc_mov:P.mc_mov,mc_del:P.mc_del,mc_eq:P.mc_eq,mc_rep:P.mc_rep,mo_mov:P.mo_mov,mo_del:P.mo_del,mo_eq:P.mo_eq,mo_rep:P.mo_rep}));
 confirmBtn("exampleBtn","Confirmar: carregar exemplo",()=>({...DEFAULTS}));
+{const mb=document.getElementById("menuBtn"),ml=document.getElementById("menuList");
+  const setM=o=>{ml.hidden=!o;mb.setAttribute("aria-expanded",String(o))};
+  mb.addEventListener("click",e=>{e.stopPropagation();setM(ml.hidden)});
+  document.addEventListener("click",e=>{if(!ml.hidden&&!ml.contains(e.target)&&e.target!==mb)setM(false)});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!ml.hidden){setM(false);mb.focus()}});
+  document.getElementById("present").addEventListener("click",()=>setM(false));}
 document.getElementById("present").addEventListener("click",e=>{const on=document.body.classList.toggle("present");e.currentTarget.textContent=on?"Mostrar premissas":"Modo apresentação";chart&&chart.resize()});
 
 // ---------- render ----------

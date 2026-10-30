@@ -28,9 +28,14 @@
         <button type="button" data-sc="otimista" id="sc-otimista">Otimista</button>
       </div>
       <button type="button" class="btn red" id="saveOpen">Salvar cenário</button>
-      <button type="button" class="btn" id="zeroBtn">Zerar premissas</button>
-      <button type="button" class="btn" id="exampleBtn">Carregar exemplo</button>
-      <button type="button" class="btn" id="present">Modo apresentação</button>
+      <div class="menu">
+        <button type="button" class="burger" id="menuBtn" aria-label="Mais opções" aria-expanded="false" aria-controls="menuList"><span></span><span></span><span></span></button>
+        <div class="menu-list" id="menuList" hidden>
+          <button type="button" id="present">Modo apresentação</button>
+          <button type="button" id="zeroBtn">Zerar premissas</button>
+          <button type="button" id="exampleBtn">Carregar exemplo</button>
+        </div>
+      </div>
     </div>
   </header>
 
