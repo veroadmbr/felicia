@@ -112,7 +112,10 @@ try{SAVED=JSON.parse(localStorage.getItem("felicia-saved")||"[]")||[]}catch(e){S
 const hhmm=d=>d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 function save(){let ok=true;try{localStorage.setItem("felicia-sim",JSON.stringify({p:P,sc:SC,cur:CUR,dirty:DIRTY}))}catch(e){ok=false}
   const a=document.getElementById("autosave");if(a)a.textContent=ok?"Alterações salvas automaticamente às "+hhmm(new Date())+".":"Este navegador bloqueou o salvamento automático. Use Salvar para guardar um cenário enquanto a página estiver aberta.";}
-function persistSaved(){try{localStorage.setItem("felicia-saved",JSON.stringify(SAVED))}catch(e){}}
+let SERVER=false,pst=null;
+function persistSaved(){try{localStorage.setItem("felicia-saved",JSON.stringify(SAVED))}catch(e){}
+  if(!SERVER)return;clearTimeout(pst);pst=setTimeout(()=>fetch("../api/scenarios",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(SAVED)}).catch(()=>{}),300)}
+const siteJSON=()=>fetch("../api/content",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status));
 
 const nf=(v,d=0)=>(isFinite(v)?v:0).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
 function brl(v){if(!isFinite(v))v=0;const a=Math.abs(v),s=v<0?"–":"";
@@ -370,17 +373,21 @@ document.getElementById("saveForm").addEventListener("submit",e=>{e.preventDefau
 function renderCur(){const c=document.getElementById("curName"),it=SAVED.find(x=>x.id===CUR);
   if(it){c.hidden=false;c.textContent="Cenário: "+it.name+(DIRTY?" · alterado":"")}else c.hidden=true}
 let SITE_SC=null;
-fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(c=>{if(c&&c.scenarioId){SITE_SC=c.scenarioId;renderSaved()}}).catch(()=>{});
+siteJSON().catch(()=>fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)).then(c=>{if(c&&c.scenarioId){SITE_SC=c.scenarioId;renderSaved()}}).catch(()=>{});
+fetch("../api/scenarios",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(list=>{if(!Array.isArray(list))return;SERVER=true;
+  const ids=new Set(list.map(x=>x.id));const local=SAVED.filter(x=>!ids.has(x.id));SAVED=[...list,...local];if(local.length)persistSaved();else{try{localStorage.setItem("felicia-saved",JSON.stringify(SAVED))}catch(e){}}renderSaved()}).catch(()=>{});
 const enc64=o=>btoa(unescape(encodeURIComponent(o)));
 function siteNote(li,cls,txt){let n=li.querySelector(".site-note");if(!n){n=document.createElement("span");n.className="site-note";li.appendChild(n)}n.className="site-note "+cls;n.textContent=txt}
 async function publishToSite(it,btn,li){
-  btn.disabled=true;btn.textContent="Gerando…";
-  let c={};try{const r=await fetch("../content.json",{cache:"no-store"});if(r.ok)c=await r.json()}catch(e){}
-  c.premissas={...DEFAULTS,...fromSaved(it)};c.scenarioId=it.id;c.scenarioName=it.name;c.defaultScenario=it.sc||"base";c.updated=new Date().toISOString();
-  try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(c,null,1)],{type:"application/json"}));a.download="content.json";document.body.appendChild(a);a.click();a.remove();
-    siteNote(li,"ok","Baixei o content.json com este cenário. No GitHub, clique em Add file → Upload files, arraste o content.json para a pasta principal e confirme. Em cerca de 1 minuto o site mostra este cenário.")}
-  catch(e){siteNote(li,"bad","Não foi possível baixar o arquivo neste navegador.")}
-  btn.disabled=false;btn.textContent="Usar no site"}
+  btn.disabled=true;btn.textContent="Salvando…";
+  try{let c={};try{c=await siteJSON()}catch(e){if(e===503||e===404){siteNote(li,"warn","O armazenamento do site ainda não está configurado. Abra o CMS (endereço do site + /cms), aba Conexão, e siga os passos uma única vez.");btn.disabled=false;btn.textContent="Usar no site";return}throw e}
+    if(!Object.keys(c).length){try{c=await fetch("../content.json",{cache:"no-store"}).then(r=>r.json())}catch(e){}}
+    c.premissas={...DEFAULTS,...fromSaved(it)};c.scenarioId=it.id;c.scenarioName=it.name;c.defaultScenario=it.sc||"base";
+    if(SERVER)await fetch("../api/scenarios",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(SAVED)});
+    const r=await fetch("../api/content",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(c)});if(!r.ok)throw new Error("erro "+r.status);
+    SITE_SC=it.id;renderSaved();const li2=[...document.querySelectorAll("#savedList .saved-item")].find(x=>x.querySelector("b").textContent.startsWith(it.name));
+    if(li2)siteNote(li2,"ok","Pronto. O site já mostra este cenário. Quando você usar Atualizar com o atual, o site muda junto.");
+  }catch(e){siteNote(li,"bad","Não foi possível salvar no site: "+(e.message||e)+".");btn.disabled=false;btn.textContent="Usar no site"}}
 function renderSaved(){
   document.getElementById("savedCount").textContent=SAVED.length;
   const ul=document.getElementById("savedList");
@@ -393,7 +400,7 @@ function renderSaved(){
     li.querySelector("b").textContent=it.name+(SITE_SC===it.id?"  ·  no site":"");
     li.querySelector('[data-a="site"]').onclick=e=>publishToSite(it,e.currentTarget,li);
     li.querySelector('[data-a="open"]').onclick=()=>{P=fromSaved(it);SC=it.sc||SC;CUR=it.id;DIRTY=false;syncControls();applyMode();update();renderSaved()};
-    li.querySelector('[data-a="upd"]').onclick=()=>{it.p={...P};delete it.sets;it.sc=SC;it.date=new Date().toISOString();CUR=it.id;DIRTY=false;persistSaved();save();renderSaved();renderCur()};
+    li.querySelector('[data-a="upd"]').onclick=()=>{if(it.id===SITE_SC&&SERVER)setTimeout(()=>{const l=[...document.querySelectorAll("#savedList .saved-item")].find(x=>x.querySelector("b").textContent.startsWith(it.name));if(l)siteNote(l,"ok","Atualizado. O site já mostra os números novos.")},50);it.p={...P};delete it.sets;it.sc=SC;it.date=new Date().toISOString();CUR=it.id;DIRTY=false;persistSaved();save();renderSaved();renderCur()};
     const del=li.querySelector('[data-a="del"]');let t;
     del.onclick=()=>{if(!del.classList.contains("confirm")){del.classList.add("confirm");del.textContent="Confirmar exclusão";t=setTimeout(()=>{del.classList.remove("confirm");del.textContent="Excluir"},3000);return}
       clearTimeout(t);SAVED=SAVED.filter(x=>x.id!==it.id);if(CUR===it.id){CUR=null;DIRTY=false}persistSaved();save();renderSaved();renderCur()};
@@ -401,7 +408,7 @@ function renderSaved(){
 }
 syncControls();applyMode();update();renderSaved();
 // cores do CMS
-fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(c=>{if(!c||!c.theme)return;const t=c.theme,rs=document.documentElement.style,set=(k,v)=>{if(v)rs.setProperty(k,v)};
+siteJSON().then(j=>j&&j.theme?j:fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)).catch(()=>fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)).then(c=>{if(!c||!c.theme)return;const t=c.theme,rs=document.documentElement.style,set=(k,v)=>{if(v)rs.setProperty(k,v)};
   set("--red",t.red);set("--brand",t.red);set("--cream",t.cream);set("--red-deep",t.redDeep);
   if(t.red){const h=x=>{const n=parseInt(x.slice(1),16);return [n>>16&255,n>>8&255,n&255]},a=h(t.red),b=[255,255,255];set("--red-soft","#"+a.map((v,i)=>Math.round(v*.13+b[i]*.87).toString(16).padStart(2,"0")).join(""))}
   update()}).catch(()=>{});

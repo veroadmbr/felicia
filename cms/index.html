@@ -7,7 +7,6 @@
 <title>Felícia · CMS</title>
 <link rel="icon" href="../img/logo.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /* Layout: editor à esquerda (abas + campos), prévia ao vivo à direita; barra superior com status e Publicar */
 :root{
@@ -133,7 +132,7 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
   <span class="sp"></span>
   <span class="status" id="status">Carregando…</span>
   <button type="button" class="btn ghost sm" id="discard" hidden>Descartar alterações</button>
-  <button type="button" class="btn cream" id="publish">Baixar atualização</button>
+  <button type="button" class="btn cream" id="publish">Salvar no site</button>
 </header>
 
 <div class="app">
@@ -144,7 +143,7 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
       <button type="button" role="tab" data-tab="imagens">Imagens</button>
       <button type="button" role="tab" data-tab="slides">Apresentação</button>
       <button type="button" role="tab" data-tab="calculos">Cálculos</button>
-      <button type="button" role="tab" data-tab="publicar">Como publicar</button>
+      <button type="button" role="tab" data-tab="publicar">Conexão</button>
     </nav>
 
     <div class="pane" data-pane="cores">
@@ -222,21 +221,25 @@ iframe{border:0;background:#fff;border-radius:12px;width:100%;height:100%;box-sh
     </div>
 
     <div class="pane" data-pane="publicar" hidden>
-      <h2>Como publicar</h2>
-      <p class="intro">O CMS não precisa de conexão com nada. Ele gera um zip com os arquivos alterados, do mesmo jeito que você já sobe no GitHub.</p>
+      <h2>Conexão</h2>
+      <p class="intro">O CMS e o simulador salvam direto no site. Não é preciso baixar nem subir arquivos.</p>
       <div class="box">
-        <h3>Passo a passo</h3>
+        <h3>Estado</h3>
+        <p class="msg" id="apiMsg">Verificando…</p>
+      </div>
+      <div class="box" id="setupBox" hidden>
+        <h3>Configuração única na Vercel</h3>
         <ol class="steps">
-          <li>Clique em <b>Baixar atualização</b>, no topo. O zip traz a pasta <b>felicia</b> só com os arquivos que mudaram.</li>
-          <li>Abra o repositório no GitHub e clique em <b>Add file → Upload files</b>.</li>
-          <li>Abra a pasta <b>felicia</b> do zip e arraste <b>o que está dentro dela</b> para o GitHub.</li>
-          <li>Clique em <b>Commit changes</b>. A Vercel atualiza o site em cerca de 1 minuto.</li>
+          <li>No painel da Vercel, abra o projeto do site e vá em <b>Storage</b>.</li>
+          <li>Clique em <b>Create Database</b>, escolha <b>Upstash for Redis</b> (plano gratuito) e confirme.</li>
+          <li>Em <b>Connect Project</b>, escolha este projeto, em todos os ambientes.</li>
+          <li>Vá em <b>Deployments</b> e faça <b>Redeploy</b> da última versão.</li>
+          <li>Volte aqui e recarregue a página.</li>
         </ol>
-        <button type="button" class="btn red sm" id="publish2" style="align-self:flex-start">Baixar atualização</button>
       </div>
       <div class="box">
         <h3>Histórico desta sessão</h3>
-        <div class="log" id="log"><span>Nada baixado ainda.</span></div>
+        <div class="log" id="log"><span>Nada salvo ainda.</span></div>
       </div>
     </div>
   </section>
@@ -266,7 +269,7 @@ const FONTS=["Outfit","DM Sans","Manrope","Plus Jakarta Sans","Sora","Urbanist",
 let PUB=null,C=null,BASE_TEXTS={},TEXTMETA=[],IMGUSE={},PENDING={},VIEW="marca",DIRTY=false;
 
 function status(t){$("#status").textContent=t}
-function setDirty(v){DIRTY=v;$("#discard").hidden=!v;status(v?"Alterações ainda não baixadas":"Sem alterações pendentes")}
+function setDirty(v){DIRTY=v;$("#discard").hidden=!v;status(v?"Alterações não salvas":"Tudo salvo no site")}
 function persist(){const ok=LS.set("felicia-cms-draft",C);if(!ok)status("Rascunho grande demais para salvar no navegador. Publique para não perder.")}
 let pt=null;
 function changed(){setDirty(true);persist();clearTimeout(pt);pt=setTimeout(pushPreview,120)}
@@ -331,15 +334,16 @@ function renderTexts(){const q=($("#q").value||"").toLowerCase();const groups={}
 $("#q").addEventListener("input",renderTexts);
 
 // ---------- imagens ----------
-async function prepImage(file,maxSide=2400){
+async function prepImage(file,maxSide=1800){
   const url=URL.createObjectURL(file);const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
-  const png=file.type==="image/png"||file.type==="image/webp"&&false;const s=Math.min(1,maxSide/Math.max(img.width,img.height));
-  const cv=document.createElement("canvas");cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
-  const type=png?"image/png":"image/jpeg";const blob=await new Promise(r=>cv.toBlob(r,type,.86));URL.revokeObjectURL(url);
-  const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(",")[1]);fr.readAsDataURL(blob)});
-  return {blob,b64,ext:png?"png":"jpg",url:URL.createObjectURL(blob)}}
+  const png=file.type==="image/png";let side=maxSide,q=.84,blob,b64,type=png?"image/png":"image/jpeg";
+  for(let k=0;k<8;k++){const s=Math.min(1,side/Math.max(img.width,img.height));const cv=document.createElement("canvas");cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
+    blob=await new Promise(r=>cv.toBlob(r,type,q));b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(",")[1]);fr.readAsDataURL(blob)});
+    if(b64.length<900000)break;if(png&&k>=2){type="image/jpeg"}side=Math.round(side*.8);q=Math.max(.7,q-.04)}
+  URL.revokeObjectURL(url);
+  return {blob,b64,type,ext:type==="image/png"?"png":"jpg",url:URL.createObjectURL(blob)}}
 const slug=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\.[a-z0-9]+$/,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"imagem";
-function imgSrc(path){return PENDING[path]?PENDING[path].url:"../"+path}
+function imgSrc(path){return PENDING[path]?PENDING[path].url:/^(\/|https?:|blob:|data:)/.test(path)?path:"../"+path}
 function renderImages(){const q=($("#qi").value||"").toLowerCase();const keys=Object.keys(C.images).filter(k=>!q||k.toLowerCase().includes(q)||[...(IMGUSE[k]||[])].join(" ").toLowerCase().includes(q));
   $("#images").innerHTML=keys.map(k=>{const cur=C.images[k],ch=cur!==k,pend=!!PENDING[cur];const logo=/logo/.test(k)&&!/red|ink/.test(k);
     return `<div class="img-row${logo?" dark":""}"><div class="th" style="background-image:url('${esc(imgSrc(cur))}')"></div><div class="meta"><b>${esc(k.replace(/^img\//,""))}</b>${pend?`<span class="badge">Nova · aguardando publicar</span>`:ch?`<span class="badge ok">Trocada</span>`:""}<span class="used">${esc([...(IMGUSE[k]||[])].filter(Boolean).join(" · "))}</span><div class="acts"><label class="btn sm red" for="up-${esc(k)}">Trocar imagem</label><input type="file" accept="image/*" id="up-${esc(k)}" data-k="${esc(k)}" hidden>${ch?`<button type="button" class="btn sm" data-restore="${esc(k)}">Restaurar original</button>`:""}</div></div></div>`}).join("")||`<p class="hint">Nenhuma imagem encontrada.</p>`;
@@ -365,7 +369,8 @@ $("#slideRep").addEventListener("change",e=>{addSlides(e.target.files,true);e.ta
 
 // ---------- cálculos ----------
 function decodeP(q){return JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,"+").replace(/_/g,"/")))))}
-function renderScen(){const saved=LS.get("felicia-saved",[]),cur=LS.get("felicia-sim",null);
+let SCEN=null;
+function renderScen(){const saved=SCEN||LS.get("felicia-saved",[]),cur=LS.get("felicia-sim",null);
   const items=[{id:"__ex",name:"Premissas de exemplo",sub:"Números de referência de mercado",p:{}}];
   if(cur&&cur.p)items.push({id:"__cur",name:"Premissas atuais do simulador",sub:"O que está aberto agora no simulador",p:cur.p});
   saved.forEach(s=>items.push({id:s.id,name:s.name,sub:"Salvo em "+new Date(s.date).toLocaleDateString("pt-BR")+" às "+new Date(s.date).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),p:(s.sets&&s.sets.base)||s.p||{}}));
@@ -378,41 +383,51 @@ function renderScen(){const saved=LS.get("felicia-saved",[]),cur=LS.get("felicia
 $$("[data-def]").forEach(b=>b.addEventListener("click",()=>{C.defaultScenario=b.dataset.def;renderScen();changed()}));
 $("#useLink").onclick=()=>{const m=$("#linkMsg");m.hidden=false;try{const u=new URL($("#pasteLink").value.trim(),location.href);const q=u.searchParams.get("p");if(!q)throw 0;C.premissas=decodeP(q);C.scenarioId="__link";C.scenarioName="Cenário do link";m.className="msg ok";m.textContent="Premissas do link aplicadas.";renderScen();changed();setView("calculos")}catch(e){m.className="msg bad";m.textContent="Esse link não tem premissas. Use o botão Copiar link do investidor, no menu do simulador."}};
 
-// ---------- publicação (zip) ----------
-function log(t){const l=$("#log");if(l.firstElementChild&&l.firstElementChild.textContent==="Nada baixado ainda.")l.innerHTML="";const s=document.createElement("span");s.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+" · "+t;l.prepend(s)}
+// ---------- salvar no site ----------
+let API=false;
+function log(t){const l=$("#log");if(l.firstElementChild&&l.firstElementChild.textContent==="Nada salvo ainda.")l.innerHTML="";const s=document.createElement("span");s.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+" · "+t;l.prepend(s)}
 function usedPending(){const used=new Set([...Object.values(C.images),...(C.slides||[])]);return Object.keys(PENDING).filter(k=>used.has(k))}
 function cleanContent(){const o=JSON.parse(JSON.stringify(C));delete o._preview;delete o._keepSc;
   const t={};for(const k in o.texts)if(o.texts[k]!==BASE_TEXTS[k])t[k]=o.texts[k];o.texts=t;
   const im={};for(const k in o.images)if(o.images[k]!==k)im[k]=o.images[k];o.images=im;o.version=(PUB&&PUB.version||1);o.updated=new Date().toISOString();return o}
-const b64=s=>btoa(unescape(encodeURIComponent(s)));
-async function download(){
-  if(!window.JSZip){status("Não foi possível carregar o gerador de zip. Recarregue a página.");return}
-  const btns=[$("#publish"),$("#publish2")];btns.forEach(b=>{b.disabled=true;b.textContent="Gerando zip…"});
-  try{const z=new JSZip(),root=z.folder("felicia");const files=usedPending();
-    for(const path of files)root.file(path,PENDING[path].b64,{base64:true});
-    root.file("content.json",JSON.stringify(cleanContent(),null,1));
-    const blob=await z.generateAsync({type:"blob"});
-    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="felicia-atualizacao.zip";document.body.appendChild(a);a.click();a.remove();
-    for(const p of files)PENDING[p].sent=true;
-    PUB=JSON.parse(JSON.stringify(C));setDirty(false);status("Zip baixado. Suba no GitHub para atualizar o site.");log("Zip baixado ("+(files.length+1)+" arquivo(s))");
-  }catch(e){status("Erro ao gerar o zip: "+e.message)}
-  btns.forEach(b=>{b.disabled=false;b.textContent="Baixar atualização"})}
-$("#publish").onclick=download;$("#publish2").onclick=download;
+function apiState(ok,detail){API=ok;const m=$("#apiMsg");m.className="msg "+(ok?"ok":"warn");m.textContent=ok?"Conectado. Tudo o que você salvar aparece no site na hora.":(detail||"O armazenamento do site ainda não está configurado. Faça a configuração abaixo uma única vez.");$("#setupBox").hidden=ok}
+async function saveSite(){
+  if(!API){$$(".tabs [data-tab]").find(b=>b.dataset.tab==="publicar").click();status("Configure o armazenamento para salvar");return}
+  const btn=$("#publish");btn.disabled=true;btn.textContent="Salvando…";
+  try{const files=usedPending();let n=0;
+    for(const path of files){if(PENDING[path].remote){continue}status("Enviando imagem "+(++n)+" de "+files.length+"…");
+      const r=await fetch("../api/img",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({type:PENDING[path].type,b64:PENDING[path].b64})});
+      if(!r.ok)throw new Error("imagem não enviada ("+r.status+")");const j=await r.json();PENDING[path].remote=j.url}
+    const map={};for(const p of files)map[p]=PENDING[p].remote;
+    for(const k in C.images)if(map[C.images[k]])C.images[k]=map[C.images[k]];
+    C.slides=(C.slides||[]).map(x=>map[x]||x);
+    for(const p of files){PENDING[map[p]]=PENDING[p];delete PENDING[p]}
+    const r=await fetch("../api/content",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(cleanContent())});
+    if(!r.ok)throw new Error("conteúdo não salvo ("+r.status+")");
+    PUB=JSON.parse(JSON.stringify(C));LS.del("felicia-cms-draft");setDirty(false);status("Salvo. O site já está atualizado.");log("Salvo no site"+(files.length?" com "+files.length+" imagem(ns)":""));
+    renderImages();renderSlides();
+  }catch(e){status("Erro ao salvar: "+e.message);log("Erro: "+e.message)}
+  btn.disabled=false;btn.textContent="Salvar no site"}
+$("#publish").onclick=saveSite;
 let dt=null;$("#discard").onclick=e=>{const b=e.currentTarget;if(!b.dataset.c){b.dataset.c=1;b.textContent="Confirmar descarte";dt=setTimeout(()=>{delete b.dataset.c;b.textContent="Descartar alterações"},3000);return}
   clearTimeout(dt);delete b.dataset.c;b.textContent="Descartar alterações";C=JSON.parse(JSON.stringify(PUB));PENDING={};LS.del("felicia-cms-draft");renderAll();setDirty(false);pushPreview()};
-window.addEventListener("beforeunload",e=>{if(usedPending().some(p=>!PENDING[p].sent)){e.preventDefault();e.returnValue=""}});
+window.addEventListener("beforeunload",e=>{if(DIRTY){e.preventDefault();e.returnValue=""}});
 
 // ---------- boot ----------
 function renderAll(){renderTheme();renderPalette();renderTexts();renderImages();renderSlides();renderScen()}
 (async()=>{
-  try{const [html,pub]=await Promise.all([fetch("../",{cache:"no-store"}).then(r=>r.text()),fetch("../content.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).catch(()=>({}))]);
+  try{const gj=u=>fetch(u,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status));
+    const [html,apiC,stat,sc]=await Promise.all([fetch("../",{cache:"no-store"}).then(r=>r.text()),gj("../api/content").catch(e=>({__err:e})),gj("../content.json").catch(()=>({})),gj("../api/scenarios").catch(()=>null)]);
+    apiState(!apiC.__err,apiC.__err===503?null:apiC.__err===404?"A API do site não foi encontrada. Confira se a pasta api foi enviada ao GitHub.":null);
+    if(Array.isArray(sc))SCEN=sc;
+    const pub=(!apiC.__err&&Object.keys(apiC).length)?apiC:stat;
     const doc=new DOMParser().parseFromString(html,"text/html");buildMeta(doc);
     const m=html.match(/const DEFAULT_CONTENT=(\{[\s\S]*?\});\nlet CONTENT/);const def=m?JSON.parse(m[1]):{theme:{},texts:{},images:{},palette:[],slides:[]};
     const merge=(d,p)=>({...d,...p,theme:{...d.theme,...(p.theme||{})},texts:{...BASE_TEXTS,...(p.texts||{})},images:{...d.images,...(p.images||{})},meta:{...(d.meta||{}),...(p.meta||{})}});
     PUB=merge(def,pub);
     const draft=LS.get("felicia-cms-draft",null);
     C=draft?merge(def,draft):JSON.parse(JSON.stringify(PUB));
-    renderAll();setDirty(!!draft);if(draft)status("Rascunho restaurado · alterações ainda não baixadas");pushPreview();
+    renderAll();setDirty(!!draft);if(draft)status("Rascunho restaurado · alterações não salvas");pushPreview();
   }catch(e){status("Não foi possível carregar o site. Recarregue a página.")}
 })();
 </script>

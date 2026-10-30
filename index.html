@@ -554,7 +554,8 @@ const GROUPS=[
   ["custoDeliv","Custo do delivery",0,35,0.5,"%","App, embalagem e entrega"]]},
  {t:"Custos variáveis",c:[
   ["cmv","Insumos (CMV)",10,45,0.5,"%","Mercado: 25% a 32%"],
-  ["simples","Imposto (Simples Nacional)",4,19,0.1,"%","Anexo I · cerca de 10% nesta faixa de faturamento"],
+  ["__tax__"],
+  ["simples","Imposto (Simples Nacional)",0,25,0.1,"%","Alíquota efetiva usada nos cálculos"],
   ["cartao","Taxa de cartão",0,6,0.1,"%","Maquininha, média entre débito, crédito e Pix"]]},
  {t:"Equipe e encargos",regime:true,note:"Encargos sobre o salário bruto. No Simples, INSS patronal, RAT e Terceiros já estão no imposto do Simples.",c:[
   ["sal","Salário médio bruto",0,12000,50,"R$","Por funcionário, sem encargos"],
@@ -799,7 +800,8 @@ function applyContent(c){
   renderPrem();if(!document.getElementById("v-calculos").hidden)update();
 }
 window.addEventListener("message",e=>{if(e.origin===location.origin&&e.data&&e.data.type==="felicia-preview"){const c=e.data.content;if(e.data.view&&e.data.view!==(location.hash||"#marca").slice(1))location.hash=e.data.view;applyContent(c)}});
-fetch("content.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j)applyContent({...DEFAULT_CONTENT,...j,theme:{...DEFAULT_CONTENT.theme,...(j.theme||{})},texts:{...DEFAULT_CONTENT.texts,...(j.texts||{})},images:{...DEFAULT_CONTENT.images,...(j.images||{})}})}).catch(()=>{});
+const getJSON=u=>fetch(u,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status));
+getJSON("api/content").then(j=>j&&Object.keys(j).length?j:getJSON("content.json")).catch(()=>getJSON("content.json")).then(j=>{if(j)applyContent({...DEFAULT_CONTENT,...j,theme:{...DEFAULT_CONTENT.theme,...(j.theme||{})},texts:{...DEFAULT_CONTENT.texts,...(j.texts||{})},images:{...DEFAULT_CONTENT.images,...(j.images||{})}})}).catch(()=>{});
 renderPalette();renderPrem();show();
 </script>
 </body>
