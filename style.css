@@ -26,6 +26,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15p
 .brand{background:var(--brand);border-radius:18px;padding:26px 28px;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
 .brand img{height:clamp(56px,7vw,84px);width:auto;display:block}
 .brand span{color:var(--cream);font-weight:600;font-size:13px;letter-spacing:.32em;text-transform:uppercase}
+.brand-nav{display:flex;gap:6px;background:rgba(0,0,0,.14);border-radius:999px;padding:4px;letter-spacing:0!important;text-transform:none!important}
+.brand-nav a,.brand-nav b{font-size:14px;font-weight:500;padding:8px 16px;border-radius:999px;color:var(--cream);text-decoration:none}
+.brand-nav b{background:var(--cream);color:var(--brand)}
+.brand a:focus-visible{outline:2px solid var(--cream);outline-offset:2px}
 .eyebrow{color:var(--red);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:13px}
 h1,h2{margin:0;font-weight:500;text-transform:uppercase;text-wrap:balance;letter-spacing:-.01em}
 h1{font-size:clamp(30px,4.4vw,52px);line-height:1}
@@ -74,6 +78,16 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .modeseg .seg{align-self:flex-start}
 .week{display:flex;flex-direction:column;gap:14px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
 .subhead{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);padding:6px 0 12px}
+.taxban{background:var(--red-soft);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.taxban .tb-l{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+.taxban .tb-big{display:flex;flex-direction:column;gap:2px}
+.taxban .tb-big b{font-size:30px;font-weight:600;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.taxban .tb-big span{font-size:13px;color:var(--muted)}
+.taxban p{margin:0;font-size:13px;line-height:1.45}
+.taxban .tb-n b{font-weight:600}
+.taxban .tb-act{display:flex;flex-direction:column;gap:8px;align-items:flex-start;font-size:13px;padding-top:8px;border-top:1px solid rgba(0,0,0,.08)}
+.taxban .tb-ok{color:var(--ok);font-weight:500}
+.taxban .tb-w{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px}
 .calc{display:flex;justify-content:space-between;font-size:14px;padding:10px 12px;background:var(--red-soft);border-radius:10px;margin-bottom:14px}
 .calc b{font-variant-numeric:tabular-nums}
 
